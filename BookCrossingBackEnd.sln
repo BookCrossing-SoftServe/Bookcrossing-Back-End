@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1000
+# Visual Studio 16
+VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCrossingBackEnd", "BookCrossingBackEnd\BookCrossingBackEnd.csproj", "{5022AB3A-75C9-4DF4-91A8-D26385E0FAC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCrossingBackEnd", "BookCrossingBackEnd\BookCrossingBackEnd.csproj", "{5022AB3A-75C9-4DF4-91A8-D26385E0FAC8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{545D2189-ABD1-416B-BBF0-C7F96EC6CDBA}"
 EndProject
