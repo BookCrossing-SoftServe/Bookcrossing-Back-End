@@ -41,9 +41,6 @@ namespace BookCrossingBackEnd
                 options.UseSqlServer(
                     "Server=MAX-ÏÊ\\SQLEXPRESS;Database=BookCrossing;Trusted_Connection=True;", x => x.MigrationsAssembly("Infastructure")));
 
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<BookCrossingContext>()
-                .AddDefaultTokenProviders();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +54,7 @@ namespace BookCrossingBackEnd
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
