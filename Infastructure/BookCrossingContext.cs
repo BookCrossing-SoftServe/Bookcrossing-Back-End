@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
-    public class BookCrossingContext : IdentityDbContext<User>
+    public class BookCrossingContext : DbContext
     {
         public BookCrossingContext(DbContextOptions<BookCrossingContext> options) : base(options)
         {
-            Database.EnsureCreated();
+ 
         }
 
         public  DbSet<Author> Author { get; set; }
@@ -24,7 +24,7 @@ namespace Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,8 +42,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new BookGenreConfiguration());
 
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
-            modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());          
- 
+            modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());
         }
     }
 }

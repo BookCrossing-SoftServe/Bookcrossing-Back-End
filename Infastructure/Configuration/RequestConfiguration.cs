@@ -10,8 +10,7 @@ namespace Infrastructure.Configuration
         {
             builder.ToTable("Request");
             builder.Property(e => e.Id)
-                .HasColumnName("id")
-                .ValueGeneratedNever();
+                .HasColumnName("id");
 
             builder.Property(e => e.BookId).HasColumnName("book_id");
 
@@ -29,19 +28,16 @@ namespace Infrastructure.Configuration
 
             builder.HasOne(d => d.Book)
                 .WithMany(p => p.Request)
-                .HasForeignKey(d => d.BookId)
-                .HasConstraintName("FK_Request_Book");
+                .HasForeignKey(d => d.BookId);
 
             builder.HasOne(d => d.Owner)
                 .WithMany(p => p.RequestOwner)
-                .HasForeignKey(d => d.OwnerId)
-                .HasConstraintName("FK_Request_User_Owner");
+                .HasForeignKey(d => d.OwnerId);
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.RequestUser)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Request_User_Requestee");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

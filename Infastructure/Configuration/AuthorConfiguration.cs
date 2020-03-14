@@ -10,8 +10,7 @@ namespace Infastructure.Configuration
         {
             builder.ToTable("Author");
             builder.Property(e => e.Id)
-                .HasColumnName("id")
-                .ValueGeneratedNever();
+                .HasColumnName("id");
 
             builder.Property(e => e.FirstName)
                 .IsRequired()

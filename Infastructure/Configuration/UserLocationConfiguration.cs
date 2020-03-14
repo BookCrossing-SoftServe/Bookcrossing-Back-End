@@ -12,8 +12,7 @@ namespace Infrastructure.Configuration
         public void Configure(EntityTypeBuilder<UserLocation> builder)
         {
             builder.ToTable("UserLocation");
-            builder.HasKey(e => new { e.UserId, e.LocationId })
-                .HasName("PK_UserLocation_id");
+            builder.HasKey(e => new {e.UserId, e.LocationId});
 
             builder.Property(e => e.UserId).HasColumnName("user_id");
 
@@ -24,14 +23,12 @@ namespace Infrastructure.Configuration
             builder.HasOne(d => d.Location)
                 .WithMany(p => p.UserLocation)
                 .HasForeignKey(d => d.LocationId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserLocation_Location");
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.UserLocation)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_UserLocation_User");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }       
     }
 }
