@@ -10,8 +10,7 @@ namespace Infrastructure.Configuration
         {
             builder.ToTable("Genre");
             builder.Property(e => e.Id)
-                .HasColumnName("id")
-                .ValueGeneratedNever();
+                .HasColumnName("id");
 
             builder.Property(e => e.Name)
                 .IsRequired()

@@ -9,8 +9,7 @@ namespace Infrastructure.Configuration
         public void Configure(EntityTypeBuilder<BookGenre> builder)
         {
             builder.ToTable("BookGenre");
-            builder.HasKey(e => new { e.BookId, e.GenreId })
-                .HasName("PK_BookGenre_id");
+            builder.HasKey(e => new {e.BookId, e.GenreId});
 
             builder.Property(e => e.BookId).HasColumnName("book_id");
 
@@ -19,14 +18,12 @@ namespace Infrastructure.Configuration
             builder.HasOne(d => d.Book)
                 .WithMany(p => p.BookGenre)
                 .HasForeignKey(d => d.BookId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BookGenre_Book");
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(d => d.Genre)
                 .WithMany(p => p.BookGenre)
                 .HasForeignKey(d => d.GenreId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BookGenre_Genre");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

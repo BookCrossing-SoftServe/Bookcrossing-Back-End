@@ -10,8 +10,7 @@ namespace Infrastructure.Configuration
         {
             builder.ToTable("Book");
             builder.Property(e => e.Id)
-                .HasColumnName("id")
-                .ValueGeneratedNever();
+                .HasColumnName("id");
 
             builder.Property(e => e.Available).HasColumnName("available");
 
@@ -28,8 +27,7 @@ namespace Infrastructure.Configuration
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Book)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_Book_User");
+                .HasForeignKey(d => d.UserId);
         }
     }
 }
