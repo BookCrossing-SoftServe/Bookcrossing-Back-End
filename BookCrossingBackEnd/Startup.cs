@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure;
+using Application.IServices;
+using Application.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,14 +34,16 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IUserProfileService, UserProfileService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
             });
+            string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    "Server=MAX-ÏÊ\\SQLEXPRESS;Database=BookCrossing;Trusted_Connection=True;", x => x.MigrationsAssembly("Infastructure")));
+                    connection, x => x.MigrationsAssembly("Infastructure")));
 
         }
 

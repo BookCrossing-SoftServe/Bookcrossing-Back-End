@@ -10,9 +10,11 @@ namespace Infrastructure
     {
         public BookCrossingContext(DbContextOptions<BookCrossingContext> options) : base(options)
         {
- 
+            Database.EnsureDeleted();
+            Database.EnsureCreated();
         }
 
+        public  DbSet<User> Users { get; set; }
         public  DbSet<Author> Author { get; set; }
         public  DbSet<Book> Book { get; set; }
         public  DbSet<BookAuthor> BookAuthor { get; set; }
