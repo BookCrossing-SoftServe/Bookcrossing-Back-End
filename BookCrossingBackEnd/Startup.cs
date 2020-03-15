@@ -49,10 +49,12 @@ namespace BookCrossingBackEnd
                     connection, x => x.MigrationsAssembly("Infastructure")));
             services.AddTransient<IUserLocationRepository, UserLocationRepository>();
             services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<IGenreRepository, GenreRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserProfileService, UserProfileService>();
             services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<IRegistrationService, RegistrationService>();
+            services.AddTransient<IAdminService, AdminService>();
 
         }
 

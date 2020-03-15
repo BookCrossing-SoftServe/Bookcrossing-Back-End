@@ -10,5 +10,6 @@ namespace Domain.IRepositories
         IEnumerable<User> GetAllUsers();
         User GetUserById(int userId);
         void AddNewUser(User user);
+        void RemoveUserById(int userId);
     }
 }
