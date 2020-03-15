@@ -10,9 +10,10 @@ namespace Infrastructure
     {
         public BookCrossingContext(DbContextOptions<BookCrossingContext> options) : base(options)
         {
- 
+            Database.EnsureCreated();
         }
 
+        public  DbSet<User> User { get; set; }
         public  DbSet<Author> Author { get; set; }
         public  DbSet<Book> Book { get; set; }
         public  DbSet<BookAuthor> BookAuthor { get; set; }
@@ -33,14 +34,10 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserLocationConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
-
             modelBuilder.ApplyConfiguration(new RequestConfiguration());
-
             modelBuilder.ApplyConfiguration(new BookConfiguration());
-
             modelBuilder.ApplyConfiguration(new GenreConfiguration());
             modelBuilder.ApplyConfiguration(new BookGenreConfiguration());
-
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());
         }

@@ -28,11 +28,13 @@ namespace Infrastructure.Configuration
 
             builder.HasOne(d => d.Book)
                 .WithMany(p => p.Request)
-                .HasForeignKey(d => d.BookId);
+                .HasForeignKey(d => d.BookId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(d => d.Owner)
                 .WithMany(p => p.RequestOwner)
-                .HasForeignKey(d => d.OwnerId);
+                .HasForeignKey(d => d.OwnerId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.RequestUser)
