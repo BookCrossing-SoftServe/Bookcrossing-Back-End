@@ -19,22 +19,26 @@ namespace BookCrossingBackEnd.Controllers
         {
             _adminService = adminService;
         }
+        [Route("UsersList")]
         [HttpGet]
         public List<User> GetListOfUsers()
         {
             return _adminService.ListAllUsers().ToList();
         }
+        [Route("GenresList")]
         [HttpGet]
         public List<Genre> GetListOfGenres()
         {
             return _adminService.ListAllGenres().ToList();
         }
+        [Route("AddNewGenre")]
         [HttpPost]
         public IActionResult AddNewGenre(Genre genre)
         {
             _adminService.AddNewGenre(genre);
             return Ok(genre);
         }
+        [Route("RemoveGenre")]
         [HttpDelete]
         public IActionResult RemoveGenre(int genreId)
         {
@@ -49,6 +53,7 @@ namespace BookCrossingBackEnd.Controllers
                 throw new Exception("Bad gerne id!");
             }
         }
+        [Route("RemoveUser")]
         [HttpDelete]
         public IActionResult RemoveUser(int userId)
         {
