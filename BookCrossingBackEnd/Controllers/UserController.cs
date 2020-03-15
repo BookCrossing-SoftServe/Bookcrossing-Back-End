@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.IServices;
+using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,36 +13,22 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // GET: api/User
+        private readonly IUserProfileService _userProfileService;
+        public UserController(IUserProfileService userProfileService)
+        {
+            _userProfileService = userProfileService;
+        }
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult GetUserProfile(int userId)
         {
-            return new string[] { "value1", "value2" };
+            var user = _userProfileService.GetMyProfile(userId);
+            return Ok(user);
         }
-
-        // GET: api/User/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/User
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult AddNewBook(Book book)
         {
-        }
-
-        // PUT: api/User/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            _userProfileService.AddNewBook(book);
+            return Ok(book);
         }
     }
 }

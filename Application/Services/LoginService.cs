@@ -5,7 +5,11 @@ using Application.IServices;
 
 namespace Application.Services
 {
-    class LoginService : ILoginService
+    public class LoginService : ILoginService
     {
+        public void LogIn()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

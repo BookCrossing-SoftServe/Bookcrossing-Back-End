@@ -5,7 +5,11 @@ using Application.IServices;
 
 namespace Application.Services
 {
-    class RegistrationService : IRegistrationService
+    public class RegistrationService : IRegistrationService
     {
+        public void RegisterNewUser()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

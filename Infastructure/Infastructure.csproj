@@ -6,15 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200313203600_CreateDB.cs" />
-    <Compile Remove="Migrations\20200313203600_CreateDB.Designer.cs" />
-    <Compile Remove="Migrations\20200313203642_CreateBookCrossingDB.cs" />
-    <Compile Remove="Migrations\20200313203642_CreateBookCrossingDB.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="Reposetories\" />
   </ItemGroup>
 
   <ItemGroup>

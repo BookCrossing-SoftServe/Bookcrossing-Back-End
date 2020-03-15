@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Application.IServices
 {
-    class IRegistrationService
+    public interface IRegistrationService
     {
+        /// <summary>
+        /// Register method
+        /// </summary>
+        void RegisterNewUser();
     }
 }

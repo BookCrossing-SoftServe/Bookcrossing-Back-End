@@ -5,7 +5,7 @@ namespace Domain.Entities
 {
     public class UserLocation : IEntityBase
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public int LocationId { get; set; }
         public int RoomNumber { get; set; }
 

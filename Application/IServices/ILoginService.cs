@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Application.IServices
 {
-    class ILoginService
+    public interface ILoginService
     {
+        /// <summary>
+        /// Login method
+        /// </summary>
+        void LogIn();
     }
 }

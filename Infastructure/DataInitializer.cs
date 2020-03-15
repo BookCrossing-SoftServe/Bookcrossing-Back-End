@@ -11,13 +11,15 @@ namespace Infastructure
     {
         public static void Initialize(BookCrossingContext context)
         {
-            if (!context.Users.Any())
+            if (!context.User.Any())
             {
-                context.Users.Add(new User()
+                context.User.Add(new User()
                 {
-                    FirstName = "Ivan",
-                    MiddleName = "Ivanovych",
-                    LastName = "Petrenko"
+                    FirstName = "Roman",
+                    MiddleName = "Ferents",
+                    LastName = "Andriyovych",
+                    Email = "ferencrman@gmail.com",
+                    Password = "password"
 
                 });
                 context.SaveChanges();
@@ -46,6 +48,7 @@ namespace Infastructure
             {
                 context.Book.Add(new Book()
                 {
+                    UserId = 1,
                     Name = "CLR via C#",
                     Available = true,
                     Publisher = "Kolosok"
@@ -64,14 +67,32 @@ namespace Infastructure
                 });
                 context.SaveChanges();
             }
-            if (!context.Location.Any())
+            if (!context.BookAuthor.Any())
             {
-                context.Location.Add(new Location()
+                context.BookAuthor.Add(new BookAuthor()
                 {
-                    City = "Lviv",
-                    Street = "Fedkovycha 13",
-                    OfficeName = "4"
-
+                    BookId = 1,
+                    AuthorId = 1
+                    
+                });
+                context.SaveChanges();
+            }
+            if (!context.BookGenre.Any())
+            {
+                context.BookGenre.Add(new BookGenre()
+                {
+                    BookId = 1,
+                    GenreId = 1
+                });
+                context.SaveChanges();
+            }
+            if (!context.UserLocation.Any())
+            {
+                context.UserLocation.Add(new UserLocation()
+                {
+                    UserId = 1,
+                    LocationId = 1,
+                    RoomNumber = 4014
                 });
                 context.SaveChanges();
             }

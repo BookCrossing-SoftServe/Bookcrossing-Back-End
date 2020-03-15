@@ -8,6 +8,8 @@ using Domain.Entities;
 using Infrastructure;
 using Application.IServices;
 using Application.Services;
+using Domain.IRepositories;
+using Infastructure.Reposetories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,8 +36,9 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IUserProfileService, UserProfileService>();
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            ); ;
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
@@ -44,6 +47,12 @@ namespace BookCrossingBackEnd
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
                     connection, x => x.MigrationsAssembly("Infastructure")));
+            services.AddTransient<IUserLocationRepository, UserLocationRepository>();
+            services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserProfileService, UserProfileService>();
+            services.AddTransient<ILoginService, LoginService>();
+            services.AddTransient<IRegistrationService, RegistrationService>();
 
         }
 
@@ -58,8 +67,6 @@ namespace BookCrossingBackEnd
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
