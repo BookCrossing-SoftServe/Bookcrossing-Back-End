@@ -28,5 +28,11 @@ namespace Infastructure.Reposetories
         public User GetUserById(int userId) =>
             _context.User.FirstOrDefault(p => p.Id == userId);
 
+        public void RemoveUserById(int userId) 
+        {
+            var user = _context.User.FirstOrDefault(p => p.Id == userId);
+            _context.User.Remove(user);
+            _context.SaveChanges();
+        }
     }
 }
