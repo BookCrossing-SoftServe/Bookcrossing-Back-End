@@ -8,7 +8,5 @@ namespace Domain.IRepositories
     public interface IGenreRepository
     {
         IEnumerable<Genre> GetAllGenres();
-        void RemoveGenreById(int genreId);
-        void AddNewGenre(Genre genre);
     }
 }
