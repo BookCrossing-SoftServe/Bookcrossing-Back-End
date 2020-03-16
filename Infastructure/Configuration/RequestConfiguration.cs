@@ -27,17 +27,21 @@ namespace Infrastructure.Configuration
             builder.Property(e => e.UserId).HasColumnName("user_id");
 
             builder.HasOne(d => d.Book)
-                .WithMany(p => p.Request)
-                .HasForeignKey(d => d.BookId);
+                   .WithMany(p => p.Request)
+                   .HasForeignKey(d => d.BookId).OnDelete(DeleteBehavior.ClientSetNull);
+            ;
 
             builder.HasOne(d => d.Owner)
                 .WithMany(p => p.RequestOwner)
-                .HasForeignKey(d => d.OwnerId);
+                .HasForeignKey(d => d.OwnerId).OnDelete(DeleteBehavior.ClientSetNull);
+            ;
+
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.RequestUser)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.ClientSetNull);
+            ;
+
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Infrastructure
     {
         public BookCrossingContext(DbContextOptions<BookCrossingContext> options) : base(options)
         {
- 
+      
         }
-
+        public DbSet<User> User { get; set; }
         public  DbSet<Author> Author { get; set; }
         public  DbSet<Book> Book { get; set; }
         public  DbSet<BookAuthor> BookAuthor { get; set; }
@@ -24,12 +24,14 @@ namespace Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             base.OnModelCreating(modelBuilder);
+        
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserLocationConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
