@@ -16,19 +16,8 @@ namespace Infastructure.Reposetories
         {
             _context = context;
         }
-        public void AddNewGenre(Genre genre)
-        {
-            _context.Genre.Add(genre);
-            _context.SaveChanges();
-        }
 
         public IEnumerable<Genre> GetAllGenres() => _context.Genre.ToList();
 
-        public void RemoveGenreById(int genreId)
-        {
-            var genre = _context.Genre.FirstOrDefault(p => p.Id == genreId);
-            _context.Genre.Remove(genre);
-            _context.SaveChanges();
-        }
     }
 }

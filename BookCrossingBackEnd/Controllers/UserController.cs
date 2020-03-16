@@ -18,14 +18,14 @@ namespace BookCrossingBackEnd.Controllers
         {
             _userProfileService = userProfileService;
         }
-        [Route("GetProfile")]
+        [Route("Profile")]
         [HttpGet]
         public IActionResult GetUserProfile(int userId)
         {
             var user = _userProfileService.GetMyProfile(userId);
             return Ok(user);
         }
-        [Route("AddNewBook")]
+        [Route("Book")]
         [HttpPost]
         public IActionResult AddNewBook(Book book)
         {

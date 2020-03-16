@@ -13,16 +13,6 @@ namespace Application.IServices
         /// <returns></returns>
         IEnumerable<User> ListAllUsers();
         /// <summary>
-        /// Function for adding new genre
-        /// </summary>
-        /// <param name="genre">Gerne object</param>
-        void AddNewGenre(Genre genre);
-        /// <summary>
-        /// Function for removing genre by Id
-        /// </summary>
-        /// <param name="genreId">Genre Id</param>
-        void RemoveGenre(int genreId);
-        /// <summary>
         /// List of all genres in admin panel
         /// </summary>
         /// <returns></returns>

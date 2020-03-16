@@ -18,13 +18,9 @@ namespace Application.Services
             _genreRepository = genreRepository;
         }
 
-        public void AddNewGenre(Genre genre) => _genreRepository.AddNewGenre(genre);
-
         public IEnumerable<Genre> ListAllGenres() => _genreRepository.GetAllGenres();
 
         public IEnumerable<User> ListAllUsers() => _userRepository.GetAllUsers();
-
-        public void RemoveGenre(int genreId) => _genreRepository.RemoveGenreById(genreId);
 
         public void RemoveUser(int userId) => _userRepository.RemoveUserById(userId);
     }
