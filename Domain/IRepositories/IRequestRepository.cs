@@ -5,7 +5,7 @@ using Domain.Entities;
 
 namespace Domain.IRepositories
 {
-    public interface IRequestRepository : IRepository<Request, int>
+    public interface IRequestRepository : IRepository<Request>
     {
 
     }

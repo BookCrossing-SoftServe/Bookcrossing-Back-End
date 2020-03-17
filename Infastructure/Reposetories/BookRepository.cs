@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class BookRepository : BaseRepository<Book, int>, IBookRepository
+    class BookRepository : BaseRepository<Book>, IBookRepository
     {
         public BookRepository(DbContext context) : base(context)
         {

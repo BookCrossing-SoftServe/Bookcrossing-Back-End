@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class BookAuthorRepository:BaseRepository<BookAuthor,int>,IBookAuthorRepository
+    class BookAuthorRepository:BaseRepository<BookAuthor>,IBookAuthorRepository
     {
         public BookAuthorRepository(DbContext context) : base(context)
         {

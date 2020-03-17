@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class UserLocationRepository : BaseRepository<UserLocation, int>, IUserLocationRepository
+    class UserLocationRepository : BaseRepository<UserLocation>, IUserLocationRepository
     {
         public UserLocationRepository(DbContext context) : base(context)
         {

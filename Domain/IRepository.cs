@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Domain.IRepositories
 {
-    public interface IRepository<TEntity, TKey> where TEntity : IEntityBase
+    public interface IRepository<TEntity> where TEntity : IEntityBase
     {
         Task<List<TEntity>> GetAll();
         Task AddAsync(TEntity entity);
-        Task<TEntity> FindByIdAsync(TKey id);
+        Task<TEntity> FindByIdAsync(params object[] keys);
         void Remove(TEntity entity);
         void Update(TEntity entity);
     }

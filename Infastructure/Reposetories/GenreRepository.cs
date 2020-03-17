@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class GenreRepository : BaseRepository<Genre, int>, IGenreRepository
+    class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
         public GenreRepository(DbContext context) : base(context)
         {

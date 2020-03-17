@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure
 {
-    public abstract class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class, IEntityBase
+    public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
         private readonly DbContext _context;
 
@@ -23,9 +23,9 @@ namespace Infastructure
             await _context.Set<TEntity>().AddAsync(entity);
         }
 
-        public virtual async Task<TEntity> FindByIdAsync(TKey id)
+        public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
         {
-            return await _context.Set<TEntity>().FindAsync(id);
+            return await _context.Set<TEntity>().FindAsync(keys);
         }
 
         public virtual async Task<List<TEntity>> GetAll()

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class LocationRepository:BaseRepository<Location, int>, ILocationRepository
+    class LocationRepository:BaseRepository<Location>, ILocationRepository
     {
         public LocationRepository(DbContext context) : base(context)
         {

@@ -5,7 +5,7 @@ using Domain.Entities;
 
 namespace Domain.IRepositories
 {
-    public interface ILocationRepository : IRepository<Location,int>
+    public interface ILocationRepository : IRepository<Location>
     {
      
     }

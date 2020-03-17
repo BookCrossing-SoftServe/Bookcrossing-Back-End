@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class RequestRepository:BaseRepository<Request, int>, IRequestRepository
+    class RequestRepository:BaseRepository<Request>, IRequestRepository
     {
         public RequestRepository(DbContext context) : base(context)
         {

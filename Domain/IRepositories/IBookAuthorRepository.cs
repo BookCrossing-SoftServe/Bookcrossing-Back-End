@@ -5,7 +5,7 @@ using Domain.Entities;
 
 namespace Domain.IRepositories
 {
-    public interface IBookAuthorRepository : IRepository<BookAuthor,int>
+    public interface IBookAuthorRepository : IRepository<BookAuthor>
     {
      
     }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class BookGenreRepository:BaseRepository<BookGenre, int>, IBookGenreRepository
+    class BookGenreRepository:BaseRepository<BookGenre>, IBookGenreRepository
     {
         public BookGenreRepository(DbContext context) : base(context)
         {
