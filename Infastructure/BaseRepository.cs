@@ -18,22 +18,22 @@ namespace Infastructure
             _context = context;
         }
 
-        public virtual void Add(TEntity entity)
+        public virtual async Task AddAsync(TEntity entity)
         {
-            _context.Set<TEntity>().Add(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
         }
 
-        public virtual TEntity FindById(TKey id)
+        public virtual async Task<TEntity> FindByIdAsync(TKey id)
         {
-            return _context.Set<TEntity>().Find(id);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
+        public virtual async Task<List<TEntity>> GetAll()
         {
-            return _context.Set<TEntity>();
+            return await _context.Set<TEntity>().ToListAsync();
         }
 
-        public virtual void RemoveById(TEntity entity)
+        public virtual void Remove(TEntity entity)
         {
             _context.Set<TEntity>().Remove(entity);
         }

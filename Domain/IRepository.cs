@@ -8,10 +8,10 @@ namespace Domain.IRepositories
 {
     public interface IRepository<TEntity, TKey> where TEntity : IEntityBase
     {
-        IEnumerable<TEntity> GetAll();
-        void Add(TEntity entity);
-        TEntity FindById(TKey id);
-        void RemoveById(TEntity entity);
+        Task<List<TEntity>> GetAll();
+        Task AddAsync(TEntity entity);
+        Task<TEntity> FindByIdAsync(TKey id);
+        void Remove(TEntity entity);
         void Update(TEntity entity);
     }
 }
