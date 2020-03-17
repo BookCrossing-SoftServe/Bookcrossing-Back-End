@@ -5,8 +5,8 @@ using Domain.Entities;
 
 namespace Domain.IRepositories
 {
-    public interface IUserLocationRepository
+    public interface IUserLocationRepository : IRepository<UserLocation, int>
     {
-        UserLocation GetLocationByUser(User user);
+
     }
 }

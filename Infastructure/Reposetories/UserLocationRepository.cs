@@ -9,15 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    public class UserLocationRepository : IUserLocationRepository
+    class UserLocationRepository : BaseRepository<UserLocation, int>, IUserLocationRepository
     {
-        private readonly BookCrossingContext _context;
-        public UserLocationRepository(BookCrossingContext context)
+        public UserLocationRepository(DbContext context) : base(context)
         {
-            _context = context;
-        }
 
-        public UserLocation GetLocationByUser(User user) =>
-            _context.UserLocation.Include(u => u.Location).FirstOrDefault(i => i.UserId == user.Id);
+        }
     }
 }
