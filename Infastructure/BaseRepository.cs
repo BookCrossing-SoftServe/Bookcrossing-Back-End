@@ -11,7 +11,7 @@ namespace Infastructure
 {
     public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
-        private readonly DbContext _context;
+        protected readonly DbContext _context;
 
         public BaseRepository(DbContext context)
         {
