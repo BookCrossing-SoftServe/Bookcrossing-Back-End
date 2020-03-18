@@ -38,8 +38,9 @@ namespace Infrastructure.Configuration
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.RequestUser)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.ClientSetNull);
+            ;
+
         }
     }
 }
