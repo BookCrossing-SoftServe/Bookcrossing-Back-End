@@ -17,11 +17,11 @@ namespace Infastructure.Reposetories
         {
 
         }
-        public virtual bool IsValidUser(User login)
+        public bool IsValidUser(User login)
         { 
             var loginResult= _context.Set<User>()
                 .FirstOrDefault(u => u.Email == login.Email & u.Password == login.Password);
-            return loginResult == null;
+            return loginResult != null;
         }
     }
 }
