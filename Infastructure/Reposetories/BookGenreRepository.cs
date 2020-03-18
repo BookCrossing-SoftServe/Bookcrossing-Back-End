@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using Domain.Entities;
 using Domain.IRepositories;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class BookGenreRepository:BaseRepository<BookGenre>, IBookGenreRepository
+    public class BookGenreRepository:BaseRepository<BookGenre>, IBookGenreRepository
     {
-        public BookGenreRepository(DbContext context) : base(context)
+        public BookGenreRepository(BookCrossingContext context) : base(context)
         {
 
         }

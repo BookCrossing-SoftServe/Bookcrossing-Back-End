@@ -11,8 +11,6 @@ using Domain.Entities;
 using Infastructure.Configuration;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Application.IServices;
-using Application.Services;
 using Domain.IRepositories;
 using Infastructure.Reposetories;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +40,8 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UsersService>();
 
@@ -51,7 +51,7 @@ namespace BookCrossingBackEnd
                 options.AddPolicy("CorsPolicu", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
             });
 
-            services.AddControllers();
+           
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             ); ;
@@ -81,14 +81,16 @@ namespace BookCrossingBackEnd
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
                     "Server=DESKTOP-0L03IAF;Database=BookCrossing_pizdec;Trusted_Connection=True;", x => x.MigrationsAssembly("Infastructure")));
-            services.AddTransient<IUserLocationRepository, UserLocationRepository>();
-            services.AddTransient<IBookRepository, BookRepository>();
-            services.AddTransient<IGenreRepository, GenreRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserProfileService, UserProfileService>();
-            services.AddTransient<ILoginService, LoginService>();
-            services.AddTransient<IRegistrationService, RegistrationService>();
-            services.AddTransient<IAdminService, AdminService>();
+
+            services.AddScoped<IUserLocationRepository, UserLocationRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
+            services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IAdminService, AdminService>();
+
 
         }
 

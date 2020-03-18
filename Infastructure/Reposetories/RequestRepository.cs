@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using Domain.Entities;
 using Domain.IRepositories;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class RequestRepository:BaseRepository<Request>, IRequestRepository
+    public class RequestRepository:BaseRepository<Request>, IRequestRepository
     {
-        public RequestRepository(DbContext context) : base(context)
+        public RequestRepository(BookCrossingContext context) : base(context)
         {
 
         }

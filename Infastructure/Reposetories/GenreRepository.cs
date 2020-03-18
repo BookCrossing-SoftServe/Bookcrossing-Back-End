@@ -9,9 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class GenreRepository : BaseRepository<Genre>, IGenreRepository
+    public class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
-        public GenreRepository(DbContext context) : base(context)
+
+
+
+        public GenreRepository(BookCrossingContext context) : base(context)
         {
 
         }
@@ -21,7 +24,7 @@ namespace Infastructure.Reposetories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Genre> GetAllGenres() => _context.Genre.ToList();
+      // public IEnumerable<Genre> GetAllGenres() => _context.Genre.ToList();
 
         public void RemoveGenreById(int genreId)
         {
