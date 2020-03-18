@@ -11,15 +11,7 @@ namespace Infastructure.Reposetories
 {
     public class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
-
-
-
         public GenreRepository(BookCrossingContext context) : base(context)
-        {
-
-        }
-
-        public void AddNewGenre(Genre genre)
         {
             throw new NotImplementedException();
         }

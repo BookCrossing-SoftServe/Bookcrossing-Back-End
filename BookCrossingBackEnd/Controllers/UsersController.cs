@@ -43,10 +43,14 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public IEnumerable<string> Get()
         {
-            throw new NotImplementedException();
+            return new string[]
+            {
+                "Hello",
+                "World"
+            };
         }
 
     

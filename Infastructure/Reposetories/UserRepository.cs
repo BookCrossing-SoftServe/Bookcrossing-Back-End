@@ -13,17 +13,9 @@ namespace Infastructure.Reposetories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-       BookCrossingContext context_;
-
         public UserRepository(BookCrossingContext context) : base(context)
         {
             
-        }
-        public bool IsValidUser(User login)
-        { 
-            var loginResult= _context.Set<User>()
-                .FirstOrDefault(u => u.Email == login.Email & u.Password == login.Password);
-            return loginResult != null;
         }
     }
 }
