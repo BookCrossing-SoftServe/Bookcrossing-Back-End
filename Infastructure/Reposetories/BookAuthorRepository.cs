@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Domain.Entities;
 using Domain.IRepositories;
-using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class UserLocationRepository : BaseRepository<UserLocation>, IUserLocationRepository
+    class BookAuthorRepository:BaseRepository<BookAuthor>,IBookAuthorRepository
     {
-        public UserLocationRepository(DbContext context) : base(context)
+        public BookAuthorRepository(DbContext context) : base(context)
         {
 
         }

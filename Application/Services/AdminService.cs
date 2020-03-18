@@ -8,7 +8,7 @@ using Domain.IRepositories;
 
 namespace Application.Services
 {
-    public class AdminService : IAdminService
+    public class AdminService
     {
         private readonly IUserRepository _userRepository;
         private readonly IGenreRepository _genreRepository;
@@ -18,10 +18,7 @@ namespace Application.Services
             _genreRepository = genreRepository;
         }
 
-        public IEnumerable<Genre> ListAllGenres() => _genreRepository.GetAllGenres();
 
-        public IEnumerable<User> ListAllUsers() => _userRepository.GetAllUsers();
-
-        public void RemoveUser(int userId) => _userRepository.RemoveUserById(userId);
+        public void RemoveUser(User user) => _userRepository.Remove(user);
     }
 }

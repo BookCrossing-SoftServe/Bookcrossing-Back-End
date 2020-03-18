@@ -5,16 +5,15 @@ using System.Text;
 using Domain.Entities;
 using Domain.IRepositories;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    public class GenreRepository : IGenreRepository
+    class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
-        private readonly BookCrossingContext _context;
-
-        public GenreRepository(BookCrossingContext context)
+        public GenreRepository(DbContext context) : base(context)
         {
-            _context = context;
+
         }
 
         public void AddNewGenre(Genre genre)
