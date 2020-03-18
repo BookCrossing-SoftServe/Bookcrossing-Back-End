@@ -40,6 +40,13 @@ namespace Infrastructure.Configuration
                 .IsRequired()
                 .HasColumnName("password")
                 .HasMaxLength(32);
+
+            builder.Property(e => e.RoleId).HasColumnName("role_id");
+
+            builder.HasOne(d => d.Role)
+                .WithMany(p => p.User)
+                .HasForeignKey(d => d.RoleId);
+
         }       
     }
 }

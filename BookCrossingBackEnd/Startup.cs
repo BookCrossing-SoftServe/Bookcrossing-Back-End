@@ -43,10 +43,10 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
             });
-            string connection = Configuration.GetConnectionString("DefaultConnection");
+            string connection = Configuration.GetConnectionString("Server = localhost; Database = BookCrossing; Trusted_Connection = True;");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    connection, x => x.MigrationsAssembly("Infastructure")));
+                    connection, x => x.MigrationsAssembly("Infrastructure")));
             services.AddTransient<IUserLocationRepository, UserLocationRepository>();
             services.AddTransient<IBookRepository, BookRepository>();
             services.AddTransient<IGenreRepository, GenreRepository>();
