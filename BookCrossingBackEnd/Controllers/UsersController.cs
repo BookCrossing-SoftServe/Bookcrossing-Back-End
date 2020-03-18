@@ -43,7 +43,7 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
-        [Authorize(Roles = "admin")]
+ 
         public IEnumerable<string> Get()
         {
             return new string[]
