@@ -80,7 +80,7 @@ namespace BookCrossingBackEnd
             });
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    connection, x => x.MigrationsAssembly("Infastructure")));
+                    "Server=DESKTOP-0L03IAF;Database=BookCrossing_pizdec;Trusted_Connection=True;", x => x.MigrationsAssembly("Infastructure")));
             services.AddTransient<IUserLocationRepository, UserLocationRepository>();
             services.AddTransient<IBookRepository, BookRepository>();
             services.AddTransient<IGenreRepository, GenreRepository>();

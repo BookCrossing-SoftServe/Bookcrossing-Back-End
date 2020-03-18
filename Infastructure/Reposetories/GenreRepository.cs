@@ -17,7 +17,16 @@ namespace Infastructure.Reposetories
             _context = context;
         }
 
+        public void AddNewGenre(Genre genre)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Genre> GetAllGenres() => _context.Genre.ToList();
 
+        public void RemoveGenreById(int genreId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
