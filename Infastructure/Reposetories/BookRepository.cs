@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class BookRepository : BaseRepository<Book>, IBookRepository
+    public class BookRepository : BaseRepository<Book>, IBookRepository
     {
-        public BookRepository(DbContext context) : base(context)
+        public BookRepository(BookCrossingContext context) : base(context)
         {
 
         }

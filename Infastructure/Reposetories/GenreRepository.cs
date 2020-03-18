@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class GenreRepository : BaseRepository<Genre>, IGenreRepository
+    public class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
-        public GenreRepository(DbContext context) : base(context)
+        public GenreRepository(BookCrossingContext context) : base(context)
         {
 
         }

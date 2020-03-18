@@ -11,17 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(DbContext context) : base(context)
+        public UserRepository(BookCrossingContext context) : base(context)
         {
 
-        }
-        public bool IsValidUser(User login)
-        { 
-            var loginResult= _context.Set<User>()
-                .FirstOrDefault(u => u.Email == login.Email & u.Password == login.Password);
-            return loginResult != null;
         }
     }
 }

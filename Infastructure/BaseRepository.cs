@@ -5,15 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.IRepositories;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure
 {
     public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
-        protected readonly DbContext _context;
+        protected readonly BookCrossingContext _context;
 
-        public BaseRepository(DbContext context)
+        public BaseRepository(BookCrossingContext context)
         {
             _context = context;
         }

@@ -6,10 +6,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure;
+using Infastructure.Reposetories;
 using Application.IServices;
 using Application.Services;
 using Domain.IRepositories;
-using Infastructure.Reposetories;
+using Infastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -47,7 +48,7 @@ namespace BookCrossingBackEnd
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
                     connection, x => x.MigrationsAssembly("Infastructure")));
-
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
