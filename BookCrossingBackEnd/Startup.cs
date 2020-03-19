@@ -81,6 +81,7 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
             });
+            string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
                     "Server=DESKTOP-0L03IAF;Database=BookCrossing_pizdec;Trusted_Connection=True;", x => x.MigrationsAssembly("Infastructure")));
@@ -93,7 +94,6 @@ namespace BookCrossingBackEnd
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IAdminService, AdminService>();
-
 
         }
 
