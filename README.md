@@ -19,8 +19,8 @@ These instructions will get you a copy of the project up and running on your loc
 2. In project BookCrossingBackEnd create file appsetings.json. And paste the code below.
 ```
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=mobilestoredb;Trusted_Connection=True;MultipleActiveResultSets=true"
+ "ConnectionStrings": {
+    "DefaultConnection": "Server=ServerName;Database=DatabaseName;Trusted_Connection=True;MultipleActiveResultSets=true"
   },
   "Logging": {
     "LogLevel": {
@@ -29,7 +29,16 @@ These instructions will get you a copy of the project up and running on your loc
       "Microsoft.Hosting.Lifetime": "Information"
     }
   },
-  "AllowedHosts": "*"
+  "AllowedHosts": "*",
+  "Data": {
+    "DefaultConnection": {
+      "ConnectionString": ""
+    }
+  },
+  "Jwt": {
+    "Key": "SoftServeBookCrossingSecretKey",
+    "Issuer": "BookCrossing.com"
+  }
 }
 ```
 
