@@ -5,11 +5,9 @@ using Domain.Entities;
 
 namespace Domain.IRepositories
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<User>
     {
-        IEnumerable<User> GetAllUsers();
-        User GetUserById(int userId);
-        void AddNewUser(User user);
-        void RemoveUserById(int userId);
+        
     }
+
 }
