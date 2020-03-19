@@ -18,10 +18,21 @@ namespace Application.Services
             _genreRepository = genreRepository;
         }
 
-        public IEnumerable<Genre> ListAllGenres() => _genreRepository.GetAllGenres();
+        public IEnumerable<Genre> ListAllGenres()
+        {
+            throw new NotImplementedException();
+        }
 
-        public IEnumerable<User> ListAllUsers() => _userRepository.GetAllUsers();
+        public IEnumerable<User> ListAllUsers()
+        {
+            throw new NotImplementedException();
+        }
 
-        public void RemoveUser(int userId) => _userRepository.RemoveUserById(userId);
+        public void RemoveUser(User user) => _userRepository.Remove(user);
+
+        public void RemoveUser(int userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
