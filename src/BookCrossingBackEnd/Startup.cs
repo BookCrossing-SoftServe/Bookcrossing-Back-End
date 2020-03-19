@@ -54,10 +54,10 @@ namespace BookCrossingBackEnd
                 options.AddPolicy("CorsPolicu", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
             });
 
-           
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            ); 
+            );
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -72,7 +72,7 @@ namespace BookCrossingBackEnd
                         ValidAudience = Configuration["Jwt:Issuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                     };
-                    
+
                 });
 
 
@@ -89,14 +89,14 @@ namespace BookCrossingBackEnd
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            } 
-            
+            }
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-           
+
 
             app.UseEndpoints(endpoints =>
             {
