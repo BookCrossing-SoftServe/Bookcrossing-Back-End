@@ -81,19 +81,19 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
             });
+
+            string connection = Configuration.GetConnectionString("Server = localhost; Database = BookCrossing; Trusted_Connection = True;");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    "Server=DESKTOP-0L03IAF;Database=BookCrossing_pizdec;Trusted_Connection=True;", x => x.MigrationsAssembly("Infastructure")));
-
-            services.AddScoped<IUserLocationRepository, UserLocationRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
-            services.AddScoped<IGenreRepository, GenreRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserProfileService, UserProfileService>();
-            services.AddScoped<ILoginService, LoginService>();
-            services.AddScoped<IRegistrationService, RegistrationService>();
-            services.AddScoped<IAdminService, AdminService>();
-
+                    connection, x => x.MigrationsAssembly("Infrastructure")));
+            services.AddTransient<IUserLocationRepository, UserLocationRepository>();
+            services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<IGenreRepository, GenreRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserProfileService, UserProfileService>();
+            services.AddTransient<ILoginService, LoginService>();
+            services.AddTransient<IRegistrationService, RegistrationService>();
+            services.AddTransient<IAdminService, AdminService>();
 
         }
 

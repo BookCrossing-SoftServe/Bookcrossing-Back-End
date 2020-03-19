@@ -11,6 +11,15 @@ namespace Infastructure
     {
         public static void Initialize(BookCrossingContext context)
         {
+            if (!context.Role.Any())
+            {
+                context.Role.Add(new Role()
+                {
+                    Id = 1,
+                    Name = "Admin"
+                });
+                context.SaveChanges();
+            }
             if (!context.User.Any())
             {
                 context.User.Add(new User()
@@ -19,8 +28,8 @@ namespace Infastructure
                     MiddleName = "Ferents",
                     LastName = "Andriyovych",
                     Email = "ferencrman@gmail.com",
-                    Password = "password"
-
+                    Password = "password",
+                    RoleId = 1
                 });
                 context.SaveChanges();
             }

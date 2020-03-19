@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Infastructure.Configuration;
 using Infrastructure.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +21,7 @@ namespace Infrastructure
         public  DbSet<Location> Location { get; set; }
         public  DbSet<Request> Request { get; set; }
         public  DbSet<UserLocation> UserLocation { get; set; }
+        public DbSet<Role> Role { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,6 +42,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new BookGenreConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
     }
 }
