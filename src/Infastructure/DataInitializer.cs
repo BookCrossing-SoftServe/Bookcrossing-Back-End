@@ -15,7 +15,6 @@ namespace Infastructure
             {
                 context.Role.Add(new Role()
                 {
-                    Id = 1,
                     Name = "Admin"
                 });
                 context.SaveChanges();

@@ -45,13 +45,9 @@ namespace BookCrossingBackEnd
                 options.UseSqlServer(
                     connection, x => x.MigrationsAssembly("Infastructure")));
 
-            services.AddScoped<IUserLocationRepository, UserLocationRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
-            services.AddScoped<IGenreRepository, GenreRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
-            services.AddScoped<IUserProfile, UserProfile>();
 
             services.AddCors(options =>
             {
