@@ -46,6 +46,7 @@ namespace BookCrossingBackEnd
                     connection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IRequestRepository, RequestRepository>();;
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
 
