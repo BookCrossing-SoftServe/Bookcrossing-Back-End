@@ -42,14 +42,14 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
- 
-        public IEnumerable<string> Get()
+        [Authorize]
+        public IActionResult Get()
         {
-            return new string[]
-            {
-                "Hello",
-                "World"
-            };
+            var IdClaim = User.Claims.FirstOrDefault(x => x.Type.Equals("id",StringComparison.CurrentCultureIgnoreCase));
+            if (IdClaim != null)
+                return Ok($"Your id is {IdClaim.Value}");
+            return BadRequest();
+
         }
 
     
