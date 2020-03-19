@@ -22,7 +22,8 @@ namespace Application.Services.Implementation
         }
         public async Task<User> Validate(LoginDto loginModel)
         {
-            var user = await dbCOntext.User.AsQueryable().FirstOrDefaultAsync(user => user.Email == loginModel.Email && user.Password==loginModel.Password);
+            var user = await dbCOntext.User.Include(p=>p.Role).AsQueryable().FirstOrDefaultAsync(user => user.Email == loginModel.Email && user.Password==loginModel.Password);
+            
             return user;
         }
     }

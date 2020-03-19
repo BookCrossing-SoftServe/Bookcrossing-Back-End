@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace BookCrossingBackEnd
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    connection, x => x.MigrationsAssembly("Infastructure")));
+                    connection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IToken, Token>();

@@ -28,10 +28,10 @@ namespace Application.Services.Implementation
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub,user.FirstName),
+                new Claim("id",user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role,"ggfhgjfgh")   
+                new Claim(ClaimTypes.Role,user.Role.Name)
             };
             var token = new JwtSecurityToken(issuer: configuration["Jwt:Issuer"], audience: configuration["Jwt:Issuer"], claims,
                 expires: DateTime.Now.AddMinutes(120), signingCredentials: credentials);
