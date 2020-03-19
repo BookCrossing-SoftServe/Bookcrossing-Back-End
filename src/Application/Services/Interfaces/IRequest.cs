@@ -11,5 +11,6 @@ namespace Application.Services.Interfaces
     {
         void MakeRequest(int userId, int bookId);
         IEnumerable<Request> BookRequests(int bookId);
+        void ApplyRequest(int id);
     }
 }

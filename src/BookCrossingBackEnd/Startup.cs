@@ -25,6 +25,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Request = Application.Services.Implementation.Request;
 
 namespace BookCrossingBackEnd
 {
@@ -46,9 +47,10 @@ namespace BookCrossingBackEnd
                     connection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IRequestRepository, RequestRepository>();;
+            services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
+            services.AddScoped<IRequest, Request>();
 
             services.AddCors(options =>
             {

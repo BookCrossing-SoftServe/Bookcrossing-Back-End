@@ -1,6 +1,10 @@
-﻿using Domain.Entities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain.Entities;
 using Domain.IRepositories;
 using Infastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -9,6 +13,10 @@ namespace Infrastructure.Repositories
         public RequestRepository(BookCrossingContext context) : base(context)
         {
 
+        }
+        public IEnumerable<Request> GetAllBookBequests(int bookId)
+        {
+            return _context.Request.Where(i=> i.BookId == bookId).ToList();
         }
     }
 }

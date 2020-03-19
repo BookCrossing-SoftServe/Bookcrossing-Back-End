@@ -23,7 +23,7 @@ namespace BookCrossingBackEnd.Controllers
         }
         [Route("{bookId}")]
         [HttpGet]
-        public IActionResult RequestBook(int bookId)
+        public IActionResult Request(int bookId)
         {
             var user = new User() {
                 FirstName = "Roman",
@@ -38,11 +38,18 @@ namespace BookCrossingBackEnd.Controllers
             _requestService.MakeRequest(id, bookId);
                 return Ok(id);
         }
-        [Route("All")]
+        [Route("{bookId}/All")]
         [HttpGet]
-        public IActionResult AllRequests(int bookId)
+        public IActionResult All(int bookId)
         {
             return Ok(_requestService.BookRequests(bookId));
+        }
+        [Route("{bookId}/Apply")]
+        [HttpGet]
+        public IActionResult Apply(int requestId)
+        {
+            _requestService.ApplyRequest(requestId);
+            return Ok("Successfully applied");
         }
 
     }
