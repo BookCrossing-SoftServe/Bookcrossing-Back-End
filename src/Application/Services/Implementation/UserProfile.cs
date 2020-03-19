@@ -13,10 +13,10 @@ namespace Application.Services.Implementation
 {
     public class UserProfile : IUserProfile
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IBookRepository _bookRepository;
-        private readonly IUserLocationRepository _locationRepository;
-        public UserProfile(IUserRepository userRepository, IBookRepository bookRepository, IUserLocationRepository locationRepository)
+        private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Book> _bookRepository;
+        private readonly IRepository<Location> _locationRepository;
+        public UserProfile(IRepository<User> userRepository, IRepository<Book> bookRepository, IRepository<Location> locationRepository)
         {
             _userRepository = userRepository;
             _bookRepository = bookRepository;

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure
 {
-    public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
+    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
         protected readonly BookCrossingContext _context;
 
