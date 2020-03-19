@@ -25,21 +25,22 @@ namespace Application.Services
 
         public void AddNewBook(Book book)
         {
-            _bookRepository.AddNewBook(book);
+            _bookRepository.AddAsync(book);
         }
 
         public UserProfileModel GetMyProfile(int userId)
         {
-            var user = _userRepository.GetUserById(userId);
+            var user = _userRepository.FindByIdAsync(userId);
             var userProfile = new UserProfileModel();
             try
             {
-                userProfile.FirstName = user.FirstName;
-                userProfile.LastName = user.LastName;
-                userProfile.MiddleName = user.MiddleName;
-                userProfile.Email = user.Email;
-                userProfile.AllUserBooks = _bookRepository.GetBookByUser(user);
-                userProfile.UserLocation = _locationRepository.GetLocationByUser(user);
+                //Got to add these to repository first
+                //userProfile.FirstName = user.FirstName;
+                //userProfile.LastName = user.LastName;
+                //userProfile.MiddleName = user.MiddleName;
+                //userProfile.Email = user.Email;
+                //userProfile.AllUserBooks = _bookRepository.GetBookByUser(user);
+                //userProfile.UserLocation = _locationRepository.GetLocationByUser(user);
             }
             catch (Exception e)
             {

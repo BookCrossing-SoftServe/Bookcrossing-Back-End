@@ -5,19 +5,22 @@ using System.Text;
 using Domain.Entities;
 using Domain.IRepositories;
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infastructure.Reposetories
 {
-    public class GenreRepository : IGenreRepository
+    public class GenreRepository : BaseRepository<Genre>, IGenreRepository
     {
-        private readonly BookCrossingContext _context;
-
-        public GenreRepository(BookCrossingContext context)
+        public GenreRepository(BookCrossingContext context) : base(context)
         {
-            _context = context;
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<Genre> GetAllGenres() => _context.Genre.ToList();
+      // public IEnumerable<Genre> GetAllGenres() => _context.Genre.ToList();
 
+        public void RemoveGenreById(int genreId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
