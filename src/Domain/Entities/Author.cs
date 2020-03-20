@@ -10,6 +10,6 @@ namespace Domain.Entities
         public string LastName { get; set; }
         public string MiddleName { get; set; }
 
-        public virtual ICollection<BookAuthor> BookAuthor { get; set; } = new HashSet<BookAuthor>();
+        public virtual List<BookAuthor> BookAuthor { get; set; } 
     }
 }
