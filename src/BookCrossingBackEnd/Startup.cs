@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Infrastructure;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Domain.IRepositories;
 using Infastructure;
@@ -26,7 +25,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-namespace BookCrossingBackEnd
+    namespace BookCrossingBackEnd
 {
     public class Startup
     {
@@ -46,8 +45,10 @@ namespace BookCrossingBackEnd
                     connection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
+            services.AddScoped<IAuthor, Author>();
 
             services.AddCors(options =>
             {

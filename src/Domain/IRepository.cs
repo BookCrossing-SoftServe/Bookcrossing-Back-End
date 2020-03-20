@@ -13,5 +13,6 @@ namespace Domain.IRepositories
         Task<TEntity> FindByIdAsync(params object[] keys);
         void Remove(TEntity entity);
         void Update(TEntity entity);
+        Task SaveChangesAsync();
     }
 }
