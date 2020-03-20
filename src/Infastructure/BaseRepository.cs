@@ -29,9 +29,14 @@ namespace Infastructure
             return await _context.Set<TEntity>().FindAsync(keys);
         }
 
-        public virtual async Task<List<TEntity>> GetAll()
+        public virtual async Task<List<TEntity>> GetAllAsync()
         {
             return await _context.Set<TEntity>().ToListAsync();
+        }
+
+        public virtual IQueryable<TEntity> GetAll()
+        {
+            return _context.Set<TEntity>().AsQueryable();
         }
 
         public virtual void Remove(TEntity entity)

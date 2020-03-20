@@ -9,6 +9,8 @@ namespace Application.Services.Interfaces
     public interface IAuthor
     {
         Task<Author> GetById(int authorId);
+        Task<List<Author>> GetAll();
+        Task<List<Author>> GetBooks(int authorId);
         Task Update(Author author);
         Task Remove(Author author);
         Task Add(Author author);

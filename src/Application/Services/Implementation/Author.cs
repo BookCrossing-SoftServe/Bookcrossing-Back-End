@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.IRepositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
@@ -24,9 +27,19 @@ namespace Application.Services.Implementation
 
         public async Task<Domain.Entities.Author> GetById(int authorId)
         {
-            var author = await _authorRepository.FindByIdAsync(authorId);
-            await _authorRepository.SaveChangesAsync();
-            return author;
+            return await _authorRepository.FindByIdAsync(authorId);
+        }
+
+        public async Task<List<Domain.Entities.Author>> GetAll()
+        {
+
+            return await _authorRepository.GetAll().ToListAsync();
+        }
+
+        public async Task<List<Domain.Entities.Author>> GetBooks(int authorId)
+        {
+
+            return await _authorRepository.GetAll().Where(a => a.Id == authorId).Include(a => a.BookAuthor).ThenInclude(b => b.Book).ToListAsync();
         }
 
         public async Task Remove(Domain.Entities.Author author)

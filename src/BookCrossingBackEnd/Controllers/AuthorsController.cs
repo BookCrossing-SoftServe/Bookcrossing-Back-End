@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
@@ -34,9 +36,22 @@ namespace BookCrossingBackEnd.Controllers
             return author;
         }
 
+        // GET: api/Authors
+        [HttpGet]
+        public async Task<ActionResult<List<Author>>> GetAllAuthor()
+        {
+            var results = await _authorService.GetAll();
+            return results;
+        }
+        // GET: api/Authors/5/Books
+        [HttpGet("{id}/Books")]
+        public async Task<ActionResult<List<Author>>> GetAuthorBooks(int id)
+        {
+            var results = await _authorService.GetBooks(id);
+            return results;
+        }
+
         // PUT: api/Authors/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
@@ -46,8 +61,6 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // POST: api/Authors
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(AuthorDto authorDto)
         {
@@ -67,7 +80,6 @@ namespace BookCrossingBackEnd.Controllers
             }
 
             await _authorService.Remove(author);
-
             return author;
         }
     }
