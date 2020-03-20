@@ -42,10 +42,11 @@ namespace BookCrossingBackEnd
         public void ConfigureServices(IServiceCollection services)
         {
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
-            string azureConnection = Configuration.GetConnectionString("AzureConnection");
+            // Please download appsettings.json for connecting to Azure DB
+            //string azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                    localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRequestRepository, RequestRepository>();

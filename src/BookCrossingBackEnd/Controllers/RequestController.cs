@@ -35,7 +35,7 @@ namespace BookCrossingBackEnd.Controllers
             return await _requestService.Get(bookId);
         }
         [Authorize]
-        [Route("{requestId}"]
+        [Route("{requestId}")]
         [HttpPut]
         public async Task Approve(int requestId)
         {
