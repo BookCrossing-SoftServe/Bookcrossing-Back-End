@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Domain.Entities;
-using Domain.IRepositories;
-using Infrastructure;
+using Entities = Domain.Entities;
+using Services= Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -19,7 +12,7 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly Application.Services.Interfaces.IAuthor _authorService;
+        private readonly Services.Interfaces.IAuthor _authorService;
 
         public AuthorsController(IAuthor authorService)
         {
@@ -28,7 +21,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<Entities.Author>> GetAuthor(int id)
         {
             var author = await _authorService.GetById(id);
             if (author == null)
@@ -38,7 +31,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<List<Author>>> GetAllAuthor()
+        public async Task<ActionResult<List<Entities.Author>>> GetAllAuthor()
         {
             var results = await _authorService.GetAll();
             return results;
@@ -54,7 +47,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Authors
         [HttpPost]
-        public async Task<ActionResult<Author>> PostAuthor(AuthorDto authorDto)
+        public async Task<ActionResult<Entities.Author>> PostAuthor(AuthorDto authorDto)
         {
             var author = await _authorService.Add(authorDto);
             return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
@@ -62,7 +55,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Author>> DeleteAuthor(int id)
+        public async Task<ActionResult<Entities.Author>> DeleteAuthor(int id)
         {
             var author = await _authorService.GetById(id);
             if (author == null)
