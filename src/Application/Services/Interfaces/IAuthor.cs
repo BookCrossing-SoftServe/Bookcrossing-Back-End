@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Dto;
 using Domain.Entities;
 
 namespace Application.Services.Interfaces
@@ -11,8 +12,8 @@ namespace Application.Services.Interfaces
         Task<Author> GetById(int authorId);
         Task<List<Author>> GetAll();
         Task<List<Author>> GetBooks(int authorId);
-        Task Update(Author author);
+        Task Update(AuthorDto author);
         Task Remove(Author author);
-        Task Add(Author author);
+        Task<Author> Add(AuthorDto author);
     }
 }

@@ -55,8 +55,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
-            var author = new Author() {FirstName = authorDto.FirstName, LastName = authorDto.LastName, MiddleName = authorDto.MiddleName, Id = authorDto.Id};
-            await _authorService.Update(author);
+            await _authorService.Update(authorDto);
             return NoContent();
         }
 
@@ -64,8 +63,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(AuthorDto authorDto)
         {
-            var author = new Author() { FirstName = authorDto.FirstName, LastName = authorDto.LastName, MiddleName = authorDto.MiddleName };
-            await _authorService.Add(author);
+            var author = await _authorService.Add(authorDto);
             return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
         }
 
