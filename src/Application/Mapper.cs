@@ -7,7 +7,7 @@ using Domain.Entities;
 
 namespace Application
 {
-    class Mapper : Profile
+    public class Mapper : Profile
     {
         public Mapper()
         {
@@ -18,12 +18,12 @@ namespace Application
             CreateMap<LoginDto, User>().ReverseMap();
             CreateMap<RegisterDto, User>().ReverseMap();
             CreateMap<RequestDto, Request>().ReverseMap();
-            CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<User, UserDto>()
+                //.ForMember(m => m.UserLocation, opt => opt.MapFrom(x => x.UserLocation))
+                .ReverseMap();
             CreateMap<UserProfileDto, User>().ReverseMap();
 
-
-
-
+                
         }
     }
 }
