@@ -32,7 +32,7 @@ namespace Application.Services.Implementation
             {
                 BookId = book.Id,
                 OwnerId = book.UserId,
-                UserId = 2,
+                UserId = userId,
                 RequestDate = DateTime.UtcNow
             };
             await _requestRepository.AddAsync(request);
@@ -49,6 +49,7 @@ namespace Application.Services.Implementation
             var request = await _requestRepository.FindByIdAsync(requestId);
             request.ReceiveDate = DateTime.UtcNow;
             _requestRepository.Update(request);
+            await _requestRepository.SaveChangesAsync();
         }
     }
 }
