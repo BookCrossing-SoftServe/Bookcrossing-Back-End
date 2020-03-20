@@ -21,7 +21,7 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="bookId">Book id</param>
         /// <returns></returns>
-        Task<IEnumerable<Request>> All(int bookId);
+        Task<IEnumerable<Request>> Get(int bookId);
         /// <summary>
         /// Ability to approve book request as book owner
         /// </summary>
