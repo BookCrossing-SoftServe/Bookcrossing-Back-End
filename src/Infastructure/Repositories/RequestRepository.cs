@@ -14,9 +14,9 @@ namespace Infrastructure.Repositories
         {
 
         }
-        public IEnumerable<Request> GetAllBookBequests(int bookId)
+        public async Task<IEnumerable<Request>> GetAllBookBequests(int bookId)
         {
-            return _context.Request.Where(i=> i.BookId == bookId).ToList();
+            return await _context.Request.Where(i=> i.BookId == bookId).ToListAsync();
         }
     }
 }

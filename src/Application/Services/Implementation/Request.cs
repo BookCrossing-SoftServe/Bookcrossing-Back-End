@@ -1,46 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using Domain.Entities;
 using Domain.IRepositories;
+using Infrastructure;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Services.Implementation
 {
     public class Request : IRequest
     {
         private readonly IRequestRepository _requestRepository;
-        public Request(IRequestRepository requestRepository)
+        private readonly IRepository<Book> _bookRepository;
+        public Request(IRequestRepository requestRepository,IRepository<Book> bookRepository)
         {
             _requestRepository = requestRepository;
+            _bookRepository = bookRepository;
         }
 
-        public void MakeRequest(int bookId, int userId)
+        public async Task MakeRequest(int userId, int bookId)
         {
+            var book = await _bookRepository.FindByIdAsync(bookId);
             var request = new Domain.Entities.Request
             {
-                BookId = 1,
-                UserId = userId,
-                OwnerId = 1,
+                BookId = book.Id,
+                OwnerId = book.UserId,
+                UserId = 2,
                 RequestDate = DateTime.UtcNow
-
             };
-            _requestRepository.AddAsync(request);
-            _requestRepository.SaveChangesAsync();
+            await _requestRepository.AddAsync(request);
+            await _requestRepository.SaveChangesAsync();
         }
 
-        public IEnumerable<Domain.Entities.Request> BookRequests(int bookId)
+        public async Task<IEnumerable<Domain.Entities.Request>> BookRequests(int bookId)
         {
-            return _requestRepository.GetAllBookBequests(bookId);
+            return await _requestRepository.GetAllBookBequests(bookId);
         }
 
-        public void ApplyRequest(int id)
+        public async Task ApplyRequest(int requestId)
         {
-            _requestRepository.FindByIdAsync(id).Result.ReceiveDate = DateTime.UtcNow;
-            _requestRepository.SaveChangesAsync();
+            var request = await _requestRepository.FindByIdAsync(requestId);
+            request.ReceiveDate = DateTime.UtcNow;
+            _requestRepository.Update(request);
         }
     }
 }

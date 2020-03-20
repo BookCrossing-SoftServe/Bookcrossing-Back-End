@@ -22,7 +22,6 @@ namespace Infastructure
         public virtual async Task AddAsync(TEntity entity)
         {
             await _context.Set<TEntity>().AddAsync(entity);
-            await _context.SaveChangesAsync();
         }
 
         public virtual async Task<TEntity> FindByIdAsync(params object[] keys)

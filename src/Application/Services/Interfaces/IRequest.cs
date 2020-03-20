@@ -9,8 +9,8 @@ namespace Application.Services.Interfaces
 {
     public interface IRequest
     {
-        void MakeRequest(int userId, int bookId);
-        IEnumerable<Request> BookRequests(int bookId);
-        void ApplyRequest(int id);
+        Task MakeRequest(int userId, int bookId);
+        Task<IEnumerable<Request>> BookRequests(int bookId);
+        Task ApplyRequest(int id);
     }
 }

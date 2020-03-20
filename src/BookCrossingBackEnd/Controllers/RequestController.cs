@@ -15,41 +15,30 @@ namespace BookCrossingBackEnd.Controllers
     public class RequestController : ControllerBase
     {
         private readonly IRequest _requestService;
-        private readonly IToken _tokenService;
-        public RequestController(IRequest requestService, IToken tokenService)
+        public RequestController(IRequest requestService)
         {
             _requestService = requestService;
-            _tokenService = tokenService;
         }
-        [Route("{bookId}")]
+        //[Authorize]
         [HttpGet]
-        public IActionResult Request(int bookId)
+        public async Task RequestBook(int bookId)
         {
-            var user = new User() {
-                FirstName = "Roman",
-                MiddleName = "Ferents",
-                LastName = "Andriyovych",
-                Email = "ferencrman@gmail.com",
-                Password = "password",
-                RoleId = 1
-            };
-            _tokenService.GenerateJSONWebToken(user);
-            var id = int.Parse(this.User.Claims.First(i => i.Type == "id").Value);
-            _requestService.MakeRequest(id, bookId);
-                return Ok(id);
+           // var id = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
+            await _requestService.MakeRequest(2, bookId);
         }
+        //[Authorize]
         [Route("{bookId}/All")]
         [HttpGet]
-        public IActionResult All(int bookId)
+        public async Task<IEnumerable<Request>> All(int bookId)
         {
-            return Ok(_requestService.BookRequests(bookId));
+            return await _requestService.BookRequests(bookId);
         }
-        [Route("{bookId}/Apply")]
-        [HttpGet]
-        public IActionResult Apply(int requestId)
+        //[Authorize]
+        [Route("{requestId}/Apply")]
+        [HttpPut]
+        public async Task Apply(int requestId)
         {
-            _requestService.ApplyRequest(requestId);
-            return Ok("Successfully applied");
+            await _requestService.ApplyRequest(requestId);
         }
 
     }
