@@ -30,11 +30,6 @@ namespace Application.Services.Implementation
         {
             return await _authorRepository.GetAllAsync();
         }
-        //THIS ONE SHOULD BE IN BOOK?
-        public async Task<List<Domain.Entities.Author>> GetBooks(int authorId)
-        {
-            return await _authorRepository.GetAll().Where(a => a.Id == authorId).Include(a => a.BookAuthor).ThenInclude(b => b.Book).ToListAsync();
-        }
         public async Task<Domain.Entities.Author> Add(AuthorDto authorDto)
         {
             var author = new Domain.Entities.Author() { FirstName = authorDto.FirstName, LastName = authorDto.LastName, MiddleName = authorDto.MiddleName };

@@ -44,13 +44,6 @@ namespace BookCrossingBackEnd.Controllers
             return results;
         }
 
-        // GET: api/Authors/5/Books
-        [HttpGet("{id}/Books")]
-        public async Task<ActionResult<List<Author>>> GetBooks(int id)
-        {
-            return await _authorService.GetBooks(id);
-        }
-        //THIS ONE SHOULD BE IN BOOK?
         // PUT: api/Authors/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)

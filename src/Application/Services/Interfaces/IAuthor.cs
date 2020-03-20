@@ -11,7 +11,6 @@ namespace Application.Services.Interfaces
     {
         Task<Author> GetById(int authorId);
         Task<List<Author>> GetAll();
-        Task<List<Author>> GetBooks(int authorId);
         Task Update(AuthorDto author);
         Task Remove(Author author);
         Task<Author> Add(AuthorDto author);
