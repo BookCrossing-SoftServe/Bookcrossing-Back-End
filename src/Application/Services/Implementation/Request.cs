@@ -25,7 +25,7 @@ namespace Application.Services.Implementation
             _bookRepository = bookRepository;
         }
 
-        public async Task MakeRequest(int userId, int bookId)
+        public async Task Make(int userId, int bookId)
         {
             var book = await _bookRepository.FindByIdAsync(bookId);
             var request = new Domain.Entities.Request
@@ -39,12 +39,12 @@ namespace Application.Services.Implementation
             await _requestRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Domain.Entities.Request>> BookRequests(int bookId)
+        public async Task<IEnumerable<Domain.Entities.Request>> All(int bookId)
         {
             return await _requestRepository.GetAllBookBequests(bookId);
         }
 
-        public async Task ApplyRequest(int requestId)
+        public async Task Approve(int requestId)
         {
             var request = await _requestRepository.FindByIdAsync(requestId);
             request.ReceiveDate = DateTime.UtcNow;
