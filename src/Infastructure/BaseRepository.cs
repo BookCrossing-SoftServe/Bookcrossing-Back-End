@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
@@ -33,6 +34,11 @@ namespace Infastructure
         public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
         {
             return await entities.FindAsync(keys);
+        }
+
+        public Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
+        {
+            return entities.FirstOrDefaultAsync(predicate);
         }
 
         public virtual IQueryable<TEntity> GetAll()

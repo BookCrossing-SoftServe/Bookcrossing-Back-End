@@ -28,7 +28,6 @@ namespace Application.Services.Implementation
 
         public async Task<List<Domain.Entities.Author>> GetAll()
         {
-
             return await _authorRepository.GetAllAsync();
         }
         //THIS ONE SHOULD BE IN BOOK?
