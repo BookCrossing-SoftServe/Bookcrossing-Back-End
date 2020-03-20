@@ -41,10 +41,11 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
+            string localConnection = Configuration.GetConnectionString("DefaultConnection");
+            string azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<BookCrossingContext>(options =>
                 options.UseSqlServer(
-                    connection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                    azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRequestRepository, RequestRepository>();
