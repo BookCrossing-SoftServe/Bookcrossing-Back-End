@@ -11,8 +11,8 @@ namespace Domain.IRepositories
     {
         IQueryable<TEntity> GetAll();
         Task<List<TEntity>> GetAllAsync();
-        Task AddAsync(TEntity entity);
         Task<TEntity> FindByIdAsync(params object[] keys);
+        void Add(TEntity entity);
         void Remove(TEntity entity);
         void Update(TEntity entity);
         Task SaveChangesAsync();

@@ -13,40 +13,41 @@ namespace Infastructure
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
         protected readonly BookCrossingContext _context;
+        private DbSet<TEntity> entities;
 
         public BaseRepository(BookCrossingContext context)
         {
             _context = context;
+            entities = context.Set<TEntity>();
         }
 
-        public virtual async Task AddAsync(TEntity entity)
+        public virtual void Add(TEntity entity)
         {
-            await _context.Set<TEntity>().AddAsync(entity);
+            entities.Add(entity);
+        }
+        public virtual async Task<List<TEntity>> GetAllAsync()
+        {
+            return await entities.ToListAsync();
         }
 
         public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
         {
-            return await _context.Set<TEntity>().FindAsync(keys);
-        }
-
-        public virtual async Task<List<TEntity>> GetAllAsync()
-        {
-            return await _context.Set<TEntity>().ToListAsync();
+            return await entities.FindAsync(keys);
         }
 
         public virtual IQueryable<TEntity> GetAll()
         {
-            return _context.Set<TEntity>().AsQueryable();
+            return entities.AsQueryable();
         }
 
         public virtual void Remove(TEntity entity)
         {
-            _context.Set<TEntity>().Remove(entity);
+            entities.Remove(entity);
         }
 
         public virtual void Update(TEntity entity)
         {
-            _context.Set<TEntity>().Update(entity);
+            entities.Update(entity);
         }
 
         public async Task SaveChangesAsync()
