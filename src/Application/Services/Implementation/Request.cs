@@ -39,7 +39,7 @@ namespace Application.Services.Implementation
             await _requestRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Domain.Entities.Request>> All(int bookId)
+        public async Task<IEnumerable<Domain.Entities.Request>> Get(int bookId)
         {
             return await _requestRepository.GetAllBookBequests(bookId);
         }

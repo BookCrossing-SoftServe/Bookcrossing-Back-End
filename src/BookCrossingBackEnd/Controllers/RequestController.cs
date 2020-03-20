@@ -20,24 +20,24 @@ namespace BookCrossingBackEnd.Controllers
             _requestService = requestService;
         }
         [Authorize]
-        [HttpPost("{bookId}")]
-        public async Task Request(int bookId)
+        [HttpPost]
+        public async Task Make(int bookId)
         {
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
             
             await _requestService.Make(userId, bookId);
         }
         [Authorize]
-        [Route("{bookId}")]
+        [Route("byBook/{bookId}")]
         [HttpGet]
-        public async Task<IEnumerable<Request>> All(int bookId)
+        public async Task<IEnumerable<Request>> Get(int bookId)
         {
-            return await _requestService.All(bookId);
+            return await _requestService.Get(bookId);
         }
         [Authorize]
-        [Route("{requestId}")]
+        [Route("{requestId}"]
         [HttpPut]
-        public async Task Apply(int requestId)
+        public async Task Approve(int requestId)
         {
             await _requestService.Approve(requestId);
         }
