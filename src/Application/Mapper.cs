@@ -11,7 +11,7 @@ namespace Application
     {
         public Mapper()
         {
-            CreateMap<AuthorDto, Author>().ReverseMap();
+            CreateMap<AuthorDto, Author>().ReverseMap().ForMember(a => a.Id, opt => opt.Condition(a => a.Id == 0));
             CreateMap<BookDto, Book>().ReverseMap();
             CreateMap<GenreDto, Genre>().ReverseMap();
             CreateMap<LocationDto, Location>().ReverseMap();

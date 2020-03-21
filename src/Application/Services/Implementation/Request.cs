@@ -35,7 +35,7 @@ namespace Application.Services.Implementation
                 UserId = userId,
                 RequestDate = DateTime.UtcNow
             };
-            await _requestRepository.AddAsync(request);
+            _requestRepository.Add(request);
             await _requestRepository.SaveChangesAsync();
         }
 
