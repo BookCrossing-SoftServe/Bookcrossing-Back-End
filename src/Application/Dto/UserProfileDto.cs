@@ -11,9 +11,9 @@ namespace Application.Dto
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public UserLocation UserLocation { get; set; }
+        public List<RoomLocationDto> UserLocation { get; set; }
         
-        public virtual List<Book> AllUserBooks { get; set; } 
+        public virtual List<BookDto> Books { get; set; } 
 
     }
 }

@@ -10,6 +10,7 @@ namespace Domain.Entities
         public string Street { get; set; }
         public string OfficeName { get; set; }
 
-        public virtual ICollection<UserLocation> UserLocation { get; set; } = new HashSet<UserLocation>();
+        //public virtual ICollection<UserLocation> UserLocation { get; set; } = new HashSet<UserLocation>();
+        public virtual List<UserLocation> UserLocation { get; set; } 
     }
 }

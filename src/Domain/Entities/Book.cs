@@ -12,8 +12,8 @@ namespace Domain.Entities
         public bool Available { get; set; }
 
         public virtual User User { get; set; }
-        public virtual ICollection<BookAuthor> BookAuthor { get; set; } = new HashSet<BookAuthor>();
-        public virtual ICollection<BookGenre> BookGenre { get; set; } = new HashSet<BookGenre>();
-        public virtual ICollection<Request> Request { get; set; } = new HashSet<Request>();
+        public virtual List<BookAuthor> BookAuthor { get; set; } 
+        public virtual List<BookGenre> BookGenre { get; set; } 
+        public virtual List<Request> Request { get; set; } 
     }
 }

@@ -14,9 +14,9 @@ namespace Domain.Entities
         public int RoleId { get; set; }
 
         public virtual Role Role { get; set; }
-        public virtual ICollection<Book> Book { get; set; } = new HashSet<Book>();
-        public virtual ICollection<Request> RequestOwner { get; set; } = new HashSet<Request>();
-        public virtual ICollection<Request> RequestUser { get; set; } = new HashSet<Request>();
-        public virtual ICollection<UserLocation> UserLocation { get; set; } = new HashSet<UserLocation>();
+        public virtual List<Book> Book { get; set; } 
+        public virtual List<Request> RequestOwner { get; set; } 
+        public virtual List<Request> RequestUser { get; set; }
+        public virtual List<UserLocation> UserLocation { get; set; }
     }
 }
