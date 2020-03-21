@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Application.Dto;
+﻿using Application.Dto;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Entities = Domain.Entities;
-using Services= Application.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Services = Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {

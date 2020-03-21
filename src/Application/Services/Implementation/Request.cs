@@ -12,14 +12,16 @@ using Domain.Entities;
 using Domain.IRepositories;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
+using Entities = Domain.Entities;
+
 
 namespace Application.Services.Implementation
 {
     public class Request : IRequest
     {
         private readonly IRequestRepository _requestRepository;
-        private readonly IRepository<Book> _bookRepository;
-        public Request(IRequestRepository requestRepository,IRepository<Book> bookRepository)
+        private readonly IRepository<Entities.Book> _bookRepository;
+        public Request(IRequestRepository requestRepository,IRepository<Entities.Book> bookRepository)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;

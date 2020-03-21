@@ -1,30 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Infrastructure;
-using Application.Services.Implementation;
+﻿using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
 using Domain.IRepositories;
 using Infastructure;
+using Infrastructure;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using AutoMapper;
+using System.Text;
 using Request = Application.Services.Implementation.Request;
 
 namespace BookCrossingBackEnd
@@ -63,10 +53,12 @@ namespace BookCrossingBackEnd
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
+            services.AddScoped<IBook, Book>();
 
             services.AddControllers();
 
@@ -75,7 +67,7 @@ namespace BookCrossingBackEnd
                 options.AddPolicy("CorsPolicu", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
             });
 
-            
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
