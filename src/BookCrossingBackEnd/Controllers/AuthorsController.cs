@@ -33,14 +33,14 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<List<AuthorDto>>> GetAllAuthor()
         {
-            var results = await _authorService.GetAll();
-            return results;
+            return Ok(await _authorService.GetAll());
         }
 
         // PUT: api/Authors/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
+            authorDto.Id = 0; // Do we need 2 DTOs? one without Id and one with?
             await _authorService.Update(authorDto);
             return NoContent();
         }
@@ -60,10 +60,8 @@ namespace BookCrossingBackEnd.Controllers
         {
             var author = await _authorService.Remove(id);
             if (author == null)
-            {
                 return NotFound();
-            }
-            return author;
+            return Ok(author);
         }
     }
 }

@@ -29,17 +29,17 @@ namespace Application.Services.Interfaces
         Task Update(AuthorDto author);
 
         /// <summary>
-        /// Remove specified Author
+        /// Remove author from database
         /// </summary>
-        /// <param name="author">Author's DTO instance</param>
-        /// <returns></returns>
+        /// <param name="authorId">Author's ID</param>
+        /// <returns>Returns removed author's DTO</returns>
         Task<AuthorDto> Remove(int authorId);
 
         /// <summary>
-        /// Create new author and add it into DbContext
+        /// Create new author and add it into Database
         /// </summary>
         /// <param name="author">Author's DTO instance</param>
-        /// <returns></returns>
+        /// <returns>Returns inserted author's ID</returns>
         Task<int> Add(AuthorDto author);
     }
 }
