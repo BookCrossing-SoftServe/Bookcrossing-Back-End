@@ -1,6 +1,10 @@
-﻿using Domain.Entities;
+﻿using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Domain.Entities;
 using Domain.IRepositories;
 using Infastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -10,5 +14,8 @@ namespace Infrastructure.Repositories
         {
             
         }
+
+        
+
     }
 }

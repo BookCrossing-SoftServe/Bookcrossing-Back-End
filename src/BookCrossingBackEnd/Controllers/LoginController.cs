@@ -15,15 +15,15 @@ namespace BookCrossingBackEnd.Controllers
     public class LoginController : Controller
     {
 
-        private IUser serice { get; set; }
-        private IConfiguration configuration { get; set; }
-        private IToken tokenService { get; set; }
+        private IUser Service { get; set; }
+        private IConfiguration Configuration { get; set; }
+        private IToken TokenService { get; set; }
 
         public LoginController(IUser userService, IConfiguration configuration, IToken tokenService)
         {
-            this.serice = userService;
-            this.configuration = configuration;
-            this.tokenService = tokenService;
+            this.Service = userService;
+            this.Configuration = configuration;
+            this.TokenService = tokenService;
         }
 
 
@@ -39,13 +39,12 @@ namespace BookCrossingBackEnd.Controllers
         {
             IActionResult response = Unauthorized();
 
-            var user = await serice.Validate(model);
+            var user = await Service.Validate(model);
 
-            if (user != null)
-            {
-                var tokenStr = tokenService.GenerateJSONWebToken(user);
-                response = Ok(new { token = tokenStr });
-            }
+            if (user == null) return response;
+
+            var tokenStr = TokenService.GenerateJSONWebToken(user);
+            response = Ok(new { token = tokenStr });
             return response;
         }
     }
