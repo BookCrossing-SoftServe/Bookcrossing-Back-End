@@ -21,17 +21,17 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Authors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Entities.Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDto>> GetAuthor(int id)
         {
             var author = await _authorService.GetById(id);
             if (author == null)
                 return NotFound();
-            return author;
+            return Ok(author);
         }
 
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult<List<Entities.Author>>> GetAllAuthor()
+        public async Task<ActionResult<List<AuthorDto>>> GetAllAuthor()
         {
             var results = await _authorService.GetAll();
             return results;
@@ -47,23 +47,22 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Authors
         [HttpPost]
-        public async Task<ActionResult<Entities.Author>> PostAuthor(AuthorDto authorDto)
+        public async Task<ActionResult<AuthorDto>> PostAuthor(AuthorDto authorDto)
         {
-            var author = await _authorService.Add(authorDto);
-            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
+            var insertedId = await _authorService.Add(authorDto);
+            authorDto.Id = insertedId;
+            return CreatedAtAction("GetAuthor", new { id = authorDto.Id }, authorDto);
         }
 
         // DELETE: api/Authors/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Entities.Author>> DeleteAuthor(int id)
+        public async Task<ActionResult<AuthorDto>> DeleteAuthor(int id)
         {
-            var author = await _authorService.GetById(id);
+            var author = await _authorService.Remove(id);
             if (author == null)
             {
                 return NotFound();
             }
-
-            await _authorService.Remove(author);
             return author;
         }
     }

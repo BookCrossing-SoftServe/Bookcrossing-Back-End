@@ -14,26 +14,35 @@ namespace Application.Services.Implementation
             _authorRepository = authorRepository;
         }
 
-        public async Task<Entities.Author> GetById(int authorId)
+        public async Task<AuthorDto> GetById(int authorId)
         {
-            return await _authorRepository.FindByIdAsync(authorId);
+            var author = await _authorRepository.FindByIdAsync(authorId);
+            //mapper logic
+            return new AuthorDto();
         }
 
-        public async Task<List<Entities.Author>> GetAll()
+        public async Task<List<AuthorDto>> GetAll()
         {
-            return await _authorRepository.GetAllAsync();
+            var author = await _authorRepository.GetAllAsync();
+            //mapper logic
+            return new List<AuthorDto>();
         }
-        public async Task<Entities.Author> Add(AuthorDto authorDto)
+        public async Task<int> Add(AuthorDto authorDto)
         {
             var author = new Domain.Entities.Author() { FirstName = authorDto.FirstName, LastName = authorDto.LastName, MiddleName = authorDto.MiddleName };
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
-            return author;
+            return author.Id;
         }
-        public async Task Remove(Entities.Author author)
+        public async Task<AuthorDto> Remove(int authorId)
         {
+            var author = await _authorRepository.FindByIdAsync(authorId);
+            if (author == null) 
+                return null;
             _authorRepository.Remove(author);
             await _authorRepository.SaveChangesAsync();
+            //mapper logic
+            return new AuthorDto();
         }
         public async Task Update(AuthorDto authorDto)
         {

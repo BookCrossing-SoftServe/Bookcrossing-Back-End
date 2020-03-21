@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
-using Domain.Entities;
+using Application.Services.Implementation;
+using Entities = Domain.Entities;
 
 namespace Application.Services.Interfaces
 {
@@ -11,14 +12,14 @@ namespace Application.Services.Interfaces
         /// Retrieve Author by ID
         /// </summary>
         /// <param name="authorId">Author's ID</param>
-        /// <returns></returns>
-        Task<Author> GetById(int authorId);
+        /// <returns>returns Author DTO</returns>
+        Task<AuthorDto> GetById(int authorId);
 
         /// <summary>
         /// Retrieve all Authors
         /// </summary>
-        /// <returns></returns>
-        Task<List<Author>> GetAll();
+        /// <returns>returns list of Author DTOs</returns>
+        Task<List<AuthorDto>> GetAll();
 
         /// <summary>
         /// Update specified Author
@@ -32,13 +33,13 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="author">Author's DTO instance</param>
         /// <returns></returns>
-        Task Remove(Author author);
+        Task<AuthorDto> Remove(int authorId);
 
         /// <summary>
         /// Create new author and add it into DbContext
         /// </summary>
         /// <param name="author">Author's DTO instance</param>
         /// <returns></returns>
-        Task<Author> Add(AuthorDto author);
+        Task<int> Add(AuthorDto author);
     }
 }
