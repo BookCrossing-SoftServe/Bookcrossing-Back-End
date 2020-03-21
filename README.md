@@ -20,7 +20,8 @@ These instructions will get you a copy of the project up and running on your loc
 ```
 {
  "ConnectionStrings": {
-    "DefaultConnection": "Server=ServerName;Database=DatabaseName;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "DefaultConnection": "Server=ServerName;Database=DatabaseName;Trusted_Connection=True;MultipleActiveResultSets=true",
+	"AzureConnection": "Server=tcp:{server_name}.database.windows.net,1433;Initial Catalog={database_name};Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"
   },
   "Logging": {
     "LogLevel": {
