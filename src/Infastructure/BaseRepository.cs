@@ -38,6 +38,7 @@ namespace Infastructure
 
         public Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
         {
+
             return entities.FirstOrDefaultAsync(predicate);
         }
 

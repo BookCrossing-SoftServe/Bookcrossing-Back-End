@@ -63,7 +63,8 @@ namespace BookCrossingBackEnd
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IToken, Token>();
+            services.AddScoped<IToken, Token>(); 
+
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
