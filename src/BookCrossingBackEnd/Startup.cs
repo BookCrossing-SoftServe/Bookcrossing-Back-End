@@ -66,6 +66,8 @@ namespace BookCrossingBackEnd
             {
                 options.AddPolicy("CorsPolicu", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
             });
+
+
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AuthorValidator>());
             
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
