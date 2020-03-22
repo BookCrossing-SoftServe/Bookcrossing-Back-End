@@ -40,10 +40,9 @@ namespace BookCrossingBackEnd.Controllers
 
         // PUT: api/Authors/5
         [ValidationFilter]
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
-            authorDto.Id = 0; // Do we need 2 DTOs? one without Id and one with?
             await _authorService.Update(authorDto);
             return NoContent();
         }
