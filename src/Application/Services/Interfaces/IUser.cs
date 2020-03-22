@@ -9,7 +9,7 @@ namespace Application.Services.Interfaces
 {
     public interface IUser
     {
-        Task<UserDto> Validate(LoginDto loginModel);
+        Task<UserDto> VerifyUserCredentials(LoginDto loginModel);
 
 
     }

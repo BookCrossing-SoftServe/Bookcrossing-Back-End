@@ -38,12 +38,16 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<IActionResult> Login([FromBody]LoginDto model)
         {
             IActionResult response = Unauthorized();
+            
 
-            var user = await Service.Validate(model);
+            var user = await Service.VerifyUserCredentials(model);
+
 
             if (user == null) return response;
 
             var tokenStr = TokenService.GenerateJSONWebToken(user);
+
+            //var tokenStr = TokenService.GenerateJSONWebToken(user);
             response = Ok(new { token = tokenStr });
             return response;
         }

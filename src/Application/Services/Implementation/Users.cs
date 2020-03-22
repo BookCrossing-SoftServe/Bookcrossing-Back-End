@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Security.Authentication;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Application.Services.Interfaces;
@@ -26,16 +27,17 @@ namespace Application.Services.Implementation
             this._userRepository = userRepository;
             this._mapper = mapper;
         }
-        public async Task<UserDto> Validate(LoginDto loginModel)
-        {
+        public async Task<UserDto> VerifyUserCredentials(LoginDto loginModel)
+        { 
 
-            var user = _mapper.Map<UserDto>(_userRepository
-                .GetAll()
-                .Where(p => p.Email == loginModel.Email && p.Password == loginModel.Password)
+            
+
+            var user = _mapper.Map<UserDto>(await _userRepository.GetAll()
                 .Include(r => r.Role)
-                .FirstOrDefault());
+                .FirstOrDefaultAsync(p => p.Email == loginModel.Email && p.Password == loginModel.Password));
 
             return user;
+
 
         }
     }
