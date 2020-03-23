@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Application.Services.Interfaces;
+using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Services.Interfaces;
-using Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -24,7 +23,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task Make(int bookId)
         {
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
-            
+
             await _requestService.Make(userId, bookId);
         }
         [Authorize]

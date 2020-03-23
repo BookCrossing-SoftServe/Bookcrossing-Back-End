@@ -1,11 +1,13 @@
-﻿using System.Text;
+using System.Text;
 using Infrastructure;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
 using Domain.IRepositories;
 using Infastructure;
+using Infrastructure;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -56,11 +58,13 @@ namespace BookCrossingBackEnd
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IToken, Token>(); 
-
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
+            services.AddScoped<IBook, Book>();
+          
             services.AddControllers();
 
             services.AddCors(options =>
@@ -70,7 +74,7 @@ namespace BookCrossingBackEnd
 
 
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AuthorValidator>());
-            
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

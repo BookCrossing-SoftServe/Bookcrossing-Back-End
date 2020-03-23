@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Application.Services.Interfaces;
-using Domain.Entities;
-using Infrastructure;
+﻿using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +12,7 @@ namespace BookCrossingBackEnd.Controllers
     [Route("api/[controller]")]
 
 
-    
+
     public class UsersController : Controller
     {
 
@@ -33,7 +25,7 @@ namespace BookCrossingBackEnd.Controllers
             this.serice = userService;
             this.configuration = configuration;
             this.tokenService = tokenService;
-        }   
+        }
 
         /// <summary>
         /// Get list of all users (only for admin)
@@ -44,14 +36,14 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public IActionResult Get()
         {
-            var IdClaim = User.Claims.FirstOrDefault(x => x.Type.Equals("id",StringComparison.CurrentCultureIgnoreCase));
+            var IdClaim = User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase));
             if (IdClaim != null)
                 return Ok($"Your id is {IdClaim.Value}");
             return BadRequest();
 
         }
 
-    
+
 
 
         /// <summary>
@@ -67,8 +59,8 @@ namespace BookCrossingBackEnd.Controllers
             return Ok("Lol");
         }
 
-        
-       
+
+
         // PUT api/<controller>/5
         /// <summary>
         /// Function for updating info about user
