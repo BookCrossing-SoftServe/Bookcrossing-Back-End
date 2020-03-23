@@ -1,11 +1,10 @@
 ﻿using Application.Dto;
 using AutoMapper;
 using Domain.IRepositories;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Entities = Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
@@ -21,12 +20,22 @@ namespace Application.Services.Implementation
 
         public async Task<BookDto> GetById(int bookId)
         {
-            return _mapper.Map<BookDto>(await _bookRepository.FindByIdAsync(bookId));
+            return _mapper.Map<BookDto>(await _bookRepository.GetAll()
+                                                               .Include(p => p.BookAuthor)
+                                                               .ThenInclude(x => x.Author)
+                                                               .Include(p => p.BookGenre)
+                                                               .ThenInclude(x => x.Genre)
+                                                               .FirstOrDefaultAsync(p => p.Id == bookId));
         }
 
         public async Task<List<BookDto>> GetAll()
         {
-            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAllAsync());
+            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAll()
+                                                                    .Include(p => p.BookAuthor)
+                                                                    .ThenInclude(x => x.Author)
+                                                                    .Include(p => p.BookGenre)
+                                                                    .ThenInclude(x => x.Genre)
+                                                                    .ToListAsync());
         }
 
         public async Task<int> Add(BookDto bookDto)
