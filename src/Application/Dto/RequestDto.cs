@@ -11,6 +11,6 @@ namespace Application.Dto
         public int OwnerId { get; set; }
         public int UserId { get; set; }
         public DateTime RequestDate { get; set; }
-        public DateTime ReceiveDate { get; set; }
+        public DateTime? ReceiveDate { get; set; }
     }
 }

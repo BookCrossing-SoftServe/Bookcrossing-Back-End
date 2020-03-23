@@ -41,5 +41,6 @@ namespace Application.Services.Interfaces
         /// <param name="author">Author's DTO instance</param>
         /// <returns>Returns inserted author's ID</returns>
         Task<int> Add(AuthorDto author);
+
     }
 }
