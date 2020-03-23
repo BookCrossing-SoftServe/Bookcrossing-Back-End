@@ -5,7 +5,6 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.IRepositories;
 using Infastructure;
-using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using AutoMapper;
 using BookCrossingBackEnd.Validators;
 using FluentValidation.AspNetCore;
 using Entities = Domain.Entities;
@@ -40,8 +38,7 @@ namespace BookCrossingBackEnd
             // Please download appsettings.json for connecting to Azure DB
             //string azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<BookCrossingContext>(options =>
-                options.UseSqlServer(
-                    localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -66,6 +63,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IBook, Book>();
           
             services.AddControllers();
+
 
             services.AddCors(options =>
             {
