@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Domain.Entities;
 
 namespace Application.Dto
 {
@@ -11,6 +12,9 @@ namespace Application.Dto
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+
+        public Role Role { get; set; }
+
         public List<RoomLocationDto> UserLocation { get; set; }
     }
 }

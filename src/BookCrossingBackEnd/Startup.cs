@@ -1,4 +1,6 @@
-﻿using Application.Services.Implementation;
+using System.Text;
+using Infrastructure;
+using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.IRepositories;
@@ -14,7 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
+using AutoMapper;
+using BookCrossingBackEnd.Validators;
+using FluentValidation.AspNetCore;
+using Entities = Domain.Entities;
 using Request = Application.Services.Implementation.Request;
 
 namespace BookCrossingBackEnd
@@ -59,7 +64,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
             services.AddScoped<IBook, Book>();
-
+          
             services.AddControllers();
 
             services.AddCors(options =>
@@ -67,6 +72,8 @@ namespace BookCrossingBackEnd
                 options.AddPolicy("CorsPolicu", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
             });
 
+
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AuthorValidator>());
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Application.Dto;
 
 namespace Application.Services.Interfaces
 {
     public interface IToken
     {
-        public string GenerateJSONWebToken(User user);
+        public string GenerateJSONWebToken(UserDto user);
     }
 }

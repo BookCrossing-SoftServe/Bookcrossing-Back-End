@@ -53,10 +53,10 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Get(int id)
         {
-            throw new NotImplementedException();
+            return Ok("Lol");
         }
 
 

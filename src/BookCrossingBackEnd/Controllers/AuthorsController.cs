@@ -1,5 +1,7 @@
 ﻿using Application.Dto;
 using Application.Services.Interfaces;
+using BookCrossingBackEnd.Filters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,6 +38,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // PUT: api/Authors/5
+        [ValidationFilter]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
@@ -45,6 +48,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // POST: api/Authors
+        [ValidationFilter]
         [HttpPost]
         public async Task<ActionResult<AuthorDto>> PostAuthor(AuthorDto authorDto)
         {
@@ -54,6 +58,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/Authors/5
+        [ValidationFilter]
         [HttpDelete("{id}")]
         public async Task<ActionResult<AuthorDto>> DeleteAuthor(int id)
         {

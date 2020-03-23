@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Dto;
 using Application.Services.Interfaces;
 
 namespace Application.Services.Implementation
@@ -20,7 +21,7 @@ namespace Application.Services.Implementation
             this.configuration = configuration;
         }
         
-        public string GenerateJSONWebToken(User user)
+        public string GenerateJSONWebToken(UserDto user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
 
