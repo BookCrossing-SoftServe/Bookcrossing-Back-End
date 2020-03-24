@@ -10,6 +10,7 @@ using Services= Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : ControllerBase
@@ -38,7 +39,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _authorService.GetAll());
         }
 
-        // PUT: api/Authors/5
+        // PUT: api/Authors
         [ValidationFilter]
         [HttpPut]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
