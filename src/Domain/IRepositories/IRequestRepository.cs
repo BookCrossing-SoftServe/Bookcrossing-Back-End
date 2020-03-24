@@ -8,6 +8,5 @@ namespace Domain.IRepositories
 {
     public interface IRequestRepository : IRepository<Request>
     {
-        Task<IEnumerable<Request>> GetAllBookBequests(int bookId);
     }
 }
