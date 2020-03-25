@@ -14,6 +14,7 @@ using AutoMapper;
 using Domain.IRepositories;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Entities = Domain.Entities;
 
 namespace Application.Services.Implementation
 {
@@ -27,6 +28,9 @@ namespace Application.Services.Implementation
             this._userRepository = userRepository;
             this._mapper = mapper;
         }
+
+      
+
         public async Task<UserDto> VerifyUserCredentials(LoginDto loginModel)
         { 
 
@@ -39,6 +43,23 @@ namespace Application.Services.Implementation
             return user;
 
 
+        }
+       
+        public async Task<bool> Add(RegisterDto dto)
+        {
+            try
+            {
+                var user = _mapper.Map<Entities.User>(dto);
+                _userRepository.Add(user);
+                await _userRepository.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+           
         }
     }
 }

@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -59,6 +63,22 @@ namespace BookCrossingBackEnd.Controllers
             return Ok("Lol");
         }
 
+        [HttpPost]
+        public async  Task <IActionResult> PostUser([FromBody] RegisterDto dto)
+        {
+            var status = await serice.Add(dto);
+             if(status)
+            {
+               return Ok(true);
+            }
+            else
+            {
+              return  BadRequest(false);
+            }
+        }
+       
+       
+
 
 
         // PUT api/<controller>/5
@@ -70,8 +90,11 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut("{id}")]
         public void Update(int id, [FromBody]string value)
         {
+            
+           
             throw new NotImplementedException();
         }
+
 
         /// <summary>
         /// Function for deleting user (only for admin)

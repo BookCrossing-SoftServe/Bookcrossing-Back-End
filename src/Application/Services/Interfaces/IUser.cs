@@ -10,6 +10,7 @@ namespace Application.Services.Interfaces
     public interface IUser
     {
         Task<UserDto> VerifyUserCredentials(LoginDto loginModel);
+        Task<bool> Add(RegisterDto register);
 
 
     }
