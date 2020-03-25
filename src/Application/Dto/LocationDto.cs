@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Application.Dto
 {
@@ -10,5 +8,6 @@ namespace Application.Dto
         public string City { get; set; }
         public string Street { get; set; }
         public string OfficeName { get; set; }
+        public List<int> Rooms { get; set; }
     }
 }

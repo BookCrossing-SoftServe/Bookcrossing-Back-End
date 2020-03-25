@@ -56,18 +56,16 @@ namespace BookCrossingBackEnd
             services.AddScoped<IRequestRepository, RequestRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<ILocation, Location>();
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
-            services.AddScoped<IBook, Book>();
-          
-            services.AddControllers();
-
+            services.AddScoped<IBook, Book>();                     
 
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicu", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
+                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().Build());
             });
 
 
@@ -108,6 +106,7 @@ namespace BookCrossingBackEnd
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 

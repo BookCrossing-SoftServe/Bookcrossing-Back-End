@@ -45,7 +45,9 @@ namespace Application
                 .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
                 .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()));
             CreateMap<GenreDto, Genre>().ReverseMap();
-            CreateMap<LocationDto, Location>().ReverseMap();
+            CreateMap<LocationDto, Location>().ReverseMap()
+                .ForMember(dto => dto.Rooms, opt => opt.MapFrom(x => x.UserLocation.Select(y => y.RoomNumber)))
+                .ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0));
             CreateMap<RoomLocationDto, UserLocation>().ReverseMap();
             CreateMap<LoginDto, User>().ReverseMap();
             CreateMap<RegisterDto, User>().ReverseMap();
