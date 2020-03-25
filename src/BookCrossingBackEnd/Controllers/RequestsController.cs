@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
+using BookCrossingBackEnd.Filters;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -38,6 +39,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
         [Authorize]
+        [ValidationFilter]
         [Route("{requestId}")]
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
@@ -48,6 +50,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(request);
         }
         [Authorize]
+        [ValidationFilter]
         [Route("{requestId}")]
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
