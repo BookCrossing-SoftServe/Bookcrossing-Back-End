@@ -10,9 +10,9 @@ namespace Application.Services.Implementation
 {
     public class Location : Interfaces.ILocation
     {
-        private readonly ILocationRepository _locationRepository;
+        private readonly IRepository<Entities.Location> _locationRepository;
         private readonly IMapper _mapper;
-        public Location(ILocationRepository bookRepository, IMapper mapper)
+        public Location(IRepository<Entities.Location> bookRepository, IMapper mapper)
         {
             _locationRepository = bookRepository;
             _mapper = mapper;
