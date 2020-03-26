@@ -9,7 +9,7 @@ using Domain;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infastructure
+namespace Infrastructure
 {
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
@@ -42,7 +42,7 @@ namespace Infastructure
         {
             Entities.Add(entity);
         }
-        public void AddRange(IEnumerable<TEntity> entity)
+        public virtual void AddRange(IEnumerable<TEntity> entity)
         {
             Entities.AddRange(entity);
         }
@@ -50,7 +50,7 @@ namespace Infastructure
         {
             Entities.Remove(entity);
         }
-        public void RemoveRange(IEnumerable<TEntity> entity)
+        public virtual void RemoveRange(IEnumerable<TEntity> entity)
         {
             Entities.RemoveRange(entity);
         }
