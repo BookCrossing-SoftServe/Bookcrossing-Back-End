@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Application.Dto;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain;
 using Entities = Domain.Entities;
 
 namespace Application.Services.Implementation

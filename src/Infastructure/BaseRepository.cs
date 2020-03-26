@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Domain.IRepositories;
+using Domain;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

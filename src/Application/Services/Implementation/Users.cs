@@ -11,8 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Domain.IRepositories;
-using Infrastructure.Repositories;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
