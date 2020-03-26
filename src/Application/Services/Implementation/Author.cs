@@ -10,9 +10,9 @@ namespace Application.Services.Implementation
 {
     public class Author : Interfaces.IAuthor
     {
-        private readonly IAuthorRepository _authorRepository;
+        private readonly IRepository<Entities.Author> _authorRepository;
         private readonly IMapper _mapper;
-        public Author(IAuthorRepository authorRepository, IMapper mapper)
+        public Author(IRepository<Entities.Author> authorRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
