@@ -5,61 +5,63 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Domain.IRepositories;
+using Domain;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infastructure
+namespace Infrastructure
 {
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
     {
-        protected readonly BookCrossingContext _context;
-        private DbSet<TEntity> entities;
+        protected readonly BookCrossingContext Context;
+        protected readonly DbSet<TEntity> Entities;
 
         public BaseRepository(BookCrossingContext context)
         {
-            _context = context;
-            entities = context.Set<TEntity>();
-        }
-
-        public virtual void Add(TEntity entity)
-        {
-            entities.Add(entity);
+            Context = context;
+            Entities = context.Set<TEntity>();
         }
         public virtual async Task<List<TEntity>> GetAllAsync()
         {
-            return await entities.ToListAsync();
+            return await Entities.ToListAsync();
         }
-
         public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
         {
-            return await entities.FindAsync(keys);
+            return await Entities.FindAsync(keys);
         }
-
-        public Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
+        public virtual async Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
         {
 
-            return entities.FirstOrDefaultAsync(predicate);
+            return await Entities.FirstOrDefaultAsync(predicate);
         }
-
         public virtual IQueryable<TEntity> GetAll()
         {
-            return entities.AsQueryable();
+            return Entities.AsQueryable();
         }
-
+        public virtual void Add(TEntity entity)
+        {
+            Entities.Add(entity);
+        }
+        public virtual void AddRange(IEnumerable<TEntity> entity)
+        {
+            Entities.AddRange(entity);
+        }
         public virtual void Remove(TEntity entity)
         {
-            entities.Remove(entity);
+            Entities.Remove(entity);
         }
-
+        public virtual void RemoveRange(IEnumerable<TEntity> entity)
+        {
+            Entities.RemoveRange(entity);
+        }
         public virtual void Update(TEntity entity)
         {
-            entities.Update(entity);
+            Entities.Update(entity);
         }
 
         public async Task SaveChangesAsync()
         {
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
     }
 }

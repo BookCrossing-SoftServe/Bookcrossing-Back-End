@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Entities = Domain.Entities;
@@ -10,9 +10,9 @@ namespace Application.Services.Implementation
 {
     public class Book : Interfaces.IBook
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IRepository<Entities.Book> _bookRepository;
         private readonly IMapper _mapper;
-        public Book(IBookRepository bookRepository, IMapper mapper)
+        public Book(IRepository<Entities.Book> bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;

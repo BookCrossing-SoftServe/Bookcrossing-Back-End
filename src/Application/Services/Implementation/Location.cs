@@ -1,6 +1,6 @@
 ﻿using Application.Dto;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Entities = Domain.Entities;

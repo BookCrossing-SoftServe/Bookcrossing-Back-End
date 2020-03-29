@@ -1,14 +1,16 @@
-﻿using Application.Dto;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Services = Application.Services;
+using Entities = Domain.Entities;
+using Services= Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : ControllerBase
@@ -37,12 +39,11 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _authorService.GetAll());
         }
 
-        // PUT: api/Authors/5
+        // PUT: api/Authors
         [ValidationFilter]
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
-            authorDto.Id = 0; // Do we need 2 DTOs? one without Id and one with?
             await _authorService.Update(authorDto);
             return NoContent();
         }

@@ -10,7 +10,7 @@ using Application.Dto;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Entities;
-using Domain.IRepositories;
+using Domain;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
