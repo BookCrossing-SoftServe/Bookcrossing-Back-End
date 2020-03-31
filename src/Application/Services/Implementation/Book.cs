@@ -48,7 +48,12 @@ namespace Application.Services.Implementation
 
         public async Task<BookDto> Remove(int bookId)
         {
-            var book = await _bookRepository.FindByIdAsync(bookId);
+            var book = await _bookRepository.GetAll()
+                                                               .Include(p => p.BookAuthor)
+                                                               .ThenInclude(x => x.Author)
+                                                               .Include(p => p.BookGenre)
+                                                               .ThenInclude(x => x.Genre)
+                                                               .FirstOrDefaultAsync(p => p.Id == bookId);
             if (book == null)
                 return null;
             _bookRepository.Remove(book);
