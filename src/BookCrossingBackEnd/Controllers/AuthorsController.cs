@@ -53,8 +53,8 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<AuthorDto>> PostAuthor(NewAuthorDto authorDto)
         {
-            var insertedId = await _authorService.Add(authorDto);
-            return CreatedAtAction("GetAuthor", new { id = insertedId }, authorDto);
+            var author = await _authorService.Add(authorDto);
+            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
         }
 
         // DELETE: api/Authors/5
