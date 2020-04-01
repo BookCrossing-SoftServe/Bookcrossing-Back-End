@@ -35,10 +35,12 @@ namespace Application
                         foreach (var item in entity.BookAuthor)
                         {
                             item.Book = entity;
+                            item.BookId = entity.Id;
                         }
                         foreach (var item in entity.BookGenre)
                         {
                             item.Book = entity;
+                            item.BookId = entity.Id;
                         }
                     }); 
             CreateMap<Book, BookDto>()
