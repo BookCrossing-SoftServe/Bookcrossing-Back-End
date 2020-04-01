@@ -5,7 +5,6 @@ using Application.Services.Interfaces;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Services= Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -14,7 +13,7 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly Services.Interfaces.IAuthor _authorService;
+        private readonly IAuthor _authorService;
 
         public AuthorsController(IAuthor authorService)
         {
@@ -27,7 +26,9 @@ namespace BookCrossingBackEnd.Controllers
         {
             var author = await _authorService.GetById(id);
             if (author == null)
+            {
                 return NotFound();
+            }
             return Ok(author);
         }
 
@@ -50,7 +51,7 @@ namespace BookCrossingBackEnd.Controllers
         // POST: api/Authors
         [ValidationFilter]
         [HttpPost]
-        public async Task<ActionResult<NewAuthorDto>> PostAuthor(NewAuthorDto authorDto)
+        public async Task<ActionResult<AuthorDto>> PostAuthor(NewAuthorDto authorDto)
         {
             var insertedId = await _authorService.Add(authorDto);
             return CreatedAtAction("GetAuthor", new { id = insertedId }, authorDto);
@@ -59,11 +60,13 @@ namespace BookCrossingBackEnd.Controllers
         // DELETE: api/Authors/5
         [ValidationFilter]
         [HttpDelete("{id:min(1)}")]
-        public async Task<ActionResult<AuthorDto>> DeleteAuthor(int id)
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
             var author = await _authorService.Remove(id);
-            if (author == null)
+            if (author == false)
+            {
                 return NotFound();
+            }
             return Ok();
         }
     }

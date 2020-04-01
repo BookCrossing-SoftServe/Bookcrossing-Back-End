@@ -27,21 +27,23 @@ namespace Application.Services.Implementation
         {
             return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll().ToListAsync());
         }
-        public async Task<int> Add(NewAuthorDto newAuthorDto)
+        public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
         {
             var author = _mapper.Map<Entities.Author>(newAuthorDto);
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
-            return author.Id;
+            return _mapper.Map<AuthorDto>(author);
         }
-        public async Task<AuthorDto> Remove(int authorId)
+        public async Task<bool> Remove(int authorId)
         {
             var author = await _authorRepository.FindByIdAsync(authorId);
-            if (author == null) 
-                return null;
+            if (author == null)
+            {
+                return false;
+            }
             _authorRepository.Remove(author);
             await _authorRepository.SaveChangesAsync();
-            return _mapper.Map<AuthorDto>(author);
+            return true;
         }
         public async Task Update(AuthorDto authorDto)
         {
