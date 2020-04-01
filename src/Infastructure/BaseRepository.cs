@@ -36,7 +36,7 @@ namespace Infrastructure
         {
             Entities.Add(entity);
         }
-        public void AddRange(IEnumerable<TEntity> entity)
+        public virtual void AddRange(IEnumerable<TEntity> entity)
         {
             Entities.AddRange(entity);
         }
@@ -44,7 +44,7 @@ namespace Infrastructure
         {
             Entities.Remove(entity);
         }
-        public void RemoveRange(IEnumerable<TEntity> entity)
+        public virtual void RemoveRange(IEnumerable<TEntity> entity)
         {
             Entities.RemoveRange(entity);
         }
