@@ -25,7 +25,7 @@ namespace Application.Services.Implementation
 
         public async Task<List<AuthorDto>> GetAll()
         {
-            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAllAsync());
+            return _mapper.Map<List<AuthorDto>>(await _authorRepository..GetAll().ToListAsync());
         }
         public async Task<int> Add(AuthorDto authorDto)
         {
