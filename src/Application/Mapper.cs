@@ -53,7 +53,11 @@ namespace Application
             CreateMap<RoomLocationDto, UserLocation>().ReverseMap();
             CreateMap<LoginDto, User>().ReverseMap();
             CreateMap<RegisterDto, User>().ReverseMap();
-            CreateMap<RequestDto, Request>().ReverseMap().ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0));
+            CreateMap<RequestDto, Request>().ReverseMap()
+                .ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0))
+                .ForMember(dto => dto.Book, opt => opt.MapFrom(x => x.Book))
+                .ForMember(dto => dto.Owner, opt => opt.MapFrom(x => x.Owner))
+                .ForMember(dto => dto.User, opt => opt.MapFrom(x => x.User));
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<UserProfileDto, User>().ForMember(x => x.Book, opt => opt.MapFrom(x => x.Books))
                 .ReverseMap();
