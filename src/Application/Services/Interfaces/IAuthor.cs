@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
-using Application.Services.Implementation;
-using Entities = Domain.Entities;
 
 namespace Application.Services.Interfaces
 {
@@ -40,7 +38,7 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="author">Author's DTO instance</param>
         /// <returns>Returns inserted author's ID</returns>
-        Task<int> Add(AuthorDto author);
+        Task<int> Add(NewAuthorDto author);
 
     }
 }

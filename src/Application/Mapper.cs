@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Application.Dto;
 using AutoMapper;
 using Domain.Entities;
@@ -12,7 +9,8 @@ namespace Application
     {
         public Mapper()
         {
-            CreateMap<AuthorDto, Author>().ReverseMap().ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0));
+            CreateMap<AuthorDto, Author>().ReverseMap();
+            CreateMap<NewAuthorDto, Author>().ReverseMap();
             CreateMap<AuthorDto, BookAuthor>()
                 .ForMember(a => a.AuthorId, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(a => a.Author, opt =>
