@@ -17,12 +17,6 @@ namespace Domain
         IQueryable<TEntity> GetAll();
 
         /// <summary>
-        /// Asynchronously retrieves all of the entities upon call
-        /// </summary>
-        /// <returns>List of the entity framework's entities</returns>
-        Task<List<TEntity>> GetAllAsync();
-
-        /// <summary>
         /// Finds and returns TEntity based on Primary Key
         /// </summary>
         /// <param name="keys">Primary Keys</param>

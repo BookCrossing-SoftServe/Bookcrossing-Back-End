@@ -2,28 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Domain;
-using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
 {
-    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
+    public class BaseRepository<TEntity> : IDisposable, IRepository<TEntity> where TEntity : class, IEntityBase
     {
         protected readonly BookCrossingContext Context;
-        protected readonly DbSet<TEntity> Entities;
+        protected DbSet<TEntity> Entities;
 
         public BaseRepository(BookCrossingContext context)
         {
             Context = context;
             Entities = context.Set<TEntity>();
         }
-        public virtual async Task<List<TEntity>> GetAllAsync()
+        public virtual IQueryable<TEntity> GetAll()
         {
-            return await Entities.ToListAsync();
+            return Entities.AsQueryable();
         }
         public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
         {
@@ -33,10 +31,6 @@ namespace Infrastructure
         {
 
             return await Entities.FirstOrDefaultAsync(predicate);
-        }
-        public virtual IQueryable<TEntity> GetAll()
-        {
-            return Entities.AsQueryable();
         }
         public virtual void Add(TEntity entity)
         {
@@ -58,10 +52,38 @@ namespace Infrastructure
         {
             Entities.Update(entity);
         }
-
         public async Task SaveChangesAsync()
         {
             await Context.SaveChangesAsync();
         }
+
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Entities = null;
+                }
+                Context?.Dispose();
+                _disposedValue = true;
+            }
+        }
+        ~BaseRepository()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+
     }
 }
