@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Dto;
 using AutoMapper;
 using Domain;
+using Microsoft.EntityFrameworkCore;
 using Entities = Domain.Entities;
 
 namespace Application.Services.Implementation
@@ -25,7 +26,7 @@ namespace Application.Services.Implementation
 
         public async Task<List<AuthorDto>> GetAll()
         {
-            return _mapper.Map<List<AuthorDto>>(await _authorRepository..GetAll().ToListAsync());
+            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll().ToListAsync());
         }
         public async Task<int> Add(AuthorDto authorDto)
         {
