@@ -36,7 +36,7 @@ namespace BookCrossingBackEnd.Controllers
             var requests = _requestService.Get(bookId);
             if (requests == null)
                 return NotFound();
-            return Ok(requests);
+            return Ok("Hello world!");
         }
         //[Authorize]
         [ValidationFilter]
