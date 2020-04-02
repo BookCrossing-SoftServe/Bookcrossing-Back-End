@@ -54,7 +54,7 @@ namespace Application
             CreateMap<LoginDto, User>().ReverseMap();
             CreateMap<RegisterDto, User>().ReverseMap();
             CreateMap<RequestDto, Request>().ReverseMap()
-                .ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0))
+                .ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0)) // just for CI/CD test in pull request
                 .ForMember(dto => dto.Book, opt => opt.MapFrom(x => x.Book))
                 .ForMember(dto => dto.Owner, opt => opt.MapFrom(x => x.Owner))
                 .ForMember(dto => dto.User, opt => opt.MapFrom(x => x.User));
