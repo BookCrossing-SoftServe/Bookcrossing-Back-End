@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
-using Application.Services.Implementation;
-using Entities = Domain.Entities;
 
 namespace Application.Services.Interfaces
 {
@@ -33,14 +31,14 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="authorId">Author's ID</param>
         /// <returns>Returns removed author's DTO</returns>
-        Task<AuthorDto> Remove(int authorId);
+        Task<bool> Remove(int authorId);
 
         /// <summary>
         /// Create new author and add it into Database
         /// </summary>
-        /// <param name="author">Author's DTO instance</param>
-        /// <returns>Returns inserted author's ID</returns>
-        Task<int> Add(AuthorDto author);
+        /// <param name="author">NewAuthor DTO instance</param>
+        /// <returns>Returns created Author's DTO </returns>
+        Task<AuthorDto> Add(NewAuthorDto author);
 
     }
 }
