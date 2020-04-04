@@ -18,12 +18,12 @@ namespace Infrastructure.Configuration
             builder.HasOne(d => d.Book)
                 .WithMany(p => p.BookGenre)
                 .HasForeignKey(d => d.BookId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(d => d.Genre)
                 .WithMany(p => p.BookGenre)
                 .HasForeignKey(d => d.GenreId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

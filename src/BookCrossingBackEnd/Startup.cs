@@ -3,9 +3,8 @@ using Infrastructure;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain;
 using Infastructure;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -57,17 +56,19 @@ namespace BookCrossingBackEnd
             );
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<IRequestRepository, RequestRepository>();
-            services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<ILocation, Location>();
             services.AddScoped<IToken, Token>();
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
+<<<<<<< HEAD
             services.AddScoped<IBook, Book>();          
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
 
+=======
+            services.AddScoped<IBook, Book>();                     
+>>>>>>> 3753ddebe0b4b3c2f35a6de1d6cb403d0e4c981b
 
             services.AddCors(options =>
             {

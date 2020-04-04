@@ -12,8 +12,8 @@ namespace BookCrossingBackEnd.Validators
         public RequestValidator()
         {
             RuleFor(x => x.Id).GreaterThan(0);
-            RuleFor(x => x.BookId).GreaterThan(0);
-            RuleFor(x => x.OwnerId).GreaterThan(0);
+            RuleFor(x => x.Book.Id).GreaterThan(0);
+            RuleFor(x => x.Owner.Id).GreaterThan(0);
             RuleFor(x => x.RequestDate).NotNull();
         }
     }

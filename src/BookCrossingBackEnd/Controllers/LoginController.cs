@@ -45,7 +45,7 @@ namespace BookCrossingBackEnd.Controllers
             var tokenStr = TokenService.GenerateJSONWebToken(user);
 
             //var tokenStr = TokenService.GenerateJSONWebToken(user);
-            response = Ok(new { token = tokenStr });
+            response = Ok(new { token = tokenStr,firstName=user.FirstName,lastName=user.LastName });
             return response;
         }
     }

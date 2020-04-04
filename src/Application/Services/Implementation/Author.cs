@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Application.Dto;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain;
+using Microsoft.EntityFrameworkCore;
 using Entities = Domain.Entities;
 
 namespace Application.Services.Implementation
 {
     public class Author : Interfaces.IAuthor
     {
-        private readonly IAuthorRepository _authorRepository;
+        private readonly IRepository<Entities.Author> _authorRepository;
         private readonly IMapper _mapper;
-        public Author(IAuthorRepository authorRepository, IMapper mapper)
+        public Author(IRepository<Entities.Author> authorRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
@@ -25,23 +25,25 @@ namespace Application.Services.Implementation
 
         public async Task<List<AuthorDto>> GetAll()
         {
-            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAllAsync());
+            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll().ToListAsync());
         }
-        public async Task<int> Add(AuthorDto authorDto)
+        public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
         {
-            var author = _mapper.Map<Entities.Author>(authorDto);
+            var author = _mapper.Map<Entities.Author>(newAuthorDto);
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
-            return author.Id;
+            return _mapper.Map<AuthorDto>(author);
         }
-        public async Task<AuthorDto> Remove(int authorId)
+        public async Task<bool> Remove(int authorId)
         {
             var author = await _authorRepository.FindByIdAsync(authorId);
-            if (author == null) 
-                return null;
+            if (author == null)
+            {
+                return false;
+            }
             _authorRepository.Remove(author);
             await _authorRepository.SaveChangesAsync();
-            return _mapper.Map<AuthorDto>(author);
+            return true;
         }
         public async Task Update(AuthorDto authorDto)
         {

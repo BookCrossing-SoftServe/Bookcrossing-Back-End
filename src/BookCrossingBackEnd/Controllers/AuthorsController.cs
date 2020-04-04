@@ -1,19 +1,19 @@
-﻿using Application.Dto;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Services = Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly Services.Interfaces.IAuthor _authorService;
+        private readonly IAuthor _authorService;
 
         public AuthorsController(IAuthor authorService)
         {
@@ -21,12 +21,14 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // GET: api/Authors/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:min(1)}")]
         public async Task<ActionResult<AuthorDto>> GetAuthor(int id)
         {
             var author = await _authorService.GetById(id);
             if (author == null)
+            {
                 return NotFound();
+            }
             return Ok(author);
         }
 
@@ -37,12 +39,11 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _authorService.GetAll());
         }
 
-        // PUT: api/Authors/5
+        // PUT: api/Authors
         [ValidationFilter]
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
         {
-            authorDto.Id = 0; // Do we need 2 DTOs? one without Id and one with?
             await _authorService.Update(authorDto);
             return NoContent();
         }
@@ -50,22 +51,23 @@ namespace BookCrossingBackEnd.Controllers
         // POST: api/Authors
         [ValidationFilter]
         [HttpPost]
-        public async Task<ActionResult<AuthorDto>> PostAuthor(AuthorDto authorDto)
+        public async Task<ActionResult<AuthorDto>> PostAuthor(NewAuthorDto authorDto)
         {
-            var insertedId = await _authorService.Add(authorDto);
-            authorDto.Id = insertedId;
-            return CreatedAtAction("GetAuthor", new { id = authorDto.Id }, authorDto);
+            var author = await _authorService.Add(authorDto);
+            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
         }
 
         // DELETE: api/Authors/5
         [ValidationFilter]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<AuthorDto>> DeleteAuthor(int id)
+        [HttpDelete("{id:min(1)}")]
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
             var author = await _authorService.Remove(id);
-            if (author == null)
+            if (author == false)
+            {
                 return NotFound();
-            return Ok(author);
+            }
+            return Ok();
         }
     }
 }

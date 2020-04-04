@@ -10,9 +10,10 @@ using Application.Dto;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.Entities;
-using Domain.IRepositories;
+using Domain;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Entities = Domain.Entities;
 
@@ -48,7 +49,12 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public IEnumerable<RequestDto> Get(int bookId)
         {
-            return _mapper.Map<IEnumerable<RequestDto>>(_requestRepository.GetAll().Where(i => i.BookId == bookId));
+            return _mapper.Map<IEnumerable<RequestDto>>(_requestRepository.GetAll()
+                .Include(i => i.Book).ThenInclude(i=>i.BookAuthor).ThenInclude(i=>i.Author)
+                .Include(i => i.Book).ThenInclude(i=>i.BookGenre).ThenInclude(i=>i.Genre)
+                .Include(i => i.Owner).ThenInclude(i=>i.UserLocation).ThenInclude(i => i.Location)
+                .Include(i => i.User).ThenInclude(i=>i.UserLocation).ThenInclude(i=>i.Location)
+                .Where(i => i.BookId == bookId));
         }
         /// <inheritdoc />
         public async Task<RequestDto> Approve(int requestId)

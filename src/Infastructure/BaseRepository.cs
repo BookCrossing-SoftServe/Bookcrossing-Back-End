@@ -2,64 +2,88 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Domain.IRepositories;
-using Infrastructure;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infastructure
+namespace Infrastructure
 {
-    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntityBase
+    public class BaseRepository<TEntity> : IDisposable, IRepository<TEntity> where TEntity : class, IEntityBase
     {
-        protected readonly BookCrossingContext _context;
-        private DbSet<TEntity> entities;
+        protected readonly BookCrossingContext Context;
+        protected DbSet<TEntity> Entities;
 
         public BaseRepository(BookCrossingContext context)
         {
-            _context = context;
-            entities = context.Set<TEntity>();
+            Context = context;
+            Entities = context.Set<TEntity>();
         }
-
-        public virtual void Add(TEntity entity)
-        {
-            entities.Add(entity);
-        }
-        public virtual async Task<List<TEntity>> GetAllAsync()
-        {
-            return await entities.ToListAsync();
-        }
-
-        public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
-        {
-            return await entities.FindAsync(keys);
-        }
-
-        public Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
-        {
-
-            return entities.FirstOrDefaultAsync(predicate);
-        }
-
         public virtual IQueryable<TEntity> GetAll()
         {
-            return entities.AsQueryable();
+            return Entities.AsQueryable();
         }
+        public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
+        {
+            return await Entities.FindAsync(keys);
+        }
+        public virtual async Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
+        {
 
+            return await Entities.FirstOrDefaultAsync(predicate);
+        }
+        public virtual void Add(TEntity entity)
+        {
+            Entities.Add(entity);
+        }
+        public virtual void AddRange(IEnumerable<TEntity> entity)
+        {
+            Entities.AddRange(entity);
+        }
         public virtual void Remove(TEntity entity)
         {
-            entities.Remove(entity);
+            Entities.Remove(entity);
         }
-
+        public virtual void RemoveRange(IEnumerable<TEntity> entity)
+        {
+            Entities.RemoveRange(entity);
+        }
         public virtual void Update(TEntity entity)
         {
-            entities.Update(entity);
+            Entities.Update(entity);
         }
-
         public async Task SaveChangesAsync()
         {
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
         }
+
+        #region IDisposable Support
+        private bool _disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    Entities = null;
+                }
+                Context?.Dispose();
+                _disposedValue = true;
+            }
+        }
+        ~BaseRepository()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
+
     }
 }

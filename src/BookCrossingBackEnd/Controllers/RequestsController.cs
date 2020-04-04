@@ -20,7 +20,7 @@ namespace BookCrossingBackEnd.Controllers
         {
             _requestService = requestService;
         }
-        [Authorize]
+        //[Authorize]
         [Route("{bookId}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
@@ -28,17 +28,17 @@ namespace BookCrossingBackEnd.Controllers
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
             return await _requestService.Make(userId, bookId);
         }
-        [Authorize]
+        //[Authorize]
         [Route("{bookId}")]
         [HttpGet]
-        public ActionResult<IEnumerable<Request>> Get([FromRoute] int bookId)
+        public ActionResult<IEnumerable<RequestDto>> Get([FromRoute] int bookId)
         {
             var requests = _requestService.Get(bookId);
             if (requests == null)
                 return NotFound();
             return Ok(requests);
         }
-        [Authorize]
+        //[Authorize]
         [ValidationFilter]
         [Route("{requestId}")]
         [HttpPut]
@@ -49,7 +49,7 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             return Ok(request);
         }
-        [Authorize]
+        //[Authorize]
         [ValidationFilter]
         [Route("{requestId}")]
         [HttpDelete]
