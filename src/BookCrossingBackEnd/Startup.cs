@@ -19,6 +19,10 @@ using BookCrossingBackEnd.Validators;
 using FluentValidation.AspNetCore;
 using Entities = Domain.Entities;
 using Request = Application.Services.Implementation.Request;
+using Microsoft.Extensions.Logging;
+using System.IO;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace BookCrossingBackEnd
 {
@@ -60,9 +64,9 @@ namespace BookCrossingBackEnd
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
-            services.AddScoped<IBook, Book>();
-          
+            services.AddScoped<IBook, Book>();          
             services.AddControllers();
+            services.AddApplicationInsightsTelemetry();
 
 
             services.AddCors(options =>
@@ -98,8 +102,11 @@ namespace BookCrossingBackEnd
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
+            var logger = loggerFactory.CreateLogger("FileLogger");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -124,6 +131,14 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
+
+            app.Run(async (context) =>
+           {
+               logger.LogInformation("Processing request {0}", context.Request.Path);
+           });
+            
         }
+
+        
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System; 
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Application.Dto;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -14,16 +15,35 @@ namespace BookCrossingBackEnd.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IBook _bookService;
+        private readonly ILogger<BooksController> _logger;
 
-        public BooksController(IBook bookService)
+        public BooksController(IBook bookService, ILogger<BooksController> logger)
         {
             _bookService = bookService;
+            _logger = logger;
         }
 
         // GET: api/Books
         [HttpGet]
         public async Task<ActionResult<BookDto>> GetAllBooks()
         {
+            //logger part
+
+            /*_logger.LogDebug("Debug");
+            _logger.LogInformation("Information");*/
+            _logger.LogWarning("Warning");
+           /* _logger.LogError("Error");
+            _logger.LogCritical("Critical");*/
+
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+            }
+
             return Ok(await _bookService.GetAll());
         }
 
