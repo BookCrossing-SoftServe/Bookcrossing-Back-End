@@ -12,13 +12,13 @@ namespace BookCrossingBackEnd.Controllers
     public class LoginController : Controller
     {
 
-        private IUser Service { get; set; }
+        private IUser UserService { get; set; }
         private IConfiguration Configuration { get; set; }
         private IToken TokenService { get; set; }
 
         public LoginController(IUser userService, IConfiguration configuration, IToken tokenService)
         {
-            this.Service = userService;
+            this.UserService = userService;
             this.Configuration = configuration;
             this.TokenService = tokenService;
         }
@@ -34,18 +34,13 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody]LoginDto model)
         {
-            IActionResult response = Unauthorized();
-            
-
-            var user = await Service.VerifyUserCredentials(model);
 
 
-            if (user == null) return response;
+            var user = await UserService.VerifyUserCredentials(model);
 
             var tokenStr = TokenService.GenerateJSONWebToken(user);
 
-            //var tokenStr = TokenService.GenerateJSONWebToken(user);
-            response = Ok(new { token = tokenStr,firstName=user.FirstName,lastName=user.LastName });
+            IActionResult response = Ok(new { token = tokenStr,firstName=user.FirstName,lastName=user.LastName });
             return response;
         }
     }
