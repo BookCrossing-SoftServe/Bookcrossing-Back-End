@@ -18,8 +18,9 @@ namespace Application.Services.Interfaces
        /// </summary>
        /// <param name="page">page index</param>
        /// <param name="pageSize">items per page</param>
-       /// <returns>Returns Pagination with Page result and Total amount of pages</returns>
-        Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize);
+       /// <param name="firstRequest">checks if count needs to be counted</param>
+       /// <returns>Returns Pagination with Page result and Total amount of items</returns>
+        Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize,bool firstRequest);
 
         /// <summary>
         /// Update specified Author

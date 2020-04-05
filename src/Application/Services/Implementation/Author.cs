@@ -25,11 +25,14 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize)
+        public async Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize, bool firstRequest = false)
         {
             var wrapper = new PaginationDto<AuthorDto>();
             var query = _authorRepository.GetAll();
-            wrapper.TotalPages = await query.CountAsync();
+            if (firstRequest)
+            {
+                wrapper.TotalCount = await query.CountAsync();
+            }
             wrapper.Page = _mapper.Map<List<AuthorDto>>(await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync());
             return wrapper;
         }

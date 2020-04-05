@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
@@ -33,9 +34,9 @@ namespace BookCrossingBackEnd.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetPage([FromQuery] int page, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetPage([FromQuery] int page, [FromQuery] int pageSize = 10, bool firstRequest = false)
         {
-            return Ok(await _authorService.GetPage(page,pageSize));
+            return Ok(await _authorService.GetPage(page,pageSize,firstRequest));
         }
         // PUT: api/Authors
         [ValidationFilter]
