@@ -16,11 +16,9 @@ namespace Application.Services.Interfaces
        /// <summary>
        /// Retrieve Pagination for Author
        /// </summary>
-       /// <param name="page">page index</param>
-       /// <param name="pageSize">items per page</param>
-       /// <param name="firstRequest">checks if count needs to be counted</param>
+       /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
        /// <returns>Returns Pagination with Page result and Total amount of items</returns>
-        Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize,bool firstRequest);
+        Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters query);
 
         /// <summary>
         /// Update specified Author

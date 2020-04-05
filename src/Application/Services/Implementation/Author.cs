@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
 using AutoMapper;
 using Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Entities = Domain.Entities;
 
 namespace Application.Services.Implementation
@@ -25,15 +27,19 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize, bool firstRequest = false)
+        public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters query)
         {
             var wrapper = new PaginationDto<AuthorDto>();
-            var query = _authorRepository.GetAll();
-            if (firstRequest)
+            var result = _authorRepository.GetAll();
+            if (query.SearchQuery != null)
             {
-                wrapper.TotalCount = await query.CountAsync();
+                result = result.Where(a=> a.LastName.Contains((query.SearchQuery)));
             }
-            wrapper.Page = _mapper.Map<List<AuthorDto>>(await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync());
+            if (query.FirstRequest)
+            {
+                wrapper.TotalCount = await result.CountAsync();
+            }
+            wrapper.Page = _mapper.Map<List<AuthorDto>>(await GetPage(result, query.Page, query.PageSize));
             return wrapper;
         }
         public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
@@ -61,5 +67,9 @@ namespace Application.Services.Implementation
             await _authorRepository.SaveChangesAsync();
         }
 
+        private async Task<List<Entities.Author>> GetPage(IQueryable<Entities.Author> query, int page, int pageSize)
+        {
+            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
     }
 }
