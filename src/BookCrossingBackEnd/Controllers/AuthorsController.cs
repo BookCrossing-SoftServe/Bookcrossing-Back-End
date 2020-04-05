@@ -31,14 +31,12 @@ namespace BookCrossingBackEnd.Controllers
             }
             return Ok(author);
         }
-
-        // GET: api/Authors
+        
         [HttpGet]
-        public async Task<ActionResult<List<AuthorDto>>> GetAllAuthor()
+        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetPage([FromQuery] int page, [FromQuery] int pageSize = 10)
         {
-            return Ok(await _authorService.GetAll());
+            return Ok(await _authorService.GetPage(page,pageSize));
         }
-
         // PUT: api/Authors
         [ValidationFilter]
         [HttpPut]

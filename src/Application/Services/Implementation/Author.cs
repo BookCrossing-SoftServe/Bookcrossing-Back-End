@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Application.Dto;
 using AutoMapper;
@@ -23,9 +25,13 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<List<AuthorDto>> GetAll()
+        public async Task<PaginationDto<AuthorDto>> GetPage(int page, int pageSize)
         {
-            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll().ToListAsync());
+            var wrapper = new PaginationDto<AuthorDto>();
+            var query = _authorRepository.GetAll();
+            wrapper.TotalPages = await query.CountAsync();
+            wrapper.Page = _mapper.Map<List<AuthorDto>>(await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync());
+            return wrapper;
         }
         public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
         {
@@ -51,5 +57,6 @@ namespace Application.Services.Implementation
             _authorRepository.Update(author);
             await _authorRepository.SaveChangesAsync();
         }
+
     }
 }
