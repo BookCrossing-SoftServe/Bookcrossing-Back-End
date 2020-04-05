@@ -3,6 +3,7 @@ using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using BookCrossingBackEnd.Filters;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,6 +33,7 @@ namespace BookCrossingBackEnd.Controllers
         /// <param name="model">This parameter receives email and password from form on client side</param>
         /// <returns>Returns JSON web token or http response code 401(Unauthorized)</returns>
         [HttpPost]
+        [LoginFilter]
         public async Task<IActionResult> Login([FromBody]LoginDto model)
         {
 
