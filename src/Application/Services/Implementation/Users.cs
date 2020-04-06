@@ -27,17 +27,14 @@ namespace Application.Services.Implementation
             this._mapper = mapper;
         }
         public async Task<UserDto> VerifyUserCredentials(LoginDto loginModel)
-        { 
-
-            
-
+        {
             var user = _mapper.Map<UserDto>(await _userRepository.GetAll()
                 .Include(r => r.Role)
                 .FirstOrDefaultAsync(p => p.Email == loginModel.Email && p.Password == loginModel.Password));
+            
+            if(user==null) throw new InvalidCredentialException();
 
             return user;
-
-
         }
     }
 }
