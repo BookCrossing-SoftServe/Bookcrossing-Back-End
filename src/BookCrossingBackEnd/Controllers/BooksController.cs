@@ -22,7 +22,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<BookDto>> GetAllBooks()
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetAllBooks()
         {
             return Ok(await _bookService.GetAll());
         }
@@ -65,7 +65,7 @@ namespace BookCrossingBackEnd.Controllers
             var book = await _bookService.Remove(id);
             if (book == null)
                 return NotFound();
-            return Ok(book);
+            return Ok();
         }
 
     }
