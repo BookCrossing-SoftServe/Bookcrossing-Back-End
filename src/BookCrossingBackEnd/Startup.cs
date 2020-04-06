@@ -22,14 +22,18 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace BookCrossingBackEnd
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger _logger;
+
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         private IConfiguration Configuration { get; }
@@ -61,14 +65,10 @@ namespace BookCrossingBackEnd
             services.AddScoped<IUser, Users>();
             services.AddScoped<IRequest, Request>();
             services.AddScoped<IAuthor, Author>();
-<<<<<<< HEAD
+            services.AddLogging();
             services.AddScoped<IBook, Book>();          
             services.AddControllers();
             services.AddApplicationInsightsTelemetry();
-
-=======
-            services.AddScoped<IBook, Book>();                     
->>>>>>> 3753ddebe0b4b3c2f35a6de1d6cb403d0e4c981b
 
             services.AddCors(options =>
             {
@@ -103,11 +103,8 @@ namespace BookCrossingBackEnd
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> _logger)
         {
-            loggerFactory.AddFile(Path.Combine(Directory.GetCurrentDirectory(), "logger.txt"));
-            var logger = loggerFactory.CreateLogger("FileLogger");
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -132,11 +129,16 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
-
-            app.Run(async (context) =>
-           {
-               logger.LogInformation("Processing request {0}", context.Request.Path);
-           });
+            if (env.IsDevelopment())
+            {
+                _logger.LogInformation("Configuring for Development environment");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                // The following will be picked up by Application Insights.
+                _logger.LogInformation("Configuring for Production environment");
+            }            
             
         }
 

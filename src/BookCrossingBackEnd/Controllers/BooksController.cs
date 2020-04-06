@@ -29,20 +29,20 @@ namespace BookCrossingBackEnd.Controllers
         {
             //logger part
 
-            /*_logger.LogDebug("Debug");
-            _logger.LogInformation("Information");*/
-            _logger.LogWarning("Warning");
+            //_logger.LogDebug("Debug");
+            //_logger.LogInformation("GetAllBooks Information");
+           // _logger.LogWarning("Warning");
            /* _logger.LogError("Error");
             _logger.LogCritical("Critical");*/
 
-            try
+            /*try
             {
                 throw new NotImplementedException();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-            }
+            }*/
 
             return Ok(await _bookService.GetAll());
         }
