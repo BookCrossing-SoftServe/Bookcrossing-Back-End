@@ -16,11 +16,11 @@ namespace BookCrossingBackEnd.Controllers
     public class UsersController : Controller
     {
 
-        private IUser serice { get; set; }
+        private IUserService serice { get; set; }
         private IConfiguration configuration { get; set; }
-        private IToken tokenService { get; set; }
+        private ITokenService tokenService { get; set; }
 
-        public UsersController(IUser userService, IConfiguration configuration, IToken tokenService)
+        public UsersController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
         {
             this.serice = userService;
             this.configuration = configuration;

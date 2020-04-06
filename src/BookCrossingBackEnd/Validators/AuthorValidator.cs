@@ -7,7 +7,7 @@ namespace BookCrossingBackEnd.Validators
     {
         public AuthorValidator()
         {
-            this.CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.StopOnFirstFailure;
             RuleFor(x => x.Id).GreaterThan(0);
             RuleFor(x => x.FirstName).NameValidator(2, 20);
             RuleFor(x => x.LastName).NameValidator(2, 20);
