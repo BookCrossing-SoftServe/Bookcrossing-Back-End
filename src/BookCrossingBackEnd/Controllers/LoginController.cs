@@ -5,19 +5,17 @@ using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using BookCrossingBackEnd.Filters;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
     public class LoginController : Controller
     {
 
-        private IUser UserService { get; set; }
+        private IUserService UserService { get; set; }
         private IConfiguration Configuration { get; set; }
-        private IToken TokenService { get; set; }
+        private ITokenService TokenService { get; set; }
 
-        public LoginController(IUser userService, IConfiguration configuration, IToken tokenService)
+        public LoginController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
         {
             this.UserService = userService;
             this.Configuration = configuration;

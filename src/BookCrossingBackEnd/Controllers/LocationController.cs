@@ -3,7 +3,6 @@ using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Services = Application.Services;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -11,9 +10,9 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class LocationController : ControllerBase
     {
-        private readonly Services.Interfaces.ILocation _locationService;
+        private readonly ILocationService _locationService;
 
-        public LocationController(ILocation locationService)
+        public LocationController(ILocationService locationService)
         {
             _locationService = locationService;
         }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
@@ -13,9 +9,9 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly IBook _bookService;
+        private readonly IBookService _bookService;
 
-        public BooksController(IBook bookService)
+        public BooksController(IBookService bookService)
         {
             _bookService = bookService;
         }

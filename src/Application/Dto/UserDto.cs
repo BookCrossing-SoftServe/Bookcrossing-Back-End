@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Domain.RDBMS.Entities;
 using System.Collections.Generic;
-using System.Text;
-using Domain.Entities;
 
 namespace Application.Dto
 {

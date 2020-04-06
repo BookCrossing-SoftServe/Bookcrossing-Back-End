@@ -16,7 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) 
 
 ### Installing
-2. In project BookCrossingBackEnd create file appsetings.json. And paste the code below.
+2. In project BookCrossingBackEnd create file appsettings.json. And paste the code below.
 ```
 {
  "ConnectionStrings": {

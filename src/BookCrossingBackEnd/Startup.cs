@@ -1,10 +1,7 @@
 using System.Text;
-using Infrastructure;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Domain;
-using Infastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,8 +13,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
 using FluentValidation.AspNetCore;
-using Entities = Domain.Entities;
-using Request = Application.Services.Implementation.Request;
+using RequestService = Application.Services.Implementation.RequestService;
+using Infrastructure.RDBMS;
+using Domain.RDBMS;
 
 namespace BookCrossingBackEnd
 {
@@ -52,12 +50,12 @@ namespace BookCrossingBackEnd
             );
 
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddScoped<ILocation, Location>();
-            services.AddScoped<IToken, Token>();
-            services.AddScoped<IUser, Users>();
-            services.AddScoped<IRequest, Request>();
-            services.AddScoped<IAuthor, Author>();
-            services.AddScoped<IBook, Book>();                     
+            services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UsersService>();
+            services.AddScoped<IRequestService, RequestService>();
+            services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IBookService, BookService>();                     
 
             services.AddCors(options =>
             {

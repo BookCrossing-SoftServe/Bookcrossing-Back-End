@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Filters;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
@@ -13,9 +12,9 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly IAuthor _authorService;
+        private readonly IAuthorService _authorService;
 
-        public AuthorsController(IAuthor authorService)
+        public AuthorsController(IAuthorService authorService)
         {
             _authorService = authorService;
         }
