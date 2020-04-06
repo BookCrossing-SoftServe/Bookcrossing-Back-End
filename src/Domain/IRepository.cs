@@ -57,6 +57,6 @@ namespace Domain
         /// <summary>
         /// Save changes into the database
         /// </summary>
-        Task SaveChangesAsync();
+        Task<bool> SaveChangesAsync();
     }
 }

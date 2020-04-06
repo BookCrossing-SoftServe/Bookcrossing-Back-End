@@ -29,7 +29,7 @@ namespace Application.Services.Implementation
 
             var claims = new[]
             {
-                new Claim("id",user.Id.ToString()),
+                new Claim(ClaimTypes.Name,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Role,user.Role.Name)

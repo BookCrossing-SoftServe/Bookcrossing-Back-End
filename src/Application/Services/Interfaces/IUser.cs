@@ -10,7 +10,10 @@ namespace Application.Services.Interfaces
     public interface IUser
     {
         Task<UserDto> VerifyUserCredentials(LoginDto loginModel);
+        Task<List<UserDto>> GetAllUsers();
+        Task UpdateUser(UserUpdateDto userDto);
 
+        Task RemoveUser(int userId);
 
     }
 }

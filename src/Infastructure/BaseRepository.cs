@@ -52,9 +52,11 @@ namespace Infrastructure
         {
             Entities.Update(entity);
         }
-        public async Task SaveChangesAsync()
+
+        public async Task<bool> SaveChangesAsync()
         {
-            await Context.SaveChangesAsync();
+            var updated = await Context.SaveChangesAsync();
+            return updated > 0;
         }
 
         #region IDisposable Support

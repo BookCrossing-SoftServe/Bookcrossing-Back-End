@@ -9,6 +9,7 @@ namespace Application
     {
         public Mapper()
         {
+            CreateMap<UserUpdateDto, User>().ReverseMap();
             CreateMap<AuthorDto, Author>().ReverseMap();
             CreateMap<NewAuthorDto, Author>().ReverseMap();
             CreateMap<AuthorDto, BookAuthor>()

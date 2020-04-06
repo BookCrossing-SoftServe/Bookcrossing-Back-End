@@ -34,7 +34,35 @@ namespace Application.Services.Implementation
             
             if(user==null) throw new InvalidCredentialException();
 
-            return user;
+            return user;        
         }
+
+        public async Task<List<UserDto>> GetAllUsers()
+        {
+            return _mapper.Map<List<UserDto>>(await _userRepository.GetAll().Include(p=>p.UserLocation).ToListAsync());
+        }
+
+        public async Task UpdateUser(UserUpdateDto userUpdateDto)
+        {
+            var user = _mapper.Map<User>(userUpdateDto);
+            _userRepository.Update(user);
+            var updated = await _userRepository.SaveChangesAsync();
+            if (!updated)
+            {
+                throw new DbUpdateException();
+            }
+        }
+
+        public async Task RemoveUser(int userId)
+        {
+            var user = await _userRepository.FindByIdAsync(userId);
+            _userRepository.Remove(user);
+            var deleted = await _userRepository.SaveChangesAsync();
+            if (!deleted)
+            {
+                throw new DbUpdateException();
+            }
+        }
+
     }
 }
