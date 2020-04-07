@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -56,11 +57,13 @@ namespace BookCrossingBackEnd.Controllers
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BookDto>> DeleteAuthor([FromRoute] int id)
+        public async Task<ActionResult<BookDto>> DeleteBook([FromRoute] int id)
         {
             var book = await _bookService.Remove(id);
-            if (book == null)
+            if (book == false)
+            {
                 return NotFound();
+            }
             return Ok();
         }
 

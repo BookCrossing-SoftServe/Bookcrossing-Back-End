@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -10,45 +11,38 @@ using System.Threading.Tasks;
 
 namespace ApplicationTest.Controllers
 {
+    [TestFixture]
     class BookControllerTest
     {
+        private Mock<IBookService> _bookService;
+
+        public BookControllerTest()
+        {
+            _bookService = new Mock<IBookService>();
+        }
+
         [Test]
         public async Task TestGetAll()
         {
-            var serviceMock = new Mock<IBook>();
-            serviceMock.Setup(s => s.GetAll()).ReturnsAsync((GetTestBooks()));
-            var booksController = new BooksController(serviceMock.Object);
+            _bookService.Setup(s => s.GetAll()).ReturnsAsync((GetTestBooks()));
+            var booksController = new BooksController(_bookService.Object);
 
             var getAllBooksResult = await booksController.GetAllBooks();
 
             var okResult = getAllBooksResult.Result as OkObjectResult;
-            Assert.IsInstanceOf<OkObjectResult>(okResult);
+            okResult.Should().BeOfType<OkObjectResult>();
             var books = okResult.Value as List<BookDto>;
-            Assert.AreEqual(GetTestBooks().Count, books.Count());
+            books.Count().Should().Be(GetTestBooks().Count);
         }
 
         private List<BookDto> GetTestBooks()
         {
-            var books = new List<BookDto>
+            return  new List<BookDto>
             {
+                new BookDto(),
                 new BookDto()
-                {
-                    UserId = 1,
-                    Name = "CLR via C#",
-                    Available = true,
-                    Publisher = "Kolosok"
-
-                },
-                new BookDto()
-                {
-                    UserId = 1,
-                    Name = "CLR via C#",
-                    Available = true,
-                    Publisher = "Kolosok"
-
-                }
             };
-            return books;
         }
+
     }
 }

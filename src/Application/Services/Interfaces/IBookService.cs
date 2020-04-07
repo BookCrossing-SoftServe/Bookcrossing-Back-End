@@ -31,7 +31,7 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="bookId">Book's ID</param>
         /// <returns>Returns removed Book DTO</returns>
-        Task<BookDto> Remove(int bookId);
+        Task<bool> Remove(int bookId);
 
         /// <summary>
         /// Create new book and add it into Database

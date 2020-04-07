@@ -46,7 +46,7 @@ namespace Application.Services.Implementation
             return book.Id;
         }
 
-        public async Task<BookDto> Remove(int bookId)
+        public async Task<bool> Remove(int bookId)
         {
             var book = await _bookRepository.GetAll()
                             .Include(p => p.BookAuthor)
@@ -55,10 +55,10 @@ namespace Application.Services.Implementation
                             .ThenInclude(x => x.Genre)
                             .FirstOrDefaultAsync(p => p.Id == bookId);
             if (book == null)
-                return null;
+                return false;
             _bookRepository.Remove(book);
             await _bookRepository.SaveChangesAsync();
-            return _mapper.Map<BookDto>(book);
+            return true;
         }
 
         public async Task Update(BookDto bookDto)
