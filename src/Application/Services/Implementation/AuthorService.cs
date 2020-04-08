@@ -4,19 +4,19 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Services.Interfaces;
 using AutoMapper;
-using Domain;
+using Domain.RDBMS;
+using Domain.RDBMS.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
-using Entities = Domain.Entities;
 
 namespace Application.Services.Implementation
 {
-    public class Author : Interfaces.IAuthor
+    public class AuthorService : IAuthorService
     {
-        private readonly IRepository<Entities.Author> _authorRepository;
+        private readonly IRepository<Author> _authorRepository;
         private readonly IMapper _mapper;
-        public Author(IRepository<Entities.Author> authorRepository, IMapper mapper)
+        public AuthorService(IRepository<Author> authorRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
@@ -44,7 +44,7 @@ namespace Application.Services.Implementation
         }
         public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
         {
-            var author = _mapper.Map<Entities.Author>(newAuthorDto);
+            var author = _mapper.Map<Author>(newAuthorDto);
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
             return _mapper.Map<AuthorDto>(author);
@@ -62,12 +62,12 @@ namespace Application.Services.Implementation
         }
         public async Task Update(AuthorDto authorDto)
         {
-            var author = _mapper.Map<Entities.Author>(authorDto);
+            var author = _mapper.Map<Author>(authorDto);
             _authorRepository.Update(author);
             await _authorRepository.SaveChangesAsync();
         }
 
-        private async Task<List<Entities.Author>> GetPage(IQueryable<Entities.Author> query, int page, int pageSize)
+        private async Task<List<Author>> GetPage(IQueryable<Author> query, int page, int pageSize)
         {
             return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
