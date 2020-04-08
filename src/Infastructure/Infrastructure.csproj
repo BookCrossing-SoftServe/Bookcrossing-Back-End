@@ -6,8 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NoSQL\Concrete\**" />
     <Compile Remove="Repositories\**" />
+    <EmbeddedResource Remove="NoSQL\Concrete\**" />
     <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="NoSQL\Concrete\**" />
     <None Remove="Repositories\**" />
   </ItemGroup>
 
@@ -22,14 +25,11 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.2" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NoSQL\Concrete\" />
   </ItemGroup>
 
 </Project>

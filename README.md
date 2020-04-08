@@ -19,9 +19,13 @@ These instructions will get you a copy of the project up and running on your loc
 2. In project BookCrossingBackEnd create file appsettings.json. And paste the code below.
 ```
 {
- "ConnectionStrings": {
-    "DefaultConnection": "Server=ServerName;Database=DatabaseName;Trusted_Connection=True;MultipleActiveResultSets=true",
-	"AzureConnection": "Server=tcp:{server_name}.database.windows.net,1433;Initial Catalog={database_name};Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(LocalDB)\\MSSQLLocalDB;Database=BookCrossingDB;Trusted_Connection=True;MultipleActiveResultSets=true",
+    "AzureConnection": "Server=tcp:{server_name}.database.windows.net,1433;Initial Catalog={database_name};Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"
+  },
+  "MongoSettings": {
+    "ConnectionString": "mongodb://{Server name}",
+    "DatabaseName": "BookCrossingDB"
   },
   "Logging": {
     "LogLevel": {
