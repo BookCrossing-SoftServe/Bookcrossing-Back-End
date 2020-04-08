@@ -14,8 +14,9 @@ using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
 using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
-using Infrastructure.RDBMS;
-using Domain.RDBMS;
+using Infrastructure.NoSQL;
+using Domain.NoSQL;
+using Microsoft.Extensions.Options;
 
 namespace BookCrossingBackEnd
 {
@@ -34,8 +35,15 @@ namespace BookCrossingBackEnd
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
             // Please download appsettings.json for connecting to Azure DB
             //string azureConnection = Configuration.GetConnectionString("AzureConnection");
-            services.AddDbContext<BookCrossingContext>(options =>
+            services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
                 options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+
+            // requires using Microsoft.Extensions.Options
+            services.Configure<MongoSettings>(
+                Configuration.GetSection(nameof(MongoSettings)));
+
+            services.AddSingleton<IMongoSettings>(sp =>
+                sp.GetRequiredService<IOptions<MongoSettings>>().Value);
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -49,7 +57,8 @@ namespace BookCrossingBackEnd
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(Domain.NoSQL.IRepository<>), typeof(Infrastructure.NoSQL.BaseRepository<>));
+            services.AddScoped(typeof(Domain.RDBMS.IRepository<>), typeof(Infrastructure.RDBMS.BaseRepository<>));
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UsersService>();
