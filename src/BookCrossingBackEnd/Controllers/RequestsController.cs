@@ -1,6 +1,4 @@
 ﻿using Application.Services.Interfaces;
-using Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,8 +13,8 @@ namespace BookCrossingBackEnd.Controllers
     [ApiController]
     public class RequestsController : ControllerBase
     {
-        private readonly IRequest _requestService;
-        public RequestsController(IRequest requestService)
+        private readonly IRequestService _requestService;
+        public RequestsController(IRequestService requestService)
         {
             _requestService = requestService;
         }

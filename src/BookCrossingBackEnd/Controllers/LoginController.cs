@@ -3,8 +3,7 @@ using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using BookCrossingBackEnd.Filters;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -12,13 +11,13 @@ namespace BookCrossingBackEnd.Controllers
     public class LoginController : Controller
     {
 
-        private IUser Service { get; set; }
+        private IUserService UserService { get; set; }
         private IConfiguration Configuration { get; set; }
-        private IToken TokenService { get; set; }
+        private ITokenService TokenService { get; set; }
 
-        public LoginController(IUser userService, IConfiguration configuration, IToken tokenService)
+        public LoginController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
         {
-            this.Service = userService;
+            this.UserService = userService;
             this.Configuration = configuration;
             this.TokenService = tokenService;
         }
@@ -32,20 +31,16 @@ namespace BookCrossingBackEnd.Controllers
         /// <param name="model">This parameter receives email and password from form on client side</param>
         /// <returns>Returns JSON web token or http response code 401(Unauthorized)</returns>
         [HttpPost]
+        [LoginFilter]
         public async Task<IActionResult> Login([FromBody]LoginDto model)
         {
-            IActionResult response = Unauthorized();
-            
-
-            var user = await Service.VerifyUserCredentials(model);
 
 
-            if (user == null) return response;
+            var user = await UserService.VerifyUserCredentials(model);
 
             var tokenStr = TokenService.GenerateJSONWebToken(user);
 
-            //var tokenStr = TokenService.GenerateJSONWebToken(user);
-            response = Ok(new { token = tokenStr,firstName=user.FirstName,lastName=user.LastName });
+            IActionResult response = Ok(new { token = tokenStr,firstName=user.FirstName,lastName=user.LastName });
             return response;
         }
     }
