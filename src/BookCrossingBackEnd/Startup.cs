@@ -1,4 +1,5 @@
 using System.Text;
+using Application.Dto.Email;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -12,7 +13,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
-using Domain;
 using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;

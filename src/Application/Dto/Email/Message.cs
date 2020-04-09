@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MimeKit;
 
-namespace Domain
+namespace Application.Dto.Email
 {
     public class Message
     {
