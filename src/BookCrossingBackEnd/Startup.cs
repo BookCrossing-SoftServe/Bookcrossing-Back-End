@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
+using Domain;
 using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;
@@ -45,6 +46,11 @@ namespace BookCrossingBackEnd
             services.AddSingleton<IMongoSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoSettings>>().Value);
 
+            var emailConfig = Configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.Mapper());
@@ -62,6 +68,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UsersService>();
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookService, BookService>();                     
