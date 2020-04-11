@@ -18,17 +18,20 @@ using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;
 using Domain.NoSQL;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace BookCrossingBackEnd
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         private IConfiguration Configuration { get; }
+        private readonly ILogger _logger;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -71,7 +74,10 @@ namespace BookCrossingBackEnd
             services.AddScoped<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IBookService, BookService>();                     
+            services.AddScoped<IBookService, BookService>();
+            services.AddLogging();
+            services.AddApplicationInsightsTelemetry();
+
 
             services.AddCors(options =>
             {
@@ -132,6 +138,18 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
+
+            if (env.IsDevelopment())
+            {
+                _logger.LogInformation("Configuring for Development environment");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                _logger.LogInformation("Configuring for Production environment");
+            }
+
         }
+    
     }
 }
