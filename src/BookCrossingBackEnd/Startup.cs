@@ -71,7 +71,9 @@ namespace BookCrossingBackEnd
             services.AddScoped<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IBookService, BookService>();                     
+            services.AddScoped<IBookService, BookService>();
+
+            services.AddSingleton<IPaginationService, PaginationService>();
 
             services.AddCors(options =>
             {

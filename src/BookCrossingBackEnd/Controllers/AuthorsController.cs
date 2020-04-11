@@ -33,7 +33,7 @@ namespace BookCrossingBackEnd.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetPage([FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] QueryParameters query)
         {
             return Ok(await _authorService.GetAuthors(query));
         }

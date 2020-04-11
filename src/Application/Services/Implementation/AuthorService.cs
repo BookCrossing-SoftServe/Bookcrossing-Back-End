@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -16,10 +17,12 @@ namespace Application.Services.Implementation
     {
         private readonly IRepository<Author> _authorRepository;
         private readonly IMapper _mapper;
-        public AuthorService(IRepository<Author> authorRepository, IMapper mapper)
+        private readonly IPaginationService _paginationService;
+        public AuthorService(IRepository<Author> authorRepository, IMapper mapper, IPaginationService paginationService)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _paginationService = paginationService;
         }
 
         public async Task<AuthorDto> GetById(int authorId)
@@ -27,20 +30,14 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters query)
+        public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters parameters)
         {
-            var wrapper = new PaginationDto<AuthorDto>();
             var result = _authorRepository.GetAll();
-            if (query.SearchQuery != null)
+            if (parameters.SearchQuery != null)
             {
-                result = result.Where(a=> a.LastName.Contains((query.SearchQuery)));
+               result = result.Where(a => a.LastName.Contains((parameters.SearchQuery)));
             }
-            if (query.FirstRequest)
-            {
-                wrapper.TotalCount = await result.CountAsync();
-            }
-            wrapper.Page = _mapper.Map<List<AuthorDto>>(await GetPage(result, query.Page, query.PageSize));
-            return wrapper;
+            return await _paginationService.GetPage<AuthorDto,Author>(result, parameters);
         }
         public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
         {
@@ -65,11 +62,6 @@ namespace Application.Services.Implementation
             var author = _mapper.Map<Author>(authorDto);
             _authorRepository.Update(author);
             await _authorRepository.SaveChangesAsync();
-        }
-
-        private async Task<List<Author>> GetPage(IQueryable<Author> query, int page, int pageSize)
-        {
-            return await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
     }
 }
