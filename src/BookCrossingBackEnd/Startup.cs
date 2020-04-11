@@ -1,4 +1,5 @@
 using System.Text;
+using Application.Dto.Email;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -15,19 +16,23 @@ using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
 using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
-using Infrastructure.RDBMS;
-using Domain.RDBMS;
+using Infrastructure.NoSQL;
+using Domain.NoSQL;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace BookCrossingBackEnd
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         private IConfiguration Configuration { get; }
+        private readonly ILogger _logger;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,8 +40,20 @@ namespace BookCrossingBackEnd
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
             // Please download appsettings.json for connecting to Azure DB
             //string azureConnection = Configuration.GetConnectionString("AzureConnection");
-            services.AddDbContext<BookCrossingContext>(options =>
+            services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
                 options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+
+            // requires using Microsoft.Extensions.Options
+            services.Configure<MongoSettings>(
+                Configuration.GetSection(nameof(MongoSettings)));
+
+            services.AddSingleton<IMongoSettings>(sp =>
+                sp.GetRequiredService<IOptions<MongoSettings>>().Value);
+
+            var emailConfig = Configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -50,13 +67,18 @@ namespace BookCrossingBackEnd
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddScoped(typeof(Domain.NoSQL.IRepository<>), typeof(Infrastructure.NoSQL.BaseRepository<>));
+            services.AddScoped(typeof(Domain.RDBMS.IRepository<>), typeof(Infrastructure.RDBMS.BaseRepository<>));
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UsersService>();
+            services.AddScoped<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IBookService, BookService>();                     
+            services.AddScoped<IBookService, BookService>();
+            services.AddLogging();
+            services.AddApplicationInsightsTelemetry();
+
 
             services.AddCors(options =>
             {
@@ -124,6 +146,18 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
+
+            if (env.IsDevelopment())
+            {
+                _logger.LogInformation("Configuring for Development environment");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                _logger.LogInformation("Configuring for Production environment");
+            }
+
         }
+    
     }
 }
