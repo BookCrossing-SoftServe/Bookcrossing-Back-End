@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using Infrastructure.RDBMS;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -34,24 +36,30 @@ namespace BookCrossingBackEnd
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .ConfigureLogging(
-                    builder =>
-                    {
-                        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                        var isDevelopment = environment == Environments.Development;
-                        if (isDevelopment)
-                        {
-                            builder.AddApplicationInsights("1efe21aa-574a-49cc-ab53-8e93c75074bf");
-                            builder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>
-                                ("", LogLevel.Information);
-                        }
-                        else
-                        {
-                            builder.AddApplicationInsights("1f191e43-3248-4c80-9160-d12ba9f10044");
-                            builder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>
-                                ("", LogLevel.Information);
-                        }
+                .ConfigureLogging((hostingContext, logging) =>
+                {
 
-                    });
+                    var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    var isDevelopment = environment == Environments.Development;
+                    if (isDevelopment)
+                    {
+                        var appInsightKey = hostingContext.Configuration["iKeyForDevelop"];
+                        logging.AddApplicationInsights(appInsightKey);
+                        logging
+                            .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
+                                    ApplicationInsightsLoggerProvider>
+                                ("", LogLevel.Information);
+                    }
+                    else
+                    {
+                        var appInsightKey = hostingContext.Configuration["iKeyForProduction"];
+                        logging.AddApplicationInsights(appInsightKey);
+                        logging
+                            .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
+                                    ApplicationInsightsLoggerProvider>
+                                ("", LogLevel.Information);
+                    }
+                });
+        
     }
 }
