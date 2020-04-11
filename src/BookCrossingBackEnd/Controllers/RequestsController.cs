@@ -37,7 +37,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
         //[Authorize]
-        [ValidationFilter]
+        [ModelValidationFilter]
         [Route("{requestId}")]
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
@@ -48,7 +48,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(request);
         }
         //[Authorize]
-        [ValidationFilter]
+        [ModelValidationFilter]
         [Route("{requestId}")]
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
