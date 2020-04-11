@@ -1,5 +1,6 @@
 using System;
 using Infrastructure.RDBMS;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +12,7 @@ namespace BookCrossingBackEnd
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            var host = CreateWebHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -30,11 +31,27 @@ namespace BookCrossingBackEnd
             host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .ConfigureLogging(
+                    builder =>
+                    {
+                        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                        var isDevelopment = environment == Environments.Development;
+                        if (isDevelopment)
+                        {
+                            builder.AddApplicationInsights("1efe21aa-574a-49cc-ab53-8e93c75074bf");
+                            builder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>
+                                ("", LogLevel.Information);
+                        }
+                        else
+                        {
+                            builder.AddApplicationInsights("1f191e43-3248-4c80-9160-d12ba9f10044");
+                            builder.AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider>
+                                ("", LogLevel.Information);
+                        }
+
+                    });
     }
 }
