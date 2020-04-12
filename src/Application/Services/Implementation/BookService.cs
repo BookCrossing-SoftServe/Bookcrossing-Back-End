@@ -5,16 +5,25 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
+using System.Linq;
+using System.Transactions;
+using Infrastructure.RDBMS;
 
 namespace Application.Services.Implementation
 {
     public class BookService : Interfaces.IBookService
     {
         private readonly IRepository<Book> _bookRepository;
+        private readonly IRepository<BookAuthor> _bookAuthorRepository;
+        private readonly IRepository<BookGenre> _bookGenreRepository;
+        private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
-        public BookService(IRepository<Book> bookRepository, IMapper mapper)
+        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, BookCrossingContext context)
         {
             _bookRepository = bookRepository;
+            _bookAuthorRepository = bookAuthorRepository;
+            _bookGenreRepository = bookGenreRepository;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -63,9 +72,18 @@ namespace Application.Services.Implementation
 
         public async Task Update(BookDto bookDto)
         {
-            var book = _mapper.Map<Book>(bookDto);
-            _bookRepository.Update(book);
-            await _bookRepository.SaveChangesAsync();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                var book = _mapper.Map<Book>(bookDto);
+                _bookAuthorRepository.RemoveRange(await _bookAuthorRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
+                _bookGenreRepository.RemoveRange(await _bookGenreRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
+                await _bookRepository.SaveChangesAsync();
+                _bookAuthorRepository.AddRange(book.BookAuthor);
+                _bookGenreRepository.AddRange(book.BookGenre);
+                _bookRepository.Update(book);
+                await _bookRepository.SaveChangesAsync();
+                transaction.Commit();
+            }
         }
     }
 }
