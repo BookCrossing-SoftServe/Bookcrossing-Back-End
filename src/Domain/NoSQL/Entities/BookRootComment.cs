@@ -20,7 +20,7 @@ namespace Domain.NoSQL.Entities
         [BsonIgnoreIfDefault]
         public int UserId { get; set; }
         [BsonIgnoreIfNull]
-        public List<BookChildComment> Comments { get; set; }
+        public IEnumerable<BookChildComment> Comments { get; set; }
         public BookRootComment() { }
         public BookRootComment(bool IsForInserting)
         {
