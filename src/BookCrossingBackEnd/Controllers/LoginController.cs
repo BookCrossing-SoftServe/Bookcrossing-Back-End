@@ -12,18 +12,13 @@ namespace BookCrossingBackEnd.Controllers
     {
 
         private IUserService UserService { get; set; }
-        private IConfiguration Configuration { get; set; }
         private ITokenService TokenService { get; set; }
 
-        public LoginController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
+        public LoginController(IUserService userService, ITokenService tokenService)
         {
             this.UserService = userService;
-            this.Configuration = configuration;
             this.TokenService = tokenService;
         }
-
-
-
 
         /// <summary>
         /// Function for user authentication.
