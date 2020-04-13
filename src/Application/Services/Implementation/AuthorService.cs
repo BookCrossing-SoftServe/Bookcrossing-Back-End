@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -32,12 +33,8 @@ namespace Application.Services.Implementation
 
         public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters parameters)
         {
-            var result = _authorRepository.GetAll();
-            if (parameters.SearchQuery != null)
-            {
-               result = result.Where(a => a.LastName.Contains((parameters.SearchQuery)));
-            }
-            return await _paginationService.GetPage<AuthorDto,Author>(result, parameters);
+            var query = _authorRepository.GetAll();
+            return await _paginationService.GetPage<AuthorDto, Author>(query, parameters);
         }
         public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
         {
