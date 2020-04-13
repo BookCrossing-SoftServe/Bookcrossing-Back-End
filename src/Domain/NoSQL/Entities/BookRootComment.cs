@@ -26,6 +26,7 @@ namespace Domain.NoSQL.Entities
         {
             if (IsForInserting)
             {
+                Id = ObjectId.GenerateNewId().ToString();
                 Comments = new List<BookChildComment>();
             }
         }
