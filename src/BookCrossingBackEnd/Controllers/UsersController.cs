@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Application.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,16 +18,12 @@ namespace BookCrossingBackEnd.Controllers
 
     public class UsersController : Controller
     {
+        private IUserService UserService { get; set; }
 
-        private IUserService serice { get; set; }
-        private IConfiguration configuration { get; set; }
-        private ITokenService tokenService { get; set; }
-
-        public UsersController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
+        public UsersController(IUserService userService)
         {
-            this.serice = userService;
-            this.configuration = configuration;
-            this.tokenService = tokenService;
+            this.UserService = userService;
+
         }
 
         /// <summary>
@@ -33,14 +32,10 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
-        [Authorize]
-        public IActionResult Get()
+        public async Task<ActionResult<UserDto>> Get()
         {
-            var IdClaim = User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase));
-            if (IdClaim != null)
-                return Ok($"Your id is {IdClaim.Value}");
-            return BadRequest();
-
+            var users = await UserService.GetAllUsers();
+            return Ok(users);
         }
 
 
@@ -56,21 +51,28 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Get(int id)
         {
-            return Ok("Lol");
+            throw new NotImplementedException();
         }
 
 
+      
 
         // PUT api/<controller>/5
         /// <summary>
         /// Function for updating info about user
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="value"></param>
-        [HttpPut("{id}")]
-        public void Update(int id, [FromBody]string value)
+        /// <param name="user"></param>
+        [HttpPut]
+        [Authorize]
+        // [UserUpdateFilter]
+        public async Task<IActionResult> Update([FromBody]UserUpdateDto user)
         {
-            throw new NotImplementedException();
+
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userId = claimsIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            user.Id = int.Parse(userId);
+            await UserService.UpdateUser(user);
+            return Ok();
         }
 
         /// <summary>
@@ -78,11 +80,14 @@ namespace BookCrossingBackEnd.Controllers
         /// </summary>
         /// <param name="id"></param>
         // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete()
         {
-            throw new NotImplementedException();
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userId = claimsIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            await UserService.RemoveUser(int.Parse(userId));
+            return Ok();
         }
     }
 }
