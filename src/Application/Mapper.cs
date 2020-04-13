@@ -3,13 +3,22 @@ using Application.Dto;
 using AutoMapper;
 using RdbmsEntities = Domain.RDBMS.Entities;
 using NoSqlEntities = Domain.NoSQL.Entities;
+using Application.Dto.Comment;
+using System;
 
 namespace Application
 {
     public class Mapper : Profile
     {
+
         public Mapper()
         {
+            CreateMap<NoSqlEntities.BookChildComment, BookChildCommentDto>()
+                .ForMember(dto => dto.Date, opt => opt.MapFrom(entity => Convert.ToDateTime(entity.Date).ToLocalTime()))
+                .ForMember(dto => dto.Comments, opt => opt.MapFrom(entity => entity.Comments));
+            CreateMap<NoSqlEntities.BookRootComment, BookRootCommentDto>()
+                .ForMember(dto => dto.Date, opt => opt.MapFrom(entity => Convert.ToDateTime(entity.Date).ToLocalTime()))
+                .ForMember(dto => dto.Comments, opt => opt.MapFrom(entity => entity.Comments));
             CreateMap<AuthorDto, RdbmsEntities.Author>().ReverseMap();
             CreateMap<NewAuthorDto, RdbmsEntities.Author>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.BookAuthor>()
@@ -61,5 +70,5 @@ namespace Application
             CreateMap<UserProfileDto, RdbmsEntities.User>().ForMember(x => x.Book, opt => opt.MapFrom(x => x.Books))
                 .ReverseMap();
         }
-    }
+    }  
 }
