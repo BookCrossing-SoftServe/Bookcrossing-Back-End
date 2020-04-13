@@ -18,14 +18,14 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<BookDto>> GetAllBooks()
+        public async Task<ActionResult<BookDto>> GetAllBooksAsync()
         {
             return Ok(await _bookService.GetAll());
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDto>> GetBook([FromRoute] int id)
+        public async Task<ActionResult<BookDto>> GetBookAsync([FromRoute] int id)
         {
             var book = await _bookService.GetById(id);
             if (book == null)
@@ -35,7 +35,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public async Task<ActionResult<BookDto>> PostBook([FromBody] BookDto bookDto)
+        public async Task<ActionResult<BookDto>> PostBookAsync([FromBody] BookDto bookDto)
         {
             var insertedId = await _bookService.Add(bookDto);
             bookDto.Id = insertedId;
@@ -44,23 +44,37 @@ namespace BookCrossingBackEnd.Controllers
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] BookDto bookDto)
+        public async Task<IActionResult> PutBookAsync([FromRoute] int id, [FromBody] BookDto bookDto)
         {
             if (id != bookDto.Id)
             {
                 return BadRequest();
             }
+
+            if (bookDto == null)
+            {
+                return BadRequest();
+            }
+
+            var persistedEntity = await _bookService.GetById(id);
+            if (persistedEntity == null)
+            {
+                return NotFound();
+            }
+
             await _bookService.Update(bookDto);
             return NoContent();
         }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BookDto>> DeleteBook([FromRoute] int id)
+        public async Task<ActionResult<BookDto>> DeleteBookAsync([FromRoute] int id)
         {
             var book = await _bookService.Remove(id);
             if (book == null)
+            {
                 return NotFound();
+            }
             return Ok(book);
         }
 
