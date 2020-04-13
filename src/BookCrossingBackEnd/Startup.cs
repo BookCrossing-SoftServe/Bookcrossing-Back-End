@@ -76,6 +76,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IGenreService, GenreService>();
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 

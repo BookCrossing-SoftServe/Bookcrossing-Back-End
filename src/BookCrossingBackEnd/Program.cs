@@ -41,24 +41,20 @@ namespace BookCrossingBackEnd
 
                     var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     var isDevelopment = environment == Environments.Development;
+                    string appInsightKey;
                     if (isDevelopment)
                     {
-                        var appInsightKey = hostingContext.Configuration["iKeyForDevelop"];
-                        logging.AddApplicationInsights(appInsightKey);
-                        logging
-                            .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
-                                    ApplicationInsightsLoggerProvider>
-                                ("", LogLevel.Information);
+                        appInsightKey = hostingContext.Configuration["iKeyForDevelop"];
                     }
                     else
                     {
-                        var appInsightKey = hostingContext.Configuration["iKeyForProduction"];
-                        logging.AddApplicationInsights(appInsightKey);
-                        logging
-                            .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
-                                    ApplicationInsightsLoggerProvider>
-                                ("", LogLevel.Information);
+                        appInsightKey = hostingContext.Configuration["iKeyForProduction"];
                     }
+                    logging.AddApplicationInsights(appInsightKey);
+                    logging
+                        .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
+                                ApplicationInsightsLoggerProvider>
+                            ("", LogLevel.Information);
                 });
         
     }
