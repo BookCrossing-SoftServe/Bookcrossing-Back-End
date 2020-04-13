@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 using Application.Dto.Email;
 using Application.Services.Implementation;
@@ -17,6 +18,8 @@ using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;
 using Domain.NoSQL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 
@@ -119,6 +122,16 @@ namespace BookCrossingBackEnd
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = ctx => {
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                },
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
+                RequestPath = new PathString("")
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -141,7 +154,7 @@ namespace BookCrossingBackEnd
 
             if (env.IsDevelopment())
             {
-                _logger.LogInformation("Configuring for Development environment");
+               _logger.LogInformation("Configuring for Development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
