@@ -73,5 +73,16 @@ namespace ApplicationTest.Controllers
             _bookService.Verify(m => m.Update(It.IsAny<BookDto>()), Times.Once);
         }
 
+        [Test]
+        public async Task DeleteBookTest()
+        {
+            _bookService.Setup(m => m.Remove(It.IsAny<int>())).ReturnsAsync(true);
+            var booksController = new BooksController(_bookService.Object);
+
+            var deleteBookResult = await booksController.DeleteBook(1);
+
+            deleteBookResult.Should().BeOfType<OkResult>();
+        }
+
     }
 }

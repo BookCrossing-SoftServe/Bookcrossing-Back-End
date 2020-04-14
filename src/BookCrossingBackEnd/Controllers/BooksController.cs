@@ -57,7 +57,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BookDto>> DeleteBook([FromRoute] int id)
+        public async Task<IActionResult> DeleteBook([FromRoute] int id)
         {
             var book = await _bookService.Remove(id);
             if (book == false)
