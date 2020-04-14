@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -19,11 +20,12 @@ namespace BookCrossingBackEnd.Controllers
     public class UsersController : Controller
     {
         private IUserService UserService { get; set; }
+        private IUserResolverService UserResolverService { get; set; }
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IUserResolverService userResolverService)
         {
             this.UserService = userService;
-
+            this.UserResolverService = userResolverService;
         }
 
         /// <summary>
@@ -32,9 +34,10 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
-        public async Task<ActionResult<UserDto>> Get()
+        public async Task<IActionResult> Get()
         {
             var users = await UserService.GetAllUsers();
+            if (users == null) return NoContent();
             return Ok(users);
         }
 
@@ -55,24 +58,26 @@ namespace BookCrossingBackEnd.Controllers
         }
 
 
-      
+
 
         // PUT api/<controller>/5
         /// <summary>
         /// Function for updating info about user
         /// </summary>
         /// <param name="user"></param>
-        [HttpPut]
+        [HttpPut("{id}")]
         [Authorize]
-        // [UserUpdateFilter]
-        public async Task<IActionResult> Update([FromBody]UserUpdateDto user)
+        //[UserUpdateFilter]
+        public async Task<IActionResult> Update([FromRoute] int id,[FromBody]UserUpdateDto user)
         {
+            if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
+            {
+                user.Id = id;
+                await UserService.UpdateUser(user);
+                return NoContent();
+            }
 
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userId = claimsIdentity?.FindFirst(ClaimTypes.Name)?.Value;
-            user.Id = int.Parse(userId);
-            await UserService.UpdateUser(user);
-            return Ok();
+            return Forbid();
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<IActionResult> Delete()
         {
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userId = claimsIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var userId = claimsIdentity?.FindFirst("id")?.Value;
             await UserService.RemoveUser(int.Parse(userId));
             return Ok();
         }

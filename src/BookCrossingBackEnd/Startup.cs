@@ -64,7 +64,8 @@ namespace BookCrossingBackEnd
             services.AddScoped<IUserService, UsersService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IBookService, BookService>();                     
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IUserResolverService,UserResolverService>();
 
             services.AddCors(options =>
             {
