@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Application.Dto;
 using BookCrossingBackEnd.Filters;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
 {

@@ -1,4 +1,6 @@
+using System.IO;
 using System.Text;
+using Application.Dto.Email;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -17,25 +19,30 @@ using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;
 using Domain.NoSQL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace BookCrossingBackEnd
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         private IConfiguration Configuration { get; }
+        private readonly ILogger _logger;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
             // Please download appsettings.json for connecting to Azure DB
-            //string azureConnection = Configuration.GetConnectionString("AzureConnection");
+            // azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
                 options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
@@ -63,7 +70,8 @@ namespace BookCrossingBackEnd
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddScoped(typeof(Domain.NoSQL.IRepository<>), typeof(Infrastructure.NoSQL.BaseRepository<>));
+            services.AddScoped(typeof(Domain.NoSQL.IChildRepository<,>), typeof(Infrastructure.NoSQL.BaseChildRepository<,>));
+            services.AddScoped(typeof(Domain.NoSQL.IRootRepository<>), typeof(Infrastructure.NoSQL.BaseRootRepository<>));
             services.AddScoped(typeof(Domain.RDBMS.IRepository<>), typeof(Infrastructure.RDBMS.BaseRepository<>));
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
@@ -71,7 +79,11 @@ namespace BookCrossingBackEnd
             services.AddScoped<IEmailSenderService, EmailSenderService>();
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IBookService, BookService>();                     
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IGenreService, GenreService>();
+            services.AddLogging();
+            services.AddApplicationInsightsTelemetry();
+
 
             services.AddCors(options =>
             {
@@ -113,6 +125,16 @@ namespace BookCrossingBackEnd
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = ctx => {
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                },
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
+                RequestPath = new PathString("")
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -132,6 +154,18 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
+
+            if (env.IsDevelopment())
+            {
+               _logger.LogInformation("Configuring for Development environment");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                _logger.LogInformation("Configuring for Production environment");
+            }
+
         }
+    
     }
 }

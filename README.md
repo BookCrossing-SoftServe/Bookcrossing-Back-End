@@ -16,6 +16,8 @@ These instructions will get you a copy of the project up and running on your loc
 [Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) 
 
 ### Installing
+1. Clone it from git hub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
+
 2. In project BookCrossingBackEnd create file appsettings.json. And paste the code below.
 ```
 {
@@ -26,6 +28,13 @@ These instructions will get you a copy of the project up and running on your loc
   "MongoSettings": {
     "ConnectionString": "mongodb://{Server name}",
     "DatabaseName": "BookCrossingDB"
+  },
+  "EmailConfiguration": {
+    "From": "{Sender email}",
+    "SmtpServer": "{Smtp server}",
+    "Port": {Port},
+    "Username": "{Username}",
+    "Password": "{Password}"
   },
   "Logging": {
     "LogLevel": {
@@ -47,7 +56,6 @@ These instructions will get you a copy of the project up and running on your loc
 }
 ```
 
-1. Clone it from git hub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
 3. Run BookCrossingBackEnd project
   
 **Note! Contribution rules:**  
