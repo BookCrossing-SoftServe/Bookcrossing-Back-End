@@ -37,9 +37,8 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<BookDto>> PostBookAsync([FromBody] BookDto bookDto)
         {
-            var insertedId = await _bookService.Add(bookDto);
-            bookDto.Id = insertedId;
-            return CreatedAtAction("GetBook", new { id = bookDto.Id }, bookDto);
+            var insertedBook = await _bookService.Add(bookDto);
+            return CreatedAtAction("GetBook", new { id = insertedBook.Id }, insertedBook);
         }
 
         // PUT: api/Books/5
@@ -56,26 +55,24 @@ namespace BookCrossingBackEnd.Controllers
                 return BadRequest();
             }
 
-            var persistedEntity = await _bookService.GetById(id);
-            if (persistedEntity == null)
+            var isBookUpdated = await _bookService.Update(bookDto);
+            if (!isBookUpdated)
             {
                 return NotFound();
             }
-
-            await _bookService.Update(bookDto);
             return NoContent();
         }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BookDto>> DeleteBookAsync([FromRoute] int id)
+        public async Task<ActionResult> DeleteBookAsync([FromRoute] int id)
         {
-            var book = await _bookService.Remove(id);
-            if (book == null)
+            var isBookRemoved = await _bookService.Remove(id);
+            if (!isBookRemoved)
             {
                 return NotFound();
             }
-            return Ok(book);
+            return Ok();
         }
 
     }

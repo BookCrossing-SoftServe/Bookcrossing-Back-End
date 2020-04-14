@@ -47,15 +47,15 @@ namespace Application.Services.Implementation
                                                                     .ToListAsync());
         }
 
-        public async Task<int> Add(BookDto bookDto)
+        public async Task<BookDto> Add(BookDto bookDto)
         {
             var book = _mapper.Map<Book>(bookDto);
             _bookRepository.Add(book);
             await _bookRepository.SaveChangesAsync();
-            return book.Id;
+            return _mapper.Map<BookDto>(book);
         }
 
-        public async Task<BookDto> Remove(int bookId)
+        public async Task<bool> Remove(int bookId)
         {
             var book = await _bookRepository.GetAll()
                             .Include(p => p.BookAuthor)
@@ -64,25 +64,31 @@ namespace Application.Services.Implementation
                             .ThenInclude(x => x.Genre)
                             .FirstOrDefaultAsync(p => p.Id == bookId);
             if (book == null)
-                return null;
+                return false;
             _bookRepository.Remove(book);
-            await _bookRepository.SaveChangesAsync();
-            return _mapper.Map<BookDto>(book);
+            var affectedRows = await _bookRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
 
-        public async Task Update(BookDto bookDto)
+        public async Task<bool> Update(BookDto bookDto)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
                 var book = _mapper.Map<Book>(bookDto);
+                var doesBookExist = await _bookRepository.GetAll().AnyAsync(a => a.Id == book.Id);
+                if (!doesBookExist)
+                {
+                    return false;
+                }
                 _bookAuthorRepository.RemoveRange(await _bookAuthorRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
                 _bookGenreRepository.RemoveRange(await _bookGenreRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
                 await _bookRepository.SaveChangesAsync();
                 _bookAuthorRepository.AddRange(book.BookAuthor);
                 _bookGenreRepository.AddRange(book.BookGenre);
                 _bookRepository.Update(book);
-                await _bookRepository.SaveChangesAsync();
+                var affectedRows = await _bookRepository.SaveChangesAsync();
                 transaction.Commit();
+                return affectedRows > 0;
             }
         }
     }
