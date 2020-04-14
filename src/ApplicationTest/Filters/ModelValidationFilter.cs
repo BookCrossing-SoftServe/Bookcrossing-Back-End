@@ -29,7 +29,7 @@ namespace ApplicationTest.Filters
             _filter = new ModelValidationFilter();
 
             _actionContext = new ActionContext(
-                Mock.Of<HttpContext>(),
+                new DefaultHttpContext(),
                 Mock.Of<RouteData>(),
                 Mock.Of<ActionDescriptor>(),
                 _modelState
