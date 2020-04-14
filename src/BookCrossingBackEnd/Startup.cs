@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 
 namespace BookCrossingBackEnd
 {
