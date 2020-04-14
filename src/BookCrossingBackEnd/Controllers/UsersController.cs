@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Application.Dto.Password;
+using AutoMapper;
+using BookCrossingBackEnd.Filters;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,13 +20,13 @@ namespace BookCrossingBackEnd.Controllers
     public class UsersController : Controller
     {
 
-        private IUserService serice { get; set; }
+        private IUserService _userService { get; set; }
         private IConfiguration configuration { get; set; }
         private ITokenService tokenService { get; set; }
 
         public UsersController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
         {
-            this.serice = userService;
+            this._userService = userService;
             this.configuration = configuration;
             this.tokenService = tokenService;
         }
@@ -83,6 +87,23 @@ namespace BookCrossingBackEnd.Controllers
         public void Delete(int id)
         {
             throw new NotImplementedException();
+        }
+        [HttpPost("password")]
+        [AllowAnonymous]
+        [ModelValidationFilter]
+        public async Task<IActionResult> ForgotPassword([FromBody]ResetPasswordDto email)
+        {
+            await _userService.SendPasswordResetConfirmation(email.Email);
+            return Ok();
+        }
+
+        [HttpPut("password")]
+        [AllowAnonymous]
+        [ModelValidationFilter]
+        public async Task<IActionResult> CreateNewPassword([FromBody]ResetPasswordDto newPassword)
+        {
+            await _userService.ResetPassword(newPassword);
+            return Ok();
         }
     }
 }

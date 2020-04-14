@@ -6,12 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NoSQL\Concrete\**" />
     <Compile Remove="Repositories\**" />
+    <EmbeddedResource Remove="NoSQL\Concrete\**" />
     <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="NoSQL\Concrete\**" />
     <None Remove="Repositories\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
@@ -21,15 +25,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.13.1" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NoSQL\Concrete\" />
   </ItemGroup>
 
 </Project>

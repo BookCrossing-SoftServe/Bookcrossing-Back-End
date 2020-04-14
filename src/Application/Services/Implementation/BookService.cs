@@ -5,16 +5,25 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
+using System.Linq;
+using System.Transactions;
+using Infrastructure.RDBMS;
 
 namespace Application.Services.Implementation
 {
     public class BookService : Interfaces.IBookService
     {
         private readonly IRepository<Book> _bookRepository;
+        private readonly IRepository<BookAuthor> _bookAuthorRepository;
+        private readonly IRepository<BookGenre> _bookGenreRepository;
+        private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
-        public BookService(IRepository<Book> bookRepository, IMapper mapper)
+        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, BookCrossingContext context)
         {
             _bookRepository = bookRepository;
+            _bookAuthorRepository = bookAuthorRepository;
+            _bookGenreRepository = bookGenreRepository;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -38,12 +47,12 @@ namespace Application.Services.Implementation
                                                                     .ToListAsync());
         }
 
-        public async Task<int> Add(BookDto bookDto)
+        public async Task<BookDto> Add(BookDto bookDto)
         {
             var book = _mapper.Map<Book>(bookDto);
             _bookRepository.Add(book);
             await _bookRepository.SaveChangesAsync();
-            return book.Id;
+            return _mapper.Map<BookDto>(book);
         }
 
         public async Task<bool> Remove(int bookId)
@@ -57,15 +66,30 @@ namespace Application.Services.Implementation
             if (book == null)
                 return false;
             _bookRepository.Remove(book);
-            await _bookRepository.SaveChangesAsync();
-            return true;
+            var affectedRows = await _bookRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
 
-        public async Task Update(BookDto bookDto)
+        public async Task<bool> Update(BookDto bookDto)
         {
-            var book = _mapper.Map<Book>(bookDto);
-            _bookRepository.Update(book);
-            await _bookRepository.SaveChangesAsync();
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                var book = _mapper.Map<Book>(bookDto);
+                var doesBookExist = await _bookRepository.GetAll().AnyAsync(a => a.Id == book.Id);
+                if (!doesBookExist)
+                {
+                    return false;
+                }
+                _bookAuthorRepository.RemoveRange(await _bookAuthorRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
+                _bookGenreRepository.RemoveRange(await _bookGenreRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
+                await _bookRepository.SaveChangesAsync();
+                _bookAuthorRepository.AddRange(book.BookAuthor);
+                _bookGenreRepository.AddRange(book.BookGenre);
+                _bookRepository.Update(book);
+                var affectedRows = await _bookRepository.SaveChangesAsync();
+                transaction.Commit();
+                return affectedRows > 0;
+            }
         }
     }
 }

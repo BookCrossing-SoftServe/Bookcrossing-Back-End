@@ -24,13 +24,13 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="book">Book DTO instance</param>
         /// <returns></returns>
-        Task Update(BookDto book);
+        Task<bool> Update(BookDto book);
 
         /// <summary>
         /// Remove book from database
         /// </summary>
         /// <param name="bookId">Book's ID</param>
-        /// <returns>Returns removed Book DTO</returns>
+        /// <returns></returns>
         Task<bool> Remove(int bookId);
 
         /// <summary>
@@ -38,6 +38,6 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="book">Book DTO instance</param>
         /// <returns>Returns inserted Book's ID</returns>
-        Task<int> Add(BookDto book);
+        Task<BookDto> Add(BookDto book);
     }
 }
