@@ -67,7 +67,8 @@ namespace BookCrossingBackEnd
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddScoped(typeof(Domain.NoSQL.IRepository<>), typeof(Infrastructure.NoSQL.BaseRepository<>));
+            services.AddScoped(typeof(Domain.NoSQL.IChildRepository<,>), typeof(Infrastructure.NoSQL.BaseChildRepository<,>));
+            services.AddScoped(typeof(Domain.NoSQL.IRootRepository<>), typeof(Infrastructure.NoSQL.BaseRootRepository<>));
             services.AddScoped(typeof(Domain.RDBMS.IRepository<>), typeof(Infrastructure.RDBMS.BaseRepository<>));
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
@@ -76,6 +77,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IGenreService, GenreService>();
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 
