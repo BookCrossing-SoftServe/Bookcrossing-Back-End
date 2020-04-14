@@ -37,7 +37,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // PUT: api/Genre
-        [ValidationFilter]
+        [ModelValidationFilter]
         [HttpPut]
         public async Task<IActionResult> PutGenre(GenreDto genreDto)
         {
@@ -55,7 +55,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/Genre/id
-        [ValidationFilter]
+        [ModelValidationFilter]
         [HttpDelete("{id:min(1)}")]
         public async Task<IActionResult> DeleteGenre(int id)
         {

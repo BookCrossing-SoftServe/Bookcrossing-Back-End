@@ -56,6 +56,8 @@ namespace Domain.RDBMS
         /// <summary>
         /// Save changes into the database
         /// </summary>
-        Task SaveChangesAsync();
+        /// <returns>The number of state entries written to the underlying database.
+        /// This can include state entries for entities and/or relationships</returns>
+        Task<int> SaveChangesAsync();
     }
 }

@@ -90,7 +90,7 @@ namespace BookCrossingBackEnd.Controllers
         }
         [HttpPost("password")]
         [AllowAnonymous]
-        [ValidationFilter]
+        [ModelValidationFilter]
         public async Task<IActionResult> ForgotPassword([FromBody]ResetPasswordDto email)
         {
             await _userService.SendPasswordResetConfirmation(email.Email);
@@ -99,7 +99,7 @@ namespace BookCrossingBackEnd.Controllers
 
         [HttpPut("password")]
         [AllowAnonymous]
-        [ValidationFilter]
+        [ModelValidationFilter]
         public async Task<IActionResult> CreateNewPassword([FromBody]ResetPasswordDto newPassword)
         {
             await _userService.ResetPassword(newPassword);
