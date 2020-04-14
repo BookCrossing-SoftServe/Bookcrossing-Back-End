@@ -1,29 +1,53 @@
 {
-    "common": {
-        "language": "Change language",
-        "id": "Id",
-        "routes": "All routes"
-    },
-    "components": {
-        "requests": {
-            "requests": "All requests",
-            "bookname": "Book name",
-            "requestdate": "Request date",
-            "approve" : "Approve",
-            "delete" : "Delete",
-            "userwhorequested" : "Who requested?"
-          },
-          "book": {
-            "name": "Book name",
-            "authors": "Authors",
-            "genres": "Genres",
-            "publisher": "Publisher",
-            "availability" : "Availability",
-            "available" : "Available",
-            "notAvailable" : "Not Available",
-            "request": "Request",
-            "reviews": "Book Reviews"
-          }
-
+  "common": {
+    "language": "Change language",
+    "id": "Id",
+    "routes": "All routes",
+    "languages": {
+      "gb": "English",
+      "ua": "Ukrainian"
     }
+  },
+  "components": {
+    "requests": {
+      "requests": "All requests",
+      "book-name": "Book name",
+      "request-date": "Request date",
+      "approve": "Approve",
+      "delete": "Delete",
+      "user-who-requested": "Who requested?",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "signIn": {
+      "forgot-password": "Forgot password?"
+    },
+    "book": {
+      "name": "Book name",
+      "authors": "Authors",
+      "genres": "Genres",
+      "publisher": "Publisher",
+      "availability": "Availability",
+      "available": "Available",
+      "notAvailable": "Not Available",
+      "request": "Request",
+      "reviews": "Book Reviews"
+    },
+    "password": {
+      "reset-error": "An error occurred while changing the password!",
+      "forgot-success": "A verification code has been sent to the mail",
+      "forgot-error": "No such email was found!",
+      "forgot-title": "Enter your email",
+      "email": "Email",
+      "input-required-email": "You must enter your email",
+      "input-email-length": "It is not email",
+      "reset": "Reset password",
+      "reset-title": "Enter new password",
+      "password": "Password",
+      "password-required-error": "You must enter yout password",
+      "input-password-length": "Password length must be greater than 6",
+      "confirm-password": "Confirm new password"
+    }
+
+  }
 }
