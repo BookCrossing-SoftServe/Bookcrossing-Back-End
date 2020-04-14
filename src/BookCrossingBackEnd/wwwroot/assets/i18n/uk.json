@@ -1,0 +1,54 @@
+{
+  "common": {
+    "language": "Змінити мову",
+    "id": "Номер",
+    "routes": "Всі маршрути",
+    "languages": {
+      "gb": "Англійська",
+      "ua": "Українська"
+    }
+  },
+
+  "components": {
+    "requests": {
+      "requests": "Всі реквести",
+      "book-name": "Назва книги",
+      "request-date": "Дата реквесту",
+      "approve": "Схвалити",
+      "delete": "Видалити",
+      "user-who-requested": "Хто кинув реквест?",
+      "previous": "Попередня",
+      "next": "Наступна"
+    },
+    "signIn": {
+      "forgot-password": "Забули пароль?"
+    },
+    "book": {
+      "name": "Назва книги",
+      "authors": "Автори",
+      "genres": "Жанри",
+      "publisher": "Видавець",
+      "availability": "Доступність",
+      "available": "Доступна",
+      "notAvailable": "Зайнята",
+      "request": "Зареквестити",
+      "reviews": "Відгуки на книгу"
+    },
+    "password": {
+      "reset-error": "Сталася помилка при зміні паролю!",
+      "forgot-success": "Код підтвердження надіслано на ваш Email",
+      "forgot-error": "Такий Email не знайдено!",
+      "forgot-title": "Введіть свій Email",
+      "email": "Електронна пошта",
+      "input-required-email": "Ви маєте ввести свою пошту",
+      "input-email-length": "Це не пошта!",
+      "reset": "Скинути пароль",
+      "reset-title": "Введіть новий пароль",
+      "password": "Пароль",
+      "password-required-error": "Ви маєте ввести новий пароль",
+      "input-password-length": "Довжина паролю має бути більша на 6 символів",
+      "confirm-password": "Підтвердіть ваш пароль"
+    }
+
+  }
+  }

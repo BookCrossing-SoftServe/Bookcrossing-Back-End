@@ -18,7 +18,7 @@ namespace Infrastructure.NoSQL
             }
         }
 
-        public IMongoCollection<TEntity> Collection<TEntity>() where TEntity : IEntityBase => typeof(TEntity).Name switch
+        public IMongoCollection<TEntity> Collection<TEntity>() where TEntity : IRootEntityBase => typeof(TEntity).Name switch
         {
             nameof(BookRootComment) => _database.GetCollection<TEntity>("BookComments"),
             //nameof(ProfileRootComment) => _database.GetCollection<TEntity>("ProfileComments"),
