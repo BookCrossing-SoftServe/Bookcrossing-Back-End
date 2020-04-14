@@ -339,3 +339,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/src/ApplicationTest/Services/RequestServiceTests.cs
+/src/ApplicationTest/Controllers/RequestsControllerTests.cs
+/src/ApplicationTest/Services/EmailSenderServiceTests.cs
