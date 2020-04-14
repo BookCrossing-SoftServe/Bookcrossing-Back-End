@@ -55,7 +55,7 @@ namespace Infrastructure.RDBMS
         public async Task<int> SaveChangesAsync()
         {
             return await Context.SaveChangesAsync();
-        }
+        } 
 
         #region IDisposable Support
         private bool _disposedValue = false;
