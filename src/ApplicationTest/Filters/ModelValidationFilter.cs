@@ -13,8 +13,8 @@ using NUnit.Framework;
 
 namespace ApplicationTest.Filters
 {
-    
-    class ModelValidationFilterTest
+    [TestFixture]
+    internal class ModelValidationFilterTest
     {
         private ModelStateDictionary _modelState;
         private ModelValidationFilter _filter;

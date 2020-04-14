@@ -1,53 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Dto;
-using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
-using BookCrossingBackEnd.Filters;
-using BookCrossingBackEnd.Validators;
-using Domain.RDBMS;
-using Domain.RDBMS.Entities;
 using FluentAssertions;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace ApplicationTest.Controllers
 {
-    class AuthorControllerTest
+    [TestFixture]
+    internal class AuthorControllerTest
     {
         private AuthorsController _authorController;
         private Mock<IAuthorService> _authorServiceMock;
-        private AuthorDto _expectedAuthorDto;
 
         [OneTimeSetUp]
         public void Setup()
         {
             _authorServiceMock = new Mock<IAuthorService>();
             _authorController = new AuthorsController(_authorServiceMock.Object);
-            _expectedAuthorDto = new AuthorDto() {Id = 201, FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar"};
         }
 
 
-        //GET by ID
-        [Test]
-        public async Task GetAuthor_AuthorExists_Returns_OkObjectResult()
-        {
-            var requestedId = 201;
-            _authorServiceMock.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(_expectedAuthorDto);
+        #region GetById
 
-            var result = await _authorController.GetAuthor(requestedId);
-            var author = (AuthorDto)((OkObjectResult)result).Value;
+        [Test]
+        [TestCase(201)]
+        public async Task GetAuthor_AuthorExists_Returns_OkObjectResultWithRequestedId(int id)
+        {
+            var expectedAuthor = new AuthorDto() {Id = 201};
+            _authorServiceMock.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(expectedAuthor);
+
+            var result = await _authorController.GetAuthor(id);
+            var author = (AuthorDto) ((OkObjectResult) result).Value;
 
             result.Should().BeOfType<OkObjectResult>();
-            author.Id.Should().Be(requestedId);
+            author.Id.Should().Be(id);
         }
 
         [Test]
@@ -60,8 +50,10 @@ namespace ApplicationTest.Controllers
             result.Should().BeOfType<NotFoundResult>();
         }
 
+        #endregion GetById
 
-        //DELETE
+        #region Delete
+
         [Test]
         public async Task DeleteAuthor_AuthorExists_Returns_OkResult()
         {
@@ -71,6 +63,7 @@ namespace ApplicationTest.Controllers
 
             result.Should().BeOfType<OkResult>();
         }
+
         [Test]
         public async Task DeleteAuthor_AuthorDoesNotExist_Returns_NotFoundResult()
         {
@@ -81,22 +74,30 @@ namespace ApplicationTest.Controllers
             result.Should().BeOfType<NotFoundResult>();
         }
 
+        #endregion Delete
 
-        //POST
+        #region Post
+
         [Test]
-        public async Task Add_Author_Returns_CreatedAtAction()
+        public async Task Add_Author_Returns_ActionResultWithSamePropertyValues()
         {
-            var insertDto = new InsertAuthorDto() {FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar" };
-            _authorServiceMock.Setup(s => s.Add(It.IsAny<InsertAuthorDto>())).ReturnsAsync(_expectedAuthorDto);
+            var insertDto = new InsertAuthorDto() {FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar"};
+            var expectedAuthorDto = new AuthorDto()
+                {Id = 201, FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar"};
+            _authorServiceMock.Setup(s => s.Add(It.IsAny<InsertAuthorDto>())).ReturnsAsync(expectedAuthorDto);
 
             var createdAtActionResult = await _authorController.PostAuthor(insertDto);
-            var result = (AuthorDto) ((CreatedAtActionResult)createdAtActionResult.Result).Value;
+            var result = (AuthorDto) ((CreatedAtActionResult) createdAtActionResult.Result).Value;
 
             result.Should().BeOfType<AuthorDto>();
+            createdAtActionResult.Should().BeOfType<ActionResult<AuthorDto>>();
             insertDto.Should().BeEquivalentTo(result, options => options.Excluding(a => a.Id));
         }
 
-        //PUT
+        #endregion Post
+
+        #region Put
+
         [Test]
         public async Task PutAuthor_AuthorExists_Returns_NoContent()
         {
@@ -106,6 +107,7 @@ namespace ApplicationTest.Controllers
 
             result.Should().BeOfType<NoContentResult>();
         }
+
         [Test]
         public async Task PutAuthor_AuthorDoesNotExist_Return_NotFound()
         {
@@ -116,7 +118,8 @@ namespace ApplicationTest.Controllers
             result.Should().BeOfType<NotFoundResult>();
         }
 
-        //Controller
+        #endregion Put
+
         [Ignore("Authorization filter is disabled until fully implemented")]
         [Test]
         public void AuthorsController_has_Authorized_Attribute()

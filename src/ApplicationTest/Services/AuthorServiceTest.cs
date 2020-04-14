@@ -1,7 +1,4 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Implementation;
@@ -9,13 +6,12 @@ using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace ApplicationTest.Services
 {
     [TestFixture]
-    class AuthorServiceTest
+    internal class AuthorServiceTest
     {
         private AuthorService _authorService;
         private Mock<IRepository<Author>> _authorRepositoryMock;
@@ -29,16 +25,20 @@ namespace ApplicationTest.Services
             _authorService = new AuthorService(_authorRepositoryMock.Object, _mapper.Object);
         }
 
-        //GET by ID
-        [Test]
-        public async Task GetById_AuthorExists_Returns_AuthorDto()
-        {
-            _authorRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Author());
-            _mapper.Setup(s => s.Map<AuthorDto>(It.IsAny<Author>())).Returns(new AuthorDto());
+        #region GetById
 
-            var authorResult = await _authorService.GetById(It.IsAny<int>());
+        [Test]
+        [TestCase(201)]
+        public async Task GetById_AuthorExists_Returns_AuthorDtoWithRequestedId(int id)
+        {
+            var expectedAuthor = new Author() {Id = 201};
+            _authorRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(expectedAuthor);
+            _mapper.Setup(s => s.Map<AuthorDto>(It.IsAny<Author>())).Returns(new AuthorDto() {Id = expectedAuthor.Id});
+
+            var authorResult = await _authorService.GetById(id);
 
             authorResult.Should().BeOfType<AuthorDto>();
+            authorResult.Id.Should().Be(id);
         }
 
         [Test]
@@ -52,7 +52,10 @@ namespace ApplicationTest.Services
             authorResult.Should().BeNull();
         }
 
-        //POST
+        #endregion GetById
+
+        #region Post
+
         [Test]
         public async Task Add_AuthorIsValid_Returns_AuthorDto()
         {
@@ -69,7 +72,10 @@ namespace ApplicationTest.Services
             authorResult.Should().BeOfType<AuthorDto>();
         }
 
-        //DELETE
+        #endregion Post
+
+        #region Delete
+
         [Test]
         public async Task Remove_AuthorExists_Returns_True()
         {
@@ -83,6 +89,7 @@ namespace ApplicationTest.Services
             _authorRepositoryMock.Verify(x => x.SaveChangesAsync(), Times.Once);
             authorResult.Should().BeTrue();
         }
+
         [Test]
         public async Task Remove_AuthorDoesNotExist_Returns_False()
         {
@@ -93,8 +100,10 @@ namespace ApplicationTest.Services
             authorResult.Should().BeFalse();
         }
 
+        #endregion Delete
 
-        //UPDATE
+        #region Update
+
         [Test]
         public async Task Update_AuthorExists_Returns_true()
         {
@@ -110,6 +119,7 @@ namespace ApplicationTest.Services
             _authorRepositoryMock.Verify(x => x.SaveChangesAsync(), Times.Once);
             result.Should().BeTrue();
         }
+
         [Test]
         public async Task Update_AuthorDoesNotExist_Returns_false()
         {
@@ -119,6 +129,7 @@ namespace ApplicationTest.Services
 
             result.Should().BeFalse();
         }
-    }
 
+        #endregion Update
+    }
 }
