@@ -41,7 +41,7 @@ namespace BookCrossingBackEnd
         {
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
             // Please download appsettings.json for connecting to Azure DB
-            //string azureConnection = Configuration.GetConnectionString("AzureConnection");
+            // azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
                 options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 

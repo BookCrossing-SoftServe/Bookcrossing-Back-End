@@ -64,6 +64,7 @@ namespace Application.Services.Implementation
 
             body = body.Replace("{USER}", userName);
             body = body.Replace("{CONFIRMNUMBER}", confirmNumber);
+            body = body.Replace("{EMAIL}", email);
 
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress("Book Crossing", _emailConfig.From));

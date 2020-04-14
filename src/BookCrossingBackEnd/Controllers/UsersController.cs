@@ -88,19 +88,19 @@ namespace BookCrossingBackEnd.Controllers
         {
             throw new NotImplementedException();
         }
-        [HttpPost("password/forgot")]
+        [HttpPost("password")]
         [AllowAnonymous]
         [ValidationFilter]
-        public async Task<IActionResult> ForgotPassword([FromBody]string email)
+        public async Task<IActionResult> ForgotPassword([FromBody]ResetPasswordDto email)
         {
-            await _userService.SendPasswordResetConfirmation(email);
+            await _userService.SendPasswordResetConfirmation(email.Email);
             return Ok();
         }
 
-        [HttpPost("password/reset")]
+        [HttpPut("password")]
         [AllowAnonymous]
         [ValidationFilter]
-        public async Task<IActionResult> CreateNewPassword([FromBody]NewPasswordDto newPassword)
+        public async Task<IActionResult> CreateNewPassword([FromBody]ResetPasswordDto newPassword)
         {
             await _userService.ResetPassword(newPassword);
             return Ok();

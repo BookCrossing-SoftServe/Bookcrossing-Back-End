@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Application.Dto.Password
 {
-    public class NewPasswordDto
+    public class ResetPasswordDto
     {
-        public int ConfirmationNumber { get; set; }
+        public string ConfirmationNumber { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public string PasswordConfirmation { get; set; }

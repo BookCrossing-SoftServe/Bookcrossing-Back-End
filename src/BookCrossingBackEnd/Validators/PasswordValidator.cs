@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace BookCrossingBackEnd.Validators
 {
-    public class PasswordValidator : AbstractValidator<NewPasswordDto>
+    public class PasswordValidator : AbstractValidator<ResetPasswordDto>
     {
         public PasswordValidator()
         {

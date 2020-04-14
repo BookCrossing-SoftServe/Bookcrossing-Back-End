@@ -7,8 +7,8 @@ namespace Application.Services.Interfaces
     public interface IUserService
     {
         Task<UserDto> VerifyUserCredentials(LoginDto loginModel);
-        Task SendPasswordResetConfirmation(string password);
-        Task ResetPassword(NewPasswordDto newPassword);
+        Task SendPasswordResetConfirmation(string email);
+        Task ResetPassword(ResetPasswordDto newPassword);
 
     }
 }
