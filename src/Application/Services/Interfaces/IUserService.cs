@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.Password;
 
 namespace Application.Services.Interfaces
 {
@@ -12,6 +13,9 @@ namespace Application.Services.Interfaces
 
         Task RemoveUser(int userId);
 
+   
+        Task SendPasswordResetConfirmation(string email);
+        Task ResetPassword(ResetPasswordDto newPassword);
 
     }
 }

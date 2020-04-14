@@ -56,6 +56,6 @@ namespace Domain.RDBMS
         /// <summary>
         /// Save changes into the database
         /// </summary>
-        Task<bool> SaveChangesAsync();
+        Task<int> SaveChangesAsync();
     }
 }

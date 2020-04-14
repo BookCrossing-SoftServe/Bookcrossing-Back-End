@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Application.Dto.Password;
+using AutoMapper;
+using BookCrossingBackEnd.Filters;
 using Application.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -92,6 +95,23 @@ namespace BookCrossingBackEnd.Controllers
             var claimsIdentity = this.User.Identity as ClaimsIdentity;
             var userId = claimsIdentity?.FindFirst("id")?.Value;
             await UserService.RemoveUser(int.Parse(userId));
+            return Ok();
+        }
+        [HttpPost("password")]
+        [AllowAnonymous]
+        [ModelValidationFilter]
+        public async Task<IActionResult> ForgotPassword([FromBody]ResetPasswordDto email)
+        {
+            await UserService.SendPasswordResetConfirmation(email.Email);
+            return Ok();
+        }
+
+        [HttpPut("password")]
+        [AllowAnonymous]
+        [ModelValidationFilter]
+        public async Task<IActionResult> CreateNewPassword([FromBody]ResetPasswordDto newPassword)
+        {
+            await UserService.ResetPassword(newPassword);
             return Ok();
         }
     }

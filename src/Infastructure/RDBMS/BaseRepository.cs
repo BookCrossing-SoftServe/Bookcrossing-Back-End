@@ -52,10 +52,9 @@ namespace Infrastructure.RDBMS
         {
             Entities.Update(entity);
         }
-        public async Task<bool> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
-            var updated = await Context.SaveChangesAsync();
-            return updated > 0;
+            return await Context.SaveChangesAsync();
         } 
 
         #region IDisposable Support
