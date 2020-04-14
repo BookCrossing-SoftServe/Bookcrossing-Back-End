@@ -3,12 +3,11 @@ using FluentValidation;
 
 namespace BookCrossingBackEnd.Validators
 {
-    public class AuthorValidator : AbstractValidator<AuthorDto>
+    public class InsertAuthorValidator : AbstractValidator<InsertAuthorDto>
     {
-        public AuthorValidator()
+        public InsertAuthorValidator()
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
-            RuleFor(x => x.Id).GreaterThan(0);
             RuleFor(x => x.FirstName)
                 .NotNull()
                 .Length(2, 20)
@@ -18,7 +17,7 @@ namespace BookCrossingBackEnd.Validators
                 .Length(2, 20)
                 .Matches(@"^([a-zA-Z '-]+)$");
             RuleFor(x => x.MiddleName)
-                .MaximumLength(30)
+                .Length(0, 30)
                 .Matches(@"^([a-zA-Z '-]+)$");
         }
     }
