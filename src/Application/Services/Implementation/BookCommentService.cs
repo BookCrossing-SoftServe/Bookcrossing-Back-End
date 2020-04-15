@@ -22,9 +22,9 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task<int> Add(BookCommentInsertDto insertDto, params string[] ids)
+        public async Task<int> Add(BookCommentInsertDto insertDto)
         {
-            if (ids == null || ids.Length == 0)
+            if (insertDto.Ids == null || insertDto.Ids.Count() == 0)
             {
                 return await _rootCommentRepository.InsertOneAsync(
                     new BookRootComment(true)
@@ -40,7 +40,7 @@ namespace Application.Services.Implementation
                 string rootId = "";
                 List<(string nestedArrayName, string itemId)> path = new List<(string nestedArrayName, string itemId)>();
 
-                foreach (string id in ids)
+                foreach (string id in insertDto.Ids)
                 {
                     if (rootId == "")
                     {
@@ -81,15 +81,15 @@ namespace Application.Services.Implementation
             return _mapper.Map<BookRootCommentDto>(await _rootCommentRepository.FindByIdAsync(rootCommentId));
         }
 
-        public async Task<int> Remove(params string[] ids)
+        public async Task<int> Remove(BookCommentDeleteDto deleteDto)
         {
-            if (ids.Length == 0)
+            if (deleteDto.Ids == null || deleteDto.Ids.Count() == 0)
             {
                 return 0;
             }
-            else if (ids.Length == 1)
+            else if (deleteDto.Ids.Count() == 1)
             {
-                var deleteResult = await _rootCommentRepository.DeleteByIdAsync(ids.First());
+                var deleteResult = await _rootCommentRepository.DeleteByIdAsync(deleteDto.Ids.First());
                 return Convert.ToInt32(deleteResult.DeletedCount);
             }
             else
@@ -98,13 +98,13 @@ namespace Application.Services.Implementation
                 string childId = "";
                 List<(string nestedArrayName, string itemId)> path = new List<(string nestedArrayName, string itemId)>();
 
-                foreach (string id in ids)
+                foreach (string id in deleteDto.Ids)
                 {
                     if (rootId == "")
                     {
                         rootId = id;
                     }
-                    else if (id == ids.Last())
+                    else if (id == deleteDto.Ids.Last())
                     {
                         childId = id;
                     }
@@ -123,15 +123,15 @@ namespace Application.Services.Implementation
             }
         }
 
-        public async Task<int> Update(BookCommentUpdateDto updateDto, params string[] ids)
+        public async Task<int> Update(BookCommentUpdateDto updateDto)
         {
-            if (ids.Length == 0)
+            if (updateDto.Ids == null || updateDto.Ids.Count() == 0)
             {
                 return 0;
             }
-            if (ids.Length == 1)
+            if (updateDto.Ids.Count() == 1)
             {
-                var updateResult = await _rootCommentRepository.UpdateByIdAsync(ids.First(), new BookRootComment() { Text = updateDto.Text });
+                var updateResult = await _rootCommentRepository.UpdateByIdAsync(updateDto.Ids.First(), new BookRootComment() { Text = updateDto.Text });
                 return Convert.ToInt32(updateResult.ModifiedCount);
             }
             else
@@ -139,7 +139,7 @@ namespace Application.Services.Implementation
                 string rootId = "";
                 List<(string nestedArrayName, string itemId)> path = new List<(string nestedArrayName, string itemId)>();
 
-                foreach (string id in ids)
+                foreach (string id in updateDto.Ids)
                 {
                     if (rootId == "")
                     {

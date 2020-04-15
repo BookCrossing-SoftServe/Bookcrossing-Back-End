@@ -30,23 +30,35 @@ namespace Application.Services.Interfaces
         /// Update specified comment
         /// </summary>
         /// <param name="updateDto">Book commet update DTO instance</param>
-        /// <param name="ids">Book commet path of ids</param>
+        /// <param name="updateDto.Ids">
+        /// If ids equals null or ids length equals 0, method will return 0 (0 elements was updated). 
+        /// If ids length equals 1, root comment will be updated. 
+        /// If ids length greater than 1, child comment will be updated. 
+        /// </param>
         /// <returns>Number of updated comments</returns>
-        Task<int> Update(BookCommentUpdateDto updateDto, params string[] ids);
+        Task<int> Update(BookCommentUpdateDto updateDto);
 
         /// <summary>
         /// Remove commnet from database
         /// </summary>
-        /// <param name="ids">Book commet path of ids</param>
+        /// <param name="insertDto">Commnet DTO instance</param>
+        /// <param name="deleteDto.Ids">
+        /// If ids equals null or ids length equals 0, method will return 0 (0 elements was deleted). 
+        /// If ids length equals 1, root comment will be deleted. 
+        /// If ids length greater than 1, child comment will be deleted. 
+        /// </param>
         /// <returns>Number of removed comments</returns>
-        Task<int> Remove(params string[] ids);
+        Task<int> Remove(BookCommentDeleteDto deleteDto);
 
         /// <summary>
         /// Create new comment and add it into Database
         /// </summary>
         /// <param name="insertDto">Commnet DTO instance</param>
-        /// <param name="ids">Book commet path of id</param>
+        /// <param name="insertDto.Ids">
+        /// If ids equals null or ids length equals 0, dto will insert like root comment. 
+        /// If ids length greater than 1, dto will  insert in childe array of comments. 
+        /// </param>
         /// <returns>Number of inserted commnets</returns>
-        Task<int> Add(BookCommentInsertDto insertDto, params string[] ids);
+        Task<int> Add(BookCommentInsertDto insertDto);
     }
 }
