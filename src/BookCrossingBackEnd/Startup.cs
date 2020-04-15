@@ -85,6 +85,7 @@ namespace BookCrossingBackEnd
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 
+            services.AddSingleton<IPaginationService, PaginationService>();
 
             services.AddCors(options =>
             {
