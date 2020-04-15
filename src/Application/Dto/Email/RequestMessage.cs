@@ -13,5 +13,6 @@ namespace Application.Dto.Email
         public DateTime RequestDate { get; set; }
         public string Subject { get; set; }
         public string BookName { get; set; }
+        public int BookId { get; set; }
     }
 }

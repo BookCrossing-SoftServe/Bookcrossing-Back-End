@@ -30,12 +30,9 @@ namespace BookCrossingBackEnd.Controllers
         //[Authorize]
         [Route("{bookId}")]
         [HttpGet]
-        public ActionResult<IEnumerable<RequestDto>> Get([FromRoute] int bookId)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> Get([FromRoute] int bookId, [FromQuery] QueryParameters query)
         {
-            var requests = _requestService.Get(bookId);
-            if (requests == null)
-                return NotFound();
-            return Ok(requests);
+            return Ok(await _requestService.Get(bookId, query));
         }
         //[Authorize]
         [ModelValidationFilter]
@@ -43,10 +40,12 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
         {
-            var request = await _requestService.Approve(requestId);
-            if (request == null)
+            var updated = await _requestService.Approve(requestId);
+            if (!updated)
+            {
                 return NotFound();
-            return Ok(request);
+            }
+            return Ok();
         }
         //[Authorize]
         [ModelValidationFilter]
@@ -54,10 +53,12 @@ namespace BookCrossingBackEnd.Controllers
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
         {
-            var request = await _requestService.Remove(requestId);
-            if (request == null)
+            var removed = await _requestService.Remove(requestId);
+            if (!removed)
+            {
                 return NotFound();
-            return Ok(request);
+            }
+            return Ok();
         }
 
     }

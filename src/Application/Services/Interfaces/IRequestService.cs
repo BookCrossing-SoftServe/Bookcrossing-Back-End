@@ -13,24 +13,26 @@ namespace Application.Services.Interfaces
         /// <param name="bookId">Certain book</param>
         /// <returns>Created request</returns>
         Task<RequestDto> Make(int userId, int bookId);
+
         /// <summary>
-        /// Ability to loook at all requests for your book
+        /// Ability to get all requests for your book in certain book
         /// </summary>
         /// <param name="bookId">Book`s id</param>
-        /// <returns>List of all requests DTO by book id</returns>
-        IEnumerable<RequestDto> Get(int bookId);
+        /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
+        /// <returns>List of all requests DTO by book id in certain page</returns>
+        Task<PaginationDto<RequestDto>> Get(int bookId, QueryParameters query);
         /// <summary>
         /// Ability to approve book request as book owner
         /// </summary>
         /// <param name="id">Request Id</param>
-        /// <returns>Approved request</returns>
-        Task<RequestDto> Approve(int id);
+        /// <returns>boolean</returns>
+        Task<bool> Approve(int id);
        
         /// <summary>
         /// Remove request from database
         /// </summary>
         /// <param name="requestId">Request's ID</param>
-        /// <returns>Returns removed request's DTO</returns>
-        Task<RequestDto> Remove(int requestId);
+        /// <returns>boolean</returns>
+        Task<bool> Remove(int requestId);
     }
 }

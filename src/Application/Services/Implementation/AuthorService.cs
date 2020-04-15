@@ -34,7 +34,7 @@ namespace Application.Services.Implementation
         public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters parameters)
         {
             var query = _authorRepository.GetAll();
-            return await _paginationService.GetPage<AuthorDto, Author>(query, parameters);
+            return await _paginationService.GetPageAsync<AuthorDto, Author>(query, parameters);
         }
         public async Task<AuthorDto> Add(InsertAuthorDto insertAuthorDto)
         {

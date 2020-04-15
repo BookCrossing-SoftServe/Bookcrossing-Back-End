@@ -15,7 +15,7 @@ namespace Application.Services.Interfaces
         /// <param name="query">IQueryable to be paginated</param>
         /// <param name="parameters">Pagination and filtering is performed based on these query parameters</param>
         /// <returns>Returns data encapsulated in PaginationDto based on QueryParameters</returns>
-        Task<PaginationDto<TDto>> GetPage<TDto, TEntity>(IQueryable<TEntity> query, QueryParameters parameters)
+        Task<PaginationDto<TDto>> GetPageAsync<TDto, TEntity>(IQueryable<TEntity> query, QueryParameters parameters)
             where TDto : class where TEntity : class;
     }
 }

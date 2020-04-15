@@ -44,6 +44,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{REQUEST.NUMBER}", Convert.ToString(message.RequestNumber));
             body = body.Replace("{REQUEST.DATE}", message.RequestDate.ToString("MMMM dd, yyyy"));
             body = body.Replace("{BOOK.NAME}", message.BookName);
+            body = body.Replace("{BOOK.ID}", message.BookId.ToString());
 
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress("Book Crossing", _emailConfig.From));
