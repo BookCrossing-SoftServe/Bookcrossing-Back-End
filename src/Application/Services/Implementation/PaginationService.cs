@@ -20,7 +20,7 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
         
-        public async Task<PaginationDto<TDto>> GetPage<TDto, TEntity>(IQueryable<TEntity> query, QueryParameters parameters) 
+        public async Task<PaginationDto<TDto>> GetPageAsync<TDto, TEntity>(IQueryable<TEntity> query, QueryParameters parameters) 
             where TDto : class where TEntity : class
         {
             if (parameters.SearchQuery != null && parameters.SearchField != null)
