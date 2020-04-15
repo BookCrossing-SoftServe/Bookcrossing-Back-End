@@ -2,6 +2,7 @@
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookCrossingBackEnd.Controllers
@@ -32,6 +33,11 @@ namespace BookCrossingBackEnd.Controllers
                 resultTime.Minutes,
                 resultTime.Seconds,
                 resultTime.Milliseconds);
+
+            if (comment == null)
+            {
+                return NotFound(new { ExecutingTime = executingTime});
+            }
             return Ok(new { ExecutingTime = executingTime, Comment = comment });
         }
 
@@ -49,6 +55,11 @@ namespace BookCrossingBackEnd.Controllers
                 resultTime.Minutes,
                 resultTime.Seconds,
                 resultTime.Milliseconds);
+
+            if (comments.Count() == 0)
+            {
+                return NotFound(new { ExecutingTime = executingTime });
+            }
             return Ok(new { ExecutingTime = executingTime, Comments = comments });
         }
 
@@ -66,6 +77,11 @@ namespace BookCrossingBackEnd.Controllers
                 resultTime.Minutes,
                 resultTime.Seconds,
                 resultTime.Milliseconds);
+
+            if (comments.Count() == 0)
+            {
+                return NotFound(new { ExecutingTime = executingTime });
+            }
             return Ok(new { ExecutingTime = executingTime, Comments = comments });
         }
 
@@ -75,7 +91,7 @@ namespace BookCrossingBackEnd.Controllers
         {
             var startTime = System.Diagnostics.Stopwatch.StartNew();
 
-            int number = await _bookCommentService.Update(updateDto);
+            int number = await _bookCommentService.Update(updateDto);          
 
             var resultTime = startTime.Elapsed;
             string executingTime = string.Format(" {0:00}:{1:00}:{2:00}.{3:000}",
@@ -83,6 +99,11 @@ namespace BookCrossingBackEnd.Controllers
                 resultTime.Minutes,
                 resultTime.Seconds,
                 resultTime.Milliseconds);
+
+            if (number == 0)
+            {
+                return NotFound(new { ExecutingTime = executingTime, InsertedNumber = number });
+            }
             return Ok(new { ExecutingTime = executingTime, ModifModifiedCount = number });
         }
 
@@ -100,6 +121,11 @@ namespace BookCrossingBackEnd.Controllers
                 resultTime.Minutes,
                 resultTime.Seconds,
                 resultTime.Milliseconds);
+
+            if (number == 0)
+            {
+                return NotFound(new { ExecutingTime = executingTime, InsertedNumber = number });
+            }
             return Ok(new { ExecutingTime = executingTime, InsertedNumber = number });
         }
 
@@ -117,6 +143,11 @@ namespace BookCrossingBackEnd.Controllers
                 resultTime.Minutes,
                 resultTime.Seconds,
                 resultTime.Milliseconds);
+
+            if (number == 0)
+            {
+                return NotFound(new { ExecutingTime = executingTime, InsertedNumber = number });
+            }
             return Ok(new { ExecutingTime = executingTime, DeletedNumber = number });
         }
     }
