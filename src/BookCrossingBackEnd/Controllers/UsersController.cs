@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Application.Dto.Password;
 using AutoMapper;
 using BookCrossingBackEnd.Filters;
+using Application.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,16 +22,13 @@ namespace BookCrossingBackEnd.Controllers
 
     public class UsersController : Controller
     {
+        private IUserService UserService { get; set; }
+        private IUserResolverService UserResolverService { get; set; }
 
-        private IUserService _userService { get; set; }
-        private IConfiguration configuration { get; set; }
-        private ITokenService tokenService { get; set; }
-
-        public UsersController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
+        public UsersController(IUserService userService, IUserResolverService userResolverService)
         {
-            this._userService = userService;
-            this.configuration = configuration;
-            this.tokenService = tokenService;
+            this.UserService = userService;
+            this.UserResolverService = userResolverService;
         }
 
         /// <summary>
@@ -37,14 +37,11 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
-        [Authorize]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var IdClaim = User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase));
-            if (IdClaim != null)
-                return Ok($"Your id is {IdClaim.Value}");
-            return BadRequest();
-
+            var users = await UserService.GetAllUsers();
+            if (users == null) return NoContent();
+            return Ok(users);
         }
 
 
@@ -60,8 +57,9 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Get(int id)
         {
-            return Ok("Lol");
+            throw new NotImplementedException();
         }
+
 
 
 
@@ -69,12 +67,20 @@ namespace BookCrossingBackEnd.Controllers
         /// <summary>
         /// Function for updating info about user
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="value"></param>
+        /// <param name="user"></param>
         [HttpPut("{id}")]
-        public void Update(int id, [FromBody]string value)
+        [Authorize]
+        //[UserUpdateFilter]
+        public async Task<IActionResult> Update([FromRoute] int id,[FromBody]UserUpdateDto user)
         {
-            throw new NotImplementedException();
+            if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
+            {
+                user.Id = id;
+                await UserService.UpdateUser(user);
+                return NoContent();
+            }
+
+            return Forbid();
         }
 
         /// <summary>
@@ -82,27 +88,30 @@ namespace BookCrossingBackEnd.Controllers
         /// </summary>
         /// <param name="id"></param>
         // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [Authorize]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete()
         {
-            throw new NotImplementedException();
+            var claimsIdentity = this.User.Identity as ClaimsIdentity;
+            var userId = claimsIdentity?.FindFirst("id")?.Value;
+            await UserService.RemoveUser(int.Parse(userId));
+            return Ok();
         }
         [HttpPost("password")]
         [AllowAnonymous]
-        [ValidationFilter]
+        [ModelValidationFilter]
         public async Task<IActionResult> ForgotPassword([FromBody]ResetPasswordDto email)
         {
-            await _userService.SendPasswordResetConfirmation(email.Email);
+            await UserService.SendPasswordResetConfirmation(email.Email);
             return Ok();
         }
 
         [HttpPut("password")]
         [AllowAnonymous]
-        [ValidationFilter]
+        [ModelValidationFilter]
         public async Task<IActionResult> CreateNewPassword([FromBody]ResetPasswordDto newPassword)
         {
-            await _userService.ResetPassword(newPassword);
+            await UserService.ResetPassword(newPassword);
             return Ok();
         }
     }

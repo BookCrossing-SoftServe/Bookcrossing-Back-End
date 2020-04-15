@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using BookCrossingBackEnd.Filters;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
@@ -39,7 +38,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
         //[Authorize]
-        [ValidationFilter]
+        [ModelValidationFilter]
         [Route("{requestId}")]
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
@@ -50,7 +49,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(request);
         }
         //[Authorize]
-        [ValidationFilter]
+        [ModelValidationFilter]
         [Route("{requestId}")]
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)

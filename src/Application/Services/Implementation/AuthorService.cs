@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
@@ -8,14 +14,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
-    public class AuthorService : Interfaces.IAuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IRepository<Author> _authorRepository;
         private readonly IMapper _mapper;
-        public AuthorService(IRepository<Author> authorRepository, IMapper mapper)
+        private readonly IPaginationService _paginationService;
+        public AuthorService(IRepository<Author> authorRepository, IMapper mapper, IPaginationService paginationService)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _paginationService = paginationService;
         }
 
         public async Task<AuthorDto> GetById(int authorId)
@@ -23,13 +31,14 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<List<AuthorDto>> GetAll()
+        public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters parameters)
         {
-            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll().ToListAsync());
+            var query = _authorRepository.GetAll();
+            return await _paginationService.GetPage<AuthorDto, Author>(query, parameters);
         }
-        public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
+        public async Task<AuthorDto> Add(InsertAuthorDto insertAuthorDto)
         {
-            var author = _mapper.Map<Author>(newAuthorDto);
+            var author = _mapper.Map<Author>(insertAuthorDto);
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
             return _mapper.Map<AuthorDto>(author);
@@ -42,14 +51,20 @@ namespace Application.Services.Implementation
                 return false;
             }
             _authorRepository.Remove(author);
-            await _authorRepository.SaveChangesAsync();
-            return true;
+            var affectedRows = await _authorRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
-        public async Task Update(AuthorDto authorDto)
+        public async Task<bool> Update(AuthorDto authorDto)
         {
             var author = _mapper.Map<Author>(authorDto);
+            author = await _authorRepository.FindByIdAsync(author.Id);
+            if (author == null)
+            {
+                return false;
+            }
             _authorRepository.Update(author);
-            await _authorRepository.SaveChangesAsync();
+            var affectedRows = await _authorRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
     }
 }

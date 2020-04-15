@@ -10,8 +10,9 @@ namespace Application
     {
         public Mapper()
         {
+            CreateMap<UserUpdateDto, RdbmsEntities.User>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.Author>().ReverseMap();
-            CreateMap<NewAuthorDto, RdbmsEntities.Author>().ReverseMap();
+            CreateMap<InsertAuthorDto, RdbmsEntities.Author>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.BookAuthor>()
                 .ForMember(a => a.AuthorId, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(a => a.Author, opt =>

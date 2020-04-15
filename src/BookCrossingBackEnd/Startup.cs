@@ -4,6 +4,7 @@ using Application.Dto.Email;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
+using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -81,10 +82,12 @@ namespace BookCrossingBackEnd
             services.AddScoped<IRequestService, RequestService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IUserResolverService,UserResolverService>();
             services.AddScoped<IGenreService, GenreService>();
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 
+            services.AddSingleton<IPaginationService, PaginationService>();
 
             services.AddCors(options =>
             {
@@ -92,7 +95,14 @@ namespace BookCrossingBackEnd
             });
 
 
-            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AuthorValidator>());
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(new ModelValidationFilter());
+            })
+            .AddFluentValidation(cfg =>
+            {
+                cfg.RegisterValidatorsFromAssemblyContaining<AuthorValidator>();
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

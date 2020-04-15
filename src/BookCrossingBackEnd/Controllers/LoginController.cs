@@ -1,7 +1,6 @@
 ﻿using Application.Dto;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using BookCrossingBackEnd.Filters;
 
@@ -11,19 +10,16 @@ namespace BookCrossingBackEnd.Controllers
     public class LoginController : Controller
     {
 
-        private IUserService UserService { get; set; }
-        private IConfiguration Configuration { get; set; }
-        private ITokenService TokenService { get; set; }
+        
+        private readonly ITokenService _tokenService;
 
-        public LoginController(IUserService userService, IConfiguration configuration, ITokenService tokenService)
+        public LoginController(ITokenService tokenService)
         {
-            this.UserService = userService;
-            this.Configuration = configuration;
-            this.TokenService = tokenService;
+            _tokenService = tokenService;
         }
 
 
-
+ 
 
         /// <summary>
         /// Function for user authentication.
@@ -36,9 +32,9 @@ namespace BookCrossingBackEnd.Controllers
         {
 
 
-            var user = await UserService.VerifyUserCredentials(model);
+            var user = await _tokenService.VerifyUserCredentials(model);
 
-            var tokenStr = TokenService.GenerateJSONWebToken(user);
+            var tokenStr = _tokenService.GenerateJSONWebToken(user);
 
             IActionResult response = Ok(new { token = tokenStr,firstName=user.FirstName,lastName=user.LastName });
             return response;
