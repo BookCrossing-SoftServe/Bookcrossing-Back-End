@@ -144,7 +144,7 @@ namespace ApplicationTest.Validators
         [Test]
         public void MiddleName_IsEmpty_ShouldThrowException()
         {
-            _validator.ShouldNotHaveValidationErrorFor(author => author.MiddleName, "");
+            _validator.ShouldHaveValidationErrorFor(author => author.MiddleName, "");
         }
         [Test]
         public void MiddleName_MoreThanThirtyCharacters_ThrowsException()
