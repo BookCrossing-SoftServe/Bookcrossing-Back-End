@@ -36,9 +36,10 @@ namespace Application.Services.Implementation
             var query = _authorRepository.GetAll();
             return await _paginationService.GetPage<AuthorDto, Author>(query, parameters);
         }
-        public async Task<AuthorDto> Add(InsertAuthorDto insertAuthorDto)
+        public async Task<AuthorDto> Add(AuthorDto authorDto)
         {
-            var author = _mapper.Map<Author>(insertAuthorDto);
+            authorDto.Id = null;
+            var author = _mapper.Map<Author>(authorDto);
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
             return _mapper.Map<AuthorDto>(author);

@@ -8,7 +8,7 @@ namespace BookCrossingBackEnd.Validators
         public AuthorValidator()
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
-            RuleFor(x => x.Id).GreaterThan(0);
+            RuleFor(x => x.Id).GreaterThanOrEqualTo(0);
             RuleFor(x => x.FirstName)
                 .NotNull()
                 .Length(2, 20)
@@ -18,6 +18,7 @@ namespace BookCrossingBackEnd.Validators
                 .Length(2, 20)
                 .Matches(@"^([a-zA-Z '-]+)$");
             RuleFor(x => x.MiddleName)
+                .NotEmpty()
                 .MaximumLength(30)
                 .Matches(@"^([a-zA-Z '-]+)$");
         }
