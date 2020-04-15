@@ -46,6 +46,7 @@ namespace BookCrossingBackEnd
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
                 options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
+         
             // requires using Microsoft.Extensions.Options
             services.Configure<MongoSettings>(
                 Configuration.GetSection(nameof(MongoSettings)));
