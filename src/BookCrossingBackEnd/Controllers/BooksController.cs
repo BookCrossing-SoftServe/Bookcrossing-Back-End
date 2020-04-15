@@ -26,7 +26,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDto>> GetBookAsync([FromRoute] int id)
+        public async Task<ActionResult<BookDto>> GetBook([FromRoute] int id)
         {
             var book = await _bookService.GetById(id);
             if (book == null)
@@ -39,7 +39,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<BookDto>> PostBookAsync([FromBody] BookDto bookDto)
         {
             var insertedBook = await _bookService.Add(bookDto);
-            return CreatedAtAction("GetBookAsync", new { id = insertedBook.Id }, insertedBook);
+            return CreatedAtAction("GetBook", new { id = insertedBook.Id }, insertedBook);
         }
 
         // PUT: api/Books/5
