@@ -19,7 +19,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<BookDto>> GetAllBooksAsync()
+        public async Task<ActionResult<List<BookDto>>> GetAllBooksAsync()
         {
             return Ok(await _bookService.GetAll());
         }
