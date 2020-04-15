@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
 using System.Linq;
-using System.Transactions;
 using Infrastructure.RDBMS;
 
 namespace Application.Services.Implementation
