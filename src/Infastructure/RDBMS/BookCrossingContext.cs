@@ -21,6 +21,7 @@ namespace Infrastructure.RDBMS
         public  DbSet<Request> Request { get; set; }
         public  DbSet<UserLocation> UserLocation { get; set; }
         public DbSet<Role> Role { get; set; }
+        public DbSet<ResetPassword> ResetPassword { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,6 +43,7 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new ResetPasswordConfiguration());
         }
     }
 }

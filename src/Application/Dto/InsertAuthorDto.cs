@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto
 {
-    public class NewAuthorDto
+    public class InsertAuthorDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

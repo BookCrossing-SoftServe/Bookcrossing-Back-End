@@ -36,9 +36,9 @@ namespace Application.Services.Implementation
             var query = _authorRepository.GetAll();
             return await _paginationService.GetPage<AuthorDto, Author>(query, parameters);
         }
-        public async Task<AuthorDto> Add(NewAuthorDto newAuthorDto)
+        public async Task<AuthorDto> Add(InsertAuthorDto insertAuthorDto)
         {
-            var author = _mapper.Map<Author>(newAuthorDto);
+            var author = _mapper.Map<Author>(insertAuthorDto);
             _authorRepository.Add(author);
             await _authorRepository.SaveChangesAsync();
             return _mapper.Map<AuthorDto>(author);
@@ -51,14 +51,20 @@ namespace Application.Services.Implementation
                 return false;
             }
             _authorRepository.Remove(author);
-            await _authorRepository.SaveChangesAsync();
-            return true;
+            var affectedRows = await _authorRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
-        public async Task Update(AuthorDto authorDto)
+        public async Task<bool> Update(AuthorDto authorDto)
         {
             var author = _mapper.Map<Author>(authorDto);
+            author = await _authorRepository.FindByIdAsync(author.Id);
+            if (author == null)
+            {
+                return false;
+            }
             _authorRepository.Update(author);
-            await _authorRepository.SaveChangesAsync();
+            var affectedRows = await _authorRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
     }
 }

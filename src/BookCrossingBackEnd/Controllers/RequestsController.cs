@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using BookCrossingBackEnd.Filters;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
@@ -20,7 +19,7 @@ namespace BookCrossingBackEnd.Controllers
         {
             _requestService = requestService;
         }
-        [Authorize]
+        //[Authorize]
         [Route("{bookId}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
@@ -28,7 +27,7 @@ namespace BookCrossingBackEnd.Controllers
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
             return await _requestService.Make(userId, bookId);
         }
-        [Authorize]
+        //[Authorize]
         [Route("{bookId}")]
         [HttpGet]
         public ActionResult<IEnumerable<RequestDto>> Get([FromRoute] int bookId)
@@ -38,8 +37,8 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             return Ok(requests);
         }
-        [Authorize]
-        [ValidationFilter]
+        //[Authorize]
+        [ModelValidationFilter]
         [Route("{requestId}")]
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
@@ -49,8 +48,8 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             return Ok(request);
         }
-        [Authorize]
-        [ValidationFilter]
+        //[Authorize]
+        [ModelValidationFilter]
         [Route("{requestId}")]
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)

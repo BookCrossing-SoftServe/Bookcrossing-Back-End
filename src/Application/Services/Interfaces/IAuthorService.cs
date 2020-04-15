@@ -25,13 +25,13 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="author">Author's DTO instance</param>
         /// <returns></returns>
-        Task Update(AuthorDto author);
+        Task<bool> Update(AuthorDto author);
 
         /// <summary>
         /// Remove author from database
         /// </summary>
         /// <param name="authorId">Author's ID</param>
-        /// <returns>Returns removed author's DTO</returns>
+        /// <returns></returns>
         Task<bool> Remove(int authorId);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="author">NewAuthor DTO instance</param>
         /// <returns>Returns created Author's DTO </returns>
-        Task<AuthorDto> Add(NewAuthorDto author);
+        Task<AuthorDto> Add(InsertAuthorDto author);
 
     }
 }
