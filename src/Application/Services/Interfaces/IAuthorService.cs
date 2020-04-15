@@ -13,11 +13,12 @@ namespace Application.Services.Interfaces
         /// <returns>returns Author DTO</returns>
         Task<AuthorDto> GetById(int authorId);
 
-        /// <summary>
-        /// Retrieve all Authors
-        /// </summary>
-        /// <returns>returns list of Author DTOs</returns>
-        Task<List<AuthorDto>> GetAll();
+       /// <summary>
+       /// Retrieve Pagination for Author
+       /// </summary>
+       /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
+       /// <returns>Returns Pagination with Page result and Total amount of items</returns>
+        Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters query);
 
         /// <summary>
         /// Update specified Author

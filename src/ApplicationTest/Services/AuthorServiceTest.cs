@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Implementation;
+using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
@@ -15,6 +16,7 @@ namespace ApplicationTest.Services
     {
         private AuthorService _authorService;
         private Mock<IRepository<Author>> _authorRepositoryMock;
+        private Mock<IPaginationService> _paginationMock;
         private Mock<IMapper> _mapper;
 
         [SetUp]
@@ -22,7 +24,8 @@ namespace ApplicationTest.Services
         {
             _authorRepositoryMock = new Mock<IRepository<Author>>();
             _mapper = new Mock<IMapper>();
-            _authorService = new AuthorService(_authorRepositoryMock.Object, _mapper.Object);
+            _paginationMock = new Mock<IPaginationService>();
+            _authorService = new AuthorService(_authorRepositoryMock.Object, _mapper.Object, _paginationMock.Object);
         }
 
         #region GetById

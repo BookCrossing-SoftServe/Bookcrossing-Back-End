@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
@@ -30,14 +31,12 @@ namespace BookCrossingBackEnd.Controllers
             }
             return Ok(author);
         }
-
-        // GET: api/Authors
+        
         [HttpGet]
-        public async Task<ActionResult<List<AuthorDto>>> GetAllAuthor()
+        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] QueryParameters query)
         {
-            return Ok(await _authorService.GetAll());
+            return Ok(await _authorService.GetAuthors(query));
         }
-
         // PUT: api/Authors
         [HttpPut]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
