@@ -53,7 +53,7 @@ namespace ApplicationTest.Controllers
             var testBook = GetTestBook();
             _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(testBook);
 
-            var getBookResult = await _booksController.GetBookAsync(It.IsAny<int>());
+            var getBookResult = await _booksController.GetBook(It.IsAny<int>());
 
             var okResult = getBookResult.Result as OkObjectResult;
             okResult.Should().BeOfType<OkObjectResult>();
@@ -71,7 +71,7 @@ namespace ApplicationTest.Controllers
         {
             _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(null as BookDto);
 
-            var result = await _booksController.GetBookAsync(It.IsAny<int>());
+            var result = await _booksController.GetBook(It.IsAny<int>());
 
             result.Result.Should().BeOfType<NotFoundResult>();
         }
