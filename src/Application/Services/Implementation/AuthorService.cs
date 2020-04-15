@@ -57,11 +57,6 @@ namespace Application.Services.Implementation
         public async Task<bool> Update(AuthorDto authorDto)
         {
             var author = _mapper.Map<Author>(authorDto);
-            author = await _authorRepository.FindByIdAsync(author.Id);
-            if (author == null)
-            {
-                return false;
-            }
             _authorRepository.Update(author);
             var affectedRows = await _authorRepository.SaveChangesAsync();
             return affectedRows > 0;
