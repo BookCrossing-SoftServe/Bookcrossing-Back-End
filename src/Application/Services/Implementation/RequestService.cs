@@ -23,7 +23,9 @@ namespace Application.Services.Implementation
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<User> _useRepository;
         private readonly IPaginationService _paginationService;
-        public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService)
+
+        public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
+            IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -36,10 +38,7 @@ namespace Application.Services.Implementation
         public async Task<RequestDto> Make(int userId, int bookId)
         {
             var book = await _bookRepository.GetAll().Include(x=> x.User).FirstOrDefaultAsync(x=> x.Id == bookId);
-            if (!book.Available || book == null)
-            {
-                return null;
-            }
+
             var request = new Request()
             {
                 BookId = book.Id,

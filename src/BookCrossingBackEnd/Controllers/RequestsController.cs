@@ -20,7 +20,7 @@ namespace BookCrossingBackEnd.Controllers
             _requestService = requestService;
         }
         //[Authorize]
-        [Route("{bookId}")]
+        [Route("{bookId:min(1)}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
@@ -28,7 +28,7 @@ namespace BookCrossingBackEnd.Controllers
             return await _requestService.Make(userId, bookId);
         }
         //[Authorize]
-        [Route("{bookId}")]
+        [Route("{bookId:min(1)}")]
         [HttpGet]
         public async Task<ActionResult<PaginationDto<RequestDto>>> Get([FromRoute] int bookId, [FromQuery] QueryParameters query)
         {
@@ -36,7 +36,7 @@ namespace BookCrossingBackEnd.Controllers
         }
         //[Authorize]
         [ModelValidationFilter]
-        [Route("{requestId}")]
+        [Route("{requestId:min(1)}")]
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
         {
@@ -49,7 +49,7 @@ namespace BookCrossingBackEnd.Controllers
         }
         //[Authorize]
         [ModelValidationFilter]
-        [Route("{requestId}")]
+        [Route("{requestId:min(1)}")]
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
         {
