@@ -16,7 +16,7 @@ namespace Domain.NoSQL.Entities
         [BsonIgnoreIfNull]
         public string Date { get; set; }
         [BsonIgnoreIfDefault]
-        public int CommentOwnerId { get; set; }
+        public int OwnerId { get; set; }
         [BsonIgnoreIfNull]
         public IEnumerable<BookChildComment> Comments { get; set; }
         public BookChildComment() {}

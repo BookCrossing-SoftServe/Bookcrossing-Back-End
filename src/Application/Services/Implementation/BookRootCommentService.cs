@@ -12,11 +12,11 @@ namespace Application.Services.Implementation
     public class BookRootCommentService : IBookRootCommentService
     {
         private readonly IRootRepository<BookRootComment> _rootCommentRepository;
-        private readonly IMapper _mapper;
-        public BookRootCommentService(IRootRepository<BookRootComment> rootCommentRepository, IMapper mapper)
+        private readonly ICommentOwnerMapper _commentOwnerMapper;
+        public BookRootCommentService(IRootRepository<BookRootComment> rootCommentRepository, ICommentOwnerMapper commentOwnerMapper)
         {
             _rootCommentRepository = rootCommentRepository;
-            _mapper = mapper;
+            _commentOwnerMapper = commentOwnerMapper;
         }
 
         public async Task<int> Add(RootInsertDto insertDto)
@@ -26,24 +26,24 @@ namespace Application.Services.Implementation
                     {
                         Text = insertDto.Text,
                         BookId = insertDto.BookId,
-                        CommentOwnerId = insertDto.CommentOwnerId,
+                        OwnerId = insertDto.CommentOwnerId,
                         Date = DateTime.Now.ToUniversalTime().ToString()
                     });
         }
 
         public async Task<IEnumerable<RootDto>> GetAll()
         {
-            return _mapper.Map<IEnumerable<RootDto>>(await _rootCommentRepository.GetAllAsync());
+            return await _commentOwnerMapper.MapAsync(await _rootCommentRepository.GetAllAsync());
         }
 
         public async Task<IEnumerable<RootDto>> GetByBookId(int bookId)
         {
-            return _mapper.Map<IEnumerable<RootDto>>(await _rootCommentRepository.FindManyAsync(root => root.BookId == bookId));
+            return await _commentOwnerMapper.MapAsync(await _rootCommentRepository.FindManyAsync(root => root.BookId == bookId));
         }
 
         public async Task<RootDto> GetById(string id)
         {
-            return _mapper.Map<RootDto>(await _rootCommentRepository.FindByIdAsync(id));
+            return await _commentOwnerMapper.MapAsync(await _rootCommentRepository.FindByIdAsync(id));
         }
 
         public async Task<int> Remove(string id)

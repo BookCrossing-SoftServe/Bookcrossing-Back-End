@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<BookDto>> GetAllBooks()
+        public async Task<ActionResult<List<BookDto>>> GetAllBooksAsync()
         {
             return Ok(await _bookService.GetAll());
         }
@@ -35,33 +36,45 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public async Task<ActionResult<BookDto>> PostBook([FromBody] BookDto bookDto)
+        public async Task<ActionResult<BookDto>> PostBookAsync([FromBody] BookDto bookDto)
         {
-            var insertedId = await _bookService.Add(bookDto);
-            bookDto.Id = insertedId;
-            return CreatedAtAction("GetBook", new { id = bookDto.Id }, bookDto);
+            var insertedBook = await _bookService.Add(bookDto);
+            return CreatedAtAction("GetBook", new { id = insertedBook.Id }, insertedBook);
         }
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook([FromRoute] int id, [FromBody] BookDto bookDto)
+        public async Task<IActionResult> PutBookAsync([FromRoute] int id, [FromBody] BookDto bookDto)
         {
             if (id != bookDto.Id)
             {
                 return BadRequest();
             }
-            await _bookService.Update(bookDto);
+
+            if (bookDto == null)
+            {
+                return BadRequest();
+            }
+
+            var isBookUpdated = await _bookService.Update(bookDto);
+            if (!isBookUpdated)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<BookDto>> DeleteAuthor([FromRoute] int id)
+
+        public async Task<ActionResult> DeleteBookAsync([FromRoute] int id)
         {
-            var book = await _bookService.Remove(id);
-            if (book == null)
+            var isBookRemoved = await _bookService.Remove(id);
+            if (!isBookRemoved)
+            {
                 return NotFound();
-            return Ok(book);
+            }
+            return Ok();
         }
 
     }

@@ -9,9 +9,17 @@ namespace BookCrossingBackEnd.Validators
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             RuleFor(x => x.Id).GreaterThan(0);
-            RuleFor(x => x.FirstName).NameValidator(2, 20);
-            RuleFor(x => x.LastName).NameValidator(2, 20);
-            RuleFor(x => x.MiddleName).NameValidator(2, 20);
+            RuleFor(x => x.FirstName)
+                .NotNull()
+                .Length(2, 20)
+                .Matches(@"^([a-zA-Z '-]+)$");
+            RuleFor(x => x.LastName)
+                .NotNull()
+                .Length(2, 20)
+                .Matches(@"^([a-zA-Z '-]+)$");
+            RuleFor(x => x.MiddleName)
+                .MaximumLength(30)
+                .Matches(@"^([a-zA-Z '-]+)$");
         }
     }
 }

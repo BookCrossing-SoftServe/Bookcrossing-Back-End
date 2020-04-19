@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Templates\RequestEmail.html" />
+    <Content Include="Templates\*">
+    <CopyToPublishDirectory>always</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +37,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationTest\ApplicationTest.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\assets\i18n\" />
   </ItemGroup>
 
 

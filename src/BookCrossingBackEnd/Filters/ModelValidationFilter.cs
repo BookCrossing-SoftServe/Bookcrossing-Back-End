@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace BookCrossingBackEnd.Filters
 {
-    public class ValidationFilter : ActionFilterAttribute
+    public class ModelValidationFilter : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext actionContext)
         {

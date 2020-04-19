@@ -27,7 +27,7 @@ namespace Application.Services.Implementation
                 new BookChildComment(true)
                 {
                     Text = insertDto.Text,
-                    CommentOwnerId = insertDto.CommentOwnerId,
+                    OwnerId = insertDto.CommentOwnerId,
                     Date = DateTime.Now.ToUniversalTime().ToString()
                 },
                 path,

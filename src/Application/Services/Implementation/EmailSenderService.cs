@@ -44,11 +44,33 @@ namespace Application.Services.Implementation
             body = body.Replace("{REQUEST.NUMBER}", Convert.ToString(message.RequestNumber));
             body = body.Replace("{REQUEST.DATE}", message.RequestDate.ToString("MMMM dd, yyyy"));
             body = body.Replace("{BOOK.NAME}", message.BookName);
+            body = body.Replace("{BOOK.ID}", message.BookId.ToString());
 
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress("Book Crossing", _emailConfig.From));
             emailMessage.To.Add(message.UserEmail);
             emailMessage.Subject = message.Subject;
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+
+            await SendAsync(emailMessage);
+        }
+        public async Task SendEmailForPasswordResetAsync(string userName, string confirmNumber, string email)
+        {
+            string body = string.Empty;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "ResetPassword.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            body = body.Replace("{USER}", userName);
+            body = body.Replace("{CONFIRMNUMBER}", confirmNumber);
+            body = body.Replace("{EMAIL}", email);
+
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("Book Crossing", _emailConfig.From));
+            emailMessage.To.Add(new MailboxAddress(email));
+            emailMessage.Subject = "Book crossing password reset!";
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
 
             await SendAsync(emailMessage);

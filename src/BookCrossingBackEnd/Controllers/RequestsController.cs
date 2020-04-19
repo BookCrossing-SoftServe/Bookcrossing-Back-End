@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using BookCrossingBackEnd.Filters;
-using Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
@@ -20,45 +19,46 @@ namespace BookCrossingBackEnd.Controllers
         {
             _requestService = requestService;
         }
-        [Authorize]
-        [Route("{bookId}")]
+        //[Authorize]
+        [Route("{bookId:min(1)}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
             var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
             return await _requestService.Make(userId, bookId);
         }
-        [Authorize]
-        [Route("{bookId}")]
+        //[Authorize]
+        [Route("{bookId:min(1)}")]
         [HttpGet]
-        public ActionResult<IEnumerable<RequestDto>> Get([FromRoute] int bookId)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> Get([FromRoute] int bookId, [FromQuery] QueryParameters query)
         {
-            var requests = _requestService.Get(bookId);
-            if (requests == null)
-                return NotFound();
-            return Ok(requests);
+            return Ok(await _requestService.Get(bookId, query));
         }
-        [Authorize]
-        [ValidationFilter]
-        [Route("{requestId}")]
+        //[Authorize]
+        [ModelValidationFilter]
+        [Route("{requestId:min(1)}")]
         [HttpPut]
         public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
         {
-            var request = await _requestService.Approve(requestId);
-            if (request == null)
+            var updated = await _requestService.Approve(requestId);
+            if (!updated)
+            {
                 return NotFound();
-            return Ok(request);
+            }
+            return Ok();
         }
-        [Authorize]
-        [ValidationFilter]
-        [Route("{requestId}")]
+        //[Authorize]
+        [ModelValidationFilter]
+        [Route("{requestId:min(1)}")]
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
         {
-            var request = await _requestService.Remove(requestId);
-            if (request == null)
+            var removed = await _requestService.Remove(requestId);
+            if (!removed)
+            {
                 return NotFound();
-            return Ok(request);
+            }
+            return Ok();
         }
 
     }

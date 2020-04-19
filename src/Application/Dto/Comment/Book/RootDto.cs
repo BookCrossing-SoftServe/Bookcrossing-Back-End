@@ -9,8 +9,7 @@ namespace Application.Dto.Comment.Book
         public string Text { get; set; }
         public DateTime Date { get; set; }
         public int BookId { get; set; }
-        public int CommentOwnerId { get; set; }
+        public OwnerDto Owner { get; set; }
         public IEnumerable<ChildDto> Comments { get; set; }
-        public RootDto() {}
     }
 }
