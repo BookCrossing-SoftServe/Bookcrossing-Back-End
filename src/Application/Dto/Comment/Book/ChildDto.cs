@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Application.Dto.Comment
+namespace Application.Dto.Comment.Book
 {
-    public  class BookRootCommentDto
+    public class ChildDto
     {
         public string Id { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }
-        public int BookId { get; set; }
         public int CommentOwnerId { get; set; }
-        public IEnumerable<BookChildCommentDto> Comments { get; set; }
-        public BookRootCommentDto() {}
+        public IEnumerable<ChildDto> Comments { get; set; }
     }
 }

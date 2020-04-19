@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Application.Dto.Comment
+namespace Application.Dto.Comment.Book
 {
-    public class BookCommentDeleteDto
+    public class ChildDeleteDto
     {
         public IEnumerable<string> Ids { get; set; }
     }
