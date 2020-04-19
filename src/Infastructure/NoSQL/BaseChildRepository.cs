@@ -265,25 +265,28 @@ namespace Infrastructure.NoSQL
         }
 
         /// <summary>
-        /// Create random lowercase string with 10 letter
+        /// Create random lowercase string
         /// </summary>
-        /// <returns>lowercase string with 10 letter</returns>
-        protected string GenerateIndex()
+        /// <returns>lowercase string</returns>
+        public static string GenerateIndexName(int size, bool isLowerCase)
         {
+            StringBuilder builder = new StringBuilder();
             Random random = new Random();
-            string characters = "abcdefghijklmnopqrstuvwxyz";
-            StringBuilder result = new StringBuilder(10);
-            for (int i = 0; i < result.Capacity; i++)
+            char ch;
+            for (int i = 0; i < size; i++)
             {
-                result.Append(characters[random.Next(characters.Length)]);
+                ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
+                builder.Append(ch);
             }
-            return result.ToString();
+            if (isLowerCase)
+                return builder.ToString().ToLower();
+            return builder.ToString();
         }
 
         /// <summary>
         /// Get path string and List of Array Filter Definitions to describe path across tree.
         /// </summary>
-        /// <param name="path">Lists of tuples (array name, id of item we need from this array)</param>
+        /// <param name="path">Lists of tuples (array name, id of item we are needed from this array)</param>
         /// <returns>pathStr and arrayFilterDefinitions</returns>
         protected (string pathStr, IEnumerable<ArrayFilterDefinition> arrayFilterDefinitions) GetPathAndArrayFilterDefinitions(IEnumerable<(string nestedArrayName, string itemId)> path)
         {
@@ -294,7 +297,7 @@ namespace Infrastructure.NoSQL
             {
                 do
                 {
-                    index = GenerateIndex();
+                    index = GenerateIndexName(5,true);
                 } while (pathStr.Contains(index));
                 arrayFilters.Add(new BsonDocumentArrayFilterDefinition<TChildEntity>(new BsonDocument($"{index}._id", new ObjectId(itemId))));
                 pathStr += $"{nestedArrayKey}.$[{index}].";
