@@ -36,11 +36,11 @@ namespace Application.Services.Implementation
             return Convert.ToInt32(updateResult.ModifiedCount);
         }
 
-        public async Task<int> Remove(ChildDeleteDto deleteDto)
+        public async Task<int> Remove(IEnumerable<string> ids)
         {
-            string rootId = deleteDto.Ids.First();
-            List<(string nestedArrayName, string itemId)> path = deleteDto.Ids.Skip(1).SkipLast(1).Select(x => ("Comments", x)).ToList();
-            string childId = deleteDto.Ids.Last();
+            string rootId = ids.First();
+            List<(string nestedArrayName, string itemId)> path = ids.Skip(1).SkipLast(1).Select(x => ("Comments", x)).ToList();
+            string childId = ids.Last();
 
             var updateResult = await _childCommentRepository.PullAsync(
                 rootId,

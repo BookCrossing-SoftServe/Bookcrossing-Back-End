@@ -10,6 +10,7 @@ namespace BookCrossingBackEnd.Validators
             CascadeMode = CascadeMode.StopOnFirstFailure;
             RuleFor(x => x.Text.Trim(' ')).NotNull().Length(1, 256);
             RuleFor(x => x.BookId).NotNull().GreaterThan(0);
+            RuleFor(x => x.CommentOwnerId).NotNull().GreaterThan(0);
         }
     }
 }
