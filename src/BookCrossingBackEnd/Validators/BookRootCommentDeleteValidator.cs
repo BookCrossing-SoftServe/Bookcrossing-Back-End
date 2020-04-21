@@ -1,15 +1,18 @@
 ﻿using Application.Dto.Comment.Book;
 using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookCrossingBackEnd.Validators
 {
-    public class BookRootCommentUpdateValidator : AbstractValidator<RootUpdateDto>
+    public class BookRootCommentDeleteValidator : AbstractValidator<RootDeleteDto>
     {
-        public BookRootCommentUpdateValidator()
+        public BookRootCommentDeleteValidator()
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             RuleFor(x => x.Id).Matches(@"^[a-f\d]{24}$");
-            RuleFor(x => x.Text.Trim(' ')).NotNull().Length(1, 256);
             RuleFor(x => x.CommentOwnerId).NotNull().GreaterThan(0);
         }
     }
