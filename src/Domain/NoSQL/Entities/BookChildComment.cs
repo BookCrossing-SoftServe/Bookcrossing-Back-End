@@ -16,13 +16,10 @@ namespace Domain.NoSQL.Entities
         [BsonIgnoreIfNull]
         public string Date { get; set; }
         [BsonIgnoreIfDefault]
-        public int UserId { get; set; }
+        public int OwnerId { get; set; }
         [BsonIgnoreIfNull]
         public IEnumerable<BookChildComment> Comments { get; set; }
-        public BookChildComment()
-        {
-
-        }
+        public BookChildComment() {}
         public BookChildComment(bool IsForInserting)
         {
             if (IsForInserting)

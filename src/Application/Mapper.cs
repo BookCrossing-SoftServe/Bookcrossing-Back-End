@@ -3,6 +3,7 @@ using Application.Dto;
 using AutoMapper;
 using RdbmsEntities = Domain.RDBMS.Entities;
 using NoSqlEntities = Domain.NoSQL.Entities;
+using System;
 
 namespace Application
 {
@@ -10,6 +11,16 @@ namespace Application
     {
         public Mapper()
         {
+            CreateMap<NoSqlEntities.BookChildComment, Dto.Comment.Book.ChildDto>()
+                .ForMember(dto => dto.Date, opt => opt.MapFrom(entity => Convert.ToDateTime(entity.Date).ToLocalTime()))
+                .ForMember(dto => dto.Comments, opt => opt.MapFrom(entity => entity.Comments))
+                .ForMember(dto => dto.Owner, opt => opt.MapFrom(entity => new Dto.Comment.OwnerDto() {Id=entity.OwnerId }));
+            CreateMap<NoSqlEntities.BookRootComment, Dto.Comment.Book.RootDto>()
+                .ForMember(dto => dto.Date, opt => opt.MapFrom(entity => Convert.ToDateTime(entity.Date).ToLocalTime()))
+                .ForMember(dto => dto.Comments, opt => opt.MapFrom(entity => entity.Comments))
+                .ForMember(dto => dto.Owner, opt => opt.MapFrom(entity => new Dto.Comment.OwnerDto() { Id = entity.OwnerId }));
+            CreateMap<RdbmsEntities.User, Dto.Comment.OwnerDto>()
+                .ForMember(dto => dto.Role, opt => opt.MapFrom(entity => entity.Role.Name));
             CreateMap<UserUpdateDto, RdbmsEntities.User>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.Author>().ReverseMap();
             CreateMap<InsertAuthorDto, RdbmsEntities.Author>().ReverseMap();
@@ -62,5 +73,5 @@ namespace Application
             CreateMap<UserProfileDto, RdbmsEntities.User>().ForMember(x => x.Book, opt => opt.MapFrom(x => x.Books))
                 .ReverseMap();
         }
-    }
+    }  
 }

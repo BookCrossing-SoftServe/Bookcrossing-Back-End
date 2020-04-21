@@ -1,6 +1,5 @@
 using System.IO;
 using System.Text;
-using Application.Dto.Email;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -25,6 +24,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
+using Application;
 
 namespace BookCrossingBackEnd
 {
@@ -44,10 +44,11 @@ namespace BookCrossingBackEnd
         {
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
             // Please download appsettings.json for connecting to Azure DB
-            string azureConnection = Configuration.GetConnectionString("AzureConnection");
+            // string azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
-                options.UseSqlServer(azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
+         
             // requires using Microsoft.Extensions.Options
             services.Configure<MongoSettings>(
                 Configuration.GetSection(nameof(MongoSettings)));
@@ -67,6 +68,7 @@ namespace BookCrossingBackEnd
 
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
+            services.AddScoped<ICommentOwnerMapper, CommentOwnerMapper>();
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -75,6 +77,8 @@ namespace BookCrossingBackEnd
             services.AddScoped(typeof(Domain.NoSQL.IChildRepository<,>), typeof(Infrastructure.NoSQL.BaseChildRepository<,>));
             services.AddScoped(typeof(Domain.NoSQL.IRootRepository<>), typeof(Infrastructure.NoSQL.BaseRootRepository<>));
             services.AddScoped(typeof(Domain.RDBMS.IRepository<>), typeof(Infrastructure.RDBMS.BaseRepository<>));
+            services.AddScoped<IBookChildCommentService, BookChildCommentService>();
+            services.AddScoped<IBookRootCommentService, BookRootCommentService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UsersService>();
