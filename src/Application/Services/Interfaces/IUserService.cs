@@ -13,7 +13,7 @@ namespace Application.Services.Interfaces
 
         Task RemoveUser(int userId);
 
-   
+     Task<bool> Add(RegisterDto register);
         Task SendPasswordResetConfirmation(string email);
         Task ResetPassword(ResetPasswordDto newPassword);
 

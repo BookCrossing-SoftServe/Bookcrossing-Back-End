@@ -80,5 +80,21 @@ namespace Application.Services.Implementation
             }
             await _userRepository.SaveChangesAsync();
         }
+
+        public async Task<bool> Add(RegisterDto register)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(register);
+                _userRepository.Add(user);
+                await _userRepository.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+        }
     }
 }
