@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Comment.Book;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,24 +12,12 @@ namespace BookCrossingBackEnd.Controllers
     public class BookRootCommentsController : ControllerBase
     {
         private readonly IBookRootCommentService _rootBookCommentService;
-
-        public BookRootCommentsController(IBookRootCommentService rootBookCommentService)
+        private readonly IUserResolverService _userResolverService;
+        public BookRootCommentsController(IBookRootCommentService rootBookCommentService, IUserResolverService userResolverService)
         {
             _rootBookCommentService = rootBookCommentService;
-        }
-
-        // GET: api/BookRootCommants/5e965865bbcf5465603b9b9f
-        [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<RootDto>> Get([FromRoute]string id)
-        { 
-            var comment = await _rootBookCommentService.GetById(id);
-
-            if (comment == null)
-            {
-                return NotFound();
-            }
-            return Ok(comment);
-        }
+            _userResolverService = userResolverService;
+    }
 
         // GET: api/BookRootCommants/5
         [HttpGet("{bookId}")]
@@ -48,8 +37,13 @@ namespace BookCrossingBackEnd.Controllers
 
         // PUT: api/BookRootCommants
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult<int>> Put([FromBody] RootUpdateDto updateDto)
         {
+            if(updateDto.CommentOwnerId != _userResolverService.GetUserId())
+            {
+                return Forbid();
+            }
             int number = await _rootBookCommentService.Update(updateDto);
             if (number == 0)
             {
@@ -60,10 +54,11 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/BookRootCommants
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<int>> Post([FromBody] RootInsertDto insertDto)
         {
+            insertDto.CommentOwnerId = _userResolverService.GetUserId();
             int number = await _rootBookCommentService.Add(insertDto);
-
             if (number == 0)
             {
                 return NotFound();
@@ -72,11 +67,15 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/BookRootCommants/5
-        [HttpDelete("{id:length(24)}")]
-        public async Task<ActionResult<int>> Delete([FromRoute]string id)
+        [HttpDelete]
+        [Authorize]
+        public async Task<ActionResult<int>> Delete([FromBody]RootDeleteDto  deleteDto)
         {
-            int number = await _rootBookCommentService.Remove(id);
-
+            if (deleteDto.CommentOwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
+            {
+                return Forbid();
+            }
+            int number = await _rootBookCommentService.Remove(deleteDto.Id);
             if (number == 0)
             {
                 return NotFound();
