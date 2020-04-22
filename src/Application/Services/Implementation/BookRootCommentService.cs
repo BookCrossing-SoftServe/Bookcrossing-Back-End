@@ -26,7 +26,7 @@ namespace Application.Services.Implementation
                     {
                         Text = insertDto.Text,
                         BookId = insertDto.BookId,
-                        OwnerId = insertDto.CommentOwnerId,
+                        OwnerId = insertDto.OwnerId,
                         Date = DateTime.Now.ToUniversalTime().ToString()
                     });
         }
@@ -38,7 +38,7 @@ namespace Application.Services.Implementation
 
         public async Task<IEnumerable<RootDto>> GetByBookId(int bookId)
         {
-            return await _commentOwnerMapper.MapAsync(await _rootCommentRepository.FindManyAsync(root => root.BookId == bookId));
+            return await _commentOwnerMapper.MapAsync(await _rootCommentRepository.FindManyAsync(root=>root.BookId==bookId));
         }
 
         public async Task<RootDto> GetById(string id)

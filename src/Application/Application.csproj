@@ -30,8 +30,4 @@
     <ProjectReference Include="..\Infastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dto\Comment\UserProfile\" />
-  </ItemGroup>
-
 </Project>

@@ -27,8 +27,9 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
-            //var userId = _userResolverService.GetUserId();
-            var request = await _requestService.Make(2, bookId);
+            var userId = _userResolverService.GetUserId();
+            var request = await _requestService.Make(userId, bookId);
+
             if (request == null)
             {
                 return BadRequest();
