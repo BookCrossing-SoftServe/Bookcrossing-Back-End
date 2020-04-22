@@ -23,7 +23,6 @@ namespace Application
                 .ForMember(dto => dto.Role, opt => opt.MapFrom(entity => entity.Role.Name));
             CreateMap<UserUpdateDto, RdbmsEntities.User>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.Author>().ReverseMap();
-            CreateMap<InsertAuthorDto, RdbmsEntities.Author>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.BookAuthor>()
                 .ForMember(a => a.AuthorId, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(a => a.Author, opt =>

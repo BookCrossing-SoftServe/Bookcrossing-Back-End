@@ -31,16 +31,18 @@ namespace ApplicationTest.Validators
 
         [Test]
         [TestCase(-1)]
-        [TestCase(0)]
-        public void IdProperty_LessOrEqualToZero_ThrowsException(int value)
+        [TestCase(-2)]
+        public void IdProperty_LessThanZero_ThrowsException(int value)
         {
             _validator.ShouldHaveValidationErrorFor(author => author.Id, value);
         }
 
         [Test]
-        public void IdProperty_GreaterThanZero_ShouldNotThrowsException()
+        [TestCase(0)]
+        [TestCase(1)]
+        public void IdProperty_GreaterThanOrEqualToZero_ShouldNotThrowsException(int value)
         {
-            _validator.ShouldNotHaveValidationErrorFor(author => author.Id, 1);
+            _validator.ShouldNotHaveValidationErrorFor(author => author.Id, value);
         }
 
         #endregion ID
@@ -139,7 +141,11 @@ namespace ApplicationTest.Validators
         {
             _validator.ShouldNotHaveValidationErrorFor(author => author.MiddleName, "John");
         }
-
+        [Test]
+        public void MiddleName_IsEmpty_ShouldThrowException()
+        {
+            _validator.ShouldHaveValidationErrorFor(author => author.MiddleName, "");
+        }
         [Test]
         public void MiddleName_MoreThanThirtyCharacters_ThrowsException()
         {

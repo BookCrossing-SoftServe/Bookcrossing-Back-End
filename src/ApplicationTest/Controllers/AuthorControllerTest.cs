@@ -81,10 +81,10 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Add_Author_Returns_ActionResultWithSamePropertyValues()
         {
-            var insertDto = new InsertAuthorDto() {FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar"};
+            var insertDto = new AuthorDto() {FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar"};
             var expectedAuthorDto = new AuthorDto()
                 {Id = 201, FirstName = "Max", LastName = "Novitskyi", MiddleName = "Yar"};
-            _authorServiceMock.Setup(s => s.Add(It.IsAny<InsertAuthorDto>())).ReturnsAsync(expectedAuthorDto);
+            _authorServiceMock.Setup(s => s.Add(It.IsAny<AuthorDto>())).ReturnsAsync(expectedAuthorDto);
 
             var createdAtActionResult = await _authorController.PostAuthor(insertDto);
             var result = (AuthorDto) ((CreatedAtActionResult) createdAtActionResult.Result).Value;
