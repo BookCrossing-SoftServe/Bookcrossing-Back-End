@@ -40,7 +40,7 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Put([FromBody] RootUpdateDto updateDto)
         {
-            if(updateDto.OwnerId != _userResolverService.GetUserId())
+            if (updateDto.OwnerId != _userResolverService.GetUserId())
             {
                 return Forbid();
             }
@@ -72,7 +72,7 @@ namespace BookCrossingBackEnd.Controllers
         // DELETE: api/RootBookCommants/5
         [HttpDelete]
         [Authorize]
-        public async Task<ActionResult<int>> Delete([FromBody]RootDeleteDto  deleteDto)
+        public async Task<ActionResult<int>> Delete([FromBody]RootDeleteDto deleteDto)
         {
             if (deleteDto.OwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
             {
