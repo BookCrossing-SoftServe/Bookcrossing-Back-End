@@ -9,7 +9,6 @@ namespace BookCrossingBackEnd.Controllers
     [Route("api/[controller]")]
     public class LoginController : Controller
     {
-
         
         private readonly ITokenService _tokenService;
 
@@ -17,9 +16,6 @@ namespace BookCrossingBackEnd.Controllers
         {
             _tokenService = tokenService;
         }
-
-
- 
 
         /// <summary>
         /// Function for user authentication.
@@ -30,8 +26,6 @@ namespace BookCrossingBackEnd.Controllers
         [LoginFilter]
         public async Task<IActionResult> Login([FromBody]LoginDto model)
         {
-
-
             var user = await _tokenService.VerifyUserCredentials(model);
 
             var tokenStr = _tokenService.GenerateJSONWebToken(user);

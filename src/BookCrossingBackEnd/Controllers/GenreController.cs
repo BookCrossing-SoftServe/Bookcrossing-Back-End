@@ -37,11 +37,14 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // PUT: api/Genre
-        [ModelValidationFilter]
         [HttpPut]
         public async Task<IActionResult> PutGenre(GenreDto genreDto)
         {
-            await _genreService.Update(genreDto);
+            var updated = await _genreService.Update(genreDto);
+            if (!updated)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 
@@ -49,9 +52,8 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<GenreDto>> PostGenre([FromBody]GenreDto genreDto)
         {
-            var insertedId = await _genreService.Add(genreDto);
-            genreDto.Id = insertedId;
-            return CreatedAtAction("GetGenre", new { id = genreDto.Id }, genreDto);
+            var insertedGenre = await _genreService.Add(genreDto);
+            return CreatedAtAction("GetGenre", new { id = insertedGenre.Id }, insertedGenre);
         }
 
         // DELETE: api/Genre/id
