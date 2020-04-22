@@ -9,6 +9,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Hangfire;
 using MailKit;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
@@ -67,6 +68,9 @@ namespace Application.Services.Implementation
                 RequestedUser = user.FirstName + " " + user.LastName, Subject = $"Request for {book.Name}"
             };
             await _emailSenderService.SendForRequestAsync(emailMessage);
+            BackgroundJob.Schedule(
+                () => Console.WriteLine("Hello, world"),
+                TimeSpan.FromDays(7));
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
