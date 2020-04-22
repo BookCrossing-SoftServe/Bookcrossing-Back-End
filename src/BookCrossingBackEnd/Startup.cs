@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
+using Domain;
 using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;

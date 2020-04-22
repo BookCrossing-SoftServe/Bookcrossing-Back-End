@@ -55,6 +55,7 @@ namespace Application.Services.Implementation
                 throw new DbUpdateException();
             }
         }
+        /// <inheritdoc />
         public async Task SendPasswordResetConfirmation(string email)
         {
             var user = await _userRepository.FindByCondition(c => c.Email == email);
@@ -65,15 +66,17 @@ namespace Application.Services.Implementation
             };
             _resetPasswordRepository.Add(resetPassword);
             await _resetPasswordRepository.SaveChangesAsync();
-             await _emailSenderService.SendEmailForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
+             await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
 
         }
+        /// <inheritdoc />
         public async Task ResetPassword(ResetPasswordDto newPassword)
         {
+            const int EXPIRATION_TIME = 30;
             var user = await _userRepository.FindByCondition(u => u.Email == newPassword.Email);
             var resetPassword =
                 _resetPasswordRepository.FindByCondition(c => c.ConfirmationNumber == newPassword.ConfirmationNumber).Result;
-            if (resetPassword != null && resetPassword.ConfirmationNumber == newPassword.ConfirmationNumber && resetPassword.ResetDate <= DateTime.Now.AddMinutes(30))
+            if (resetPassword != null && resetPassword.ConfirmationNumber == newPassword.ConfirmationNumber && resetPassword.ResetDate <= DateTime.Now.AddMinutes(EXPIRATION_TIME))
             {
                 user.Password = newPassword.Password;
                 await _userRepository.SaveChangesAsync();
