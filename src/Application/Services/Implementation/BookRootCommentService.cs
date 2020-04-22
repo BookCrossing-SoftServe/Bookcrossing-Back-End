@@ -26,7 +26,7 @@ namespace Application.Services.Implementation
                     {
                         Text = insertDto.Text,
                         BookId = insertDto.BookId,
-                        OwnerId = insertDto.CommentOwnerId,
+                        OwnerId = insertDto.OwnerId,
                         Date = DateTime.Now.ToUniversalTime().ToString()
                     });
         }

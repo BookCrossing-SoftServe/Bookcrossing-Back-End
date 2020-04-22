@@ -9,10 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ApplicationTest.Controllers
+namespace ApplicationTest.Controllers.Comment.Book
 {
     [TestFixture]
-    class BookChildCommentsControllerTest
+    class ChildControllerTest
     {
         private BookChildCommentsController _bookChildCommentsController;
         private Mock<IBookChildCommentService> _mockChildBookCommentService;
@@ -35,7 +35,7 @@ namespace ApplicationTest.Controllers
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1
+                OwnerId = 1
             };
             _mockChildBookCommentService.Setup(s => s.Remove(deleteDto.Ids)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
@@ -55,7 +55,7 @@ namespace ApplicationTest.Controllers
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1
+                OwnerId = 1
             };
             _mockChildBookCommentService.Setup(s => s.Remove(deleteDto.Ids)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
@@ -73,7 +73,7 @@ namespace ApplicationTest.Controllers
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1
+                OwnerId = 1
             };
             _mockChildBookCommentService.Setup(s => s.Remove(deleteDto.Ids)).ReturnsAsync(0);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
@@ -93,7 +93,7 @@ namespace ApplicationTest.Controllers
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1
+                OwnerId = 1
             };
             _mockChildBookCommentService.Setup(s => s.Remove(deleteDto.Ids)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
@@ -113,7 +113,7 @@ namespace ApplicationTest.Controllers
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1
+                OwnerId = 1
             };
             _mockChildBookCommentService.Setup(s => s.Remove(deleteDto.Ids)).ReturnsAsync(0);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
@@ -138,7 +138,7 @@ namespace ApplicationTest.Controllers
             ChildInsertDto insertDto = new ChildInsertDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0" },
-                CommentOwnerId = 1,
+                OwnerId = 1,
                 Text = "Text"
             };
             _mockChildBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(1);
@@ -158,7 +158,7 @@ namespace ApplicationTest.Controllers
             ChildInsertDto insertDto = new ChildInsertDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0" },
-                CommentOwnerId = 1,
+                OwnerId = 1,
                 Text = "Text"
             };
             _mockChildBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(0);
@@ -178,7 +178,7 @@ namespace ApplicationTest.Controllers
             ChildInsertDto insertDto = new ChildInsertDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0" },
-                CommentOwnerId = 1,
+                OwnerId = 1,
                 Text = "Text"
             };
             _mockChildBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(1);
@@ -201,7 +201,7 @@ namespace ApplicationTest.Controllers
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1,
+                OwnerId = 1,
                 Text = "Text"
             };
             _mockChildBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(1);
@@ -221,7 +221,7 @@ namespace ApplicationTest.Controllers
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1,
+                OwnerId = 1,
                 Text = "Text"
             };
             _mockChildBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(1);
@@ -239,7 +239,7 @@ namespace ApplicationTest.Controllers
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-                CommentOwnerId = 1,
+                OwnerId = 1,
                 Text = "Text"
             };
             _mockChildBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(0);

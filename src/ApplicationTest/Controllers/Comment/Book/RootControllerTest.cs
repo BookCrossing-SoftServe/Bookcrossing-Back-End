@@ -11,10 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApplicationTest.Controllers
+namespace ApplicationTest.Controllers.Comment.Book
 {
     [TestFixture]
-    class BookRootCommentsControllerTest
+    class RootControllerTest
     {
         private BookRootCommentsController _bookRootCommentsController;
         private Mock<IBookRootCommentService> _mockRootBookCommentService;
@@ -146,7 +146,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Delete_ByUser_Returns_OkObjectResult()
         {
-            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1 };
+            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
             _mockUserResolverService.Setup(s => s.IsUserAdmin()).Returns(false);
@@ -162,7 +162,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Delete_ByUser_Returns_ForbidResult()
         {
-            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1 };
+            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
             _mockUserResolverService.Setup(s => s.IsUserAdmin()).Returns(false);
@@ -176,7 +176,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Delete_ByUser_Returns_NotFoundObjectResult()
         {
-            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1 };
+            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(0);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
             _mockUserResolverService.Setup(s => s.IsUserAdmin()).Returns(false);
@@ -192,7 +192,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Delete_ByAdmin_Returns_OkObjectResult()
         {
-            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1 };
+            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
             _mockUserResolverService.Setup(s => s.IsUserAdmin()).Returns(true);
@@ -208,7 +208,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Delete_ByAdmin_Returns_NotFoundObjectResult()
         {
-            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1 };
+            RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(0);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
             _mockUserResolverService.Setup(s => s.IsUserAdmin()).Returns(true);
@@ -229,7 +229,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Post_Returns_OkObjectResult()
         {
-            RootInsertDto insertDto = new RootInsertDto() { BookId = 1, CommentOwnerId = 1, Text = "Text" };
+            RootInsertDto insertDto = new RootInsertDto() { BookId = 1, OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
 
@@ -244,7 +244,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Post_Returns_BadRequestObjectResult()
         {
-            RootInsertDto insertDto = new RootInsertDto() { BookId = 1, CommentOwnerId = 1, Text = "Text" };
+            RootInsertDto insertDto = new RootInsertDto() { BookId = 1, OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(0);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
 
@@ -259,7 +259,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Post_Returns_ForbidResult()
         {
-            RootInsertDto insertDto = new RootInsertDto() { BookId = 1, CommentOwnerId = 1, Text = "Text" };
+            RootInsertDto insertDto = new RootInsertDto() { BookId = 1, OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
 
@@ -277,7 +277,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Put_ByUser_Returns_OkObjectResult()
         {
-            RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1, Text = "Text" };
+            RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
 
@@ -292,7 +292,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Put_ByUser_Returns_ForbidResult()
         {
-            RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1, Text = "Text" };
+            RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(1);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(2);
 
@@ -305,7 +305,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task Put_ByUser_Returns_NotFoundObjectResult()
         {
-            RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", CommentOwnerId = 1, Text = "Text" };
+            RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(0);
             _mockUserResolverService.Setup(s => s.GetUserId()).Returns(1);
 

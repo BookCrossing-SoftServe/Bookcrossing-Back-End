@@ -40,7 +40,7 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Put([FromBody] RootUpdateDto updateDto)
         {
-            if(updateDto.CommentOwnerId != _userResolverService.GetUserId())
+            if(updateDto.OwnerId != _userResolverService.GetUserId())
             {
                 return Forbid();
             }
@@ -57,7 +57,7 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Post([FromBody] RootInsertDto insertDto)
         {
-            if (insertDto.CommentOwnerId != _userResolverService.GetUserId())
+            if (insertDto.OwnerId != _userResolverService.GetUserId())
             {
                 return Forbid();
             }
@@ -74,7 +74,7 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Delete([FromBody]RootDeleteDto  deleteDto)
         {
-            if (deleteDto.CommentOwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
+            if (deleteDto.OwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
             {
                 return Forbid();
             }
