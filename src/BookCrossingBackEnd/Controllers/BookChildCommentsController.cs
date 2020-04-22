@@ -23,14 +23,14 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Put([FromBody] ChildUpdateDto updateDto)
         {
-            if (updateDto.CommentOwnerId != _userResolverService.GetUserId())
+            if (updateDto.OwnerId != _userResolverService.GetUserId())
             {
                 return Forbid();
             }
             int number = await _childBookCommentService.Update(updateDto);
             if (number == 0)
             {
-                return NotFound();
+                return NotFound(number);
             }
             return Ok(number);
         }
@@ -40,11 +40,14 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Post([FromBody] ChildInsertDto insertDto)
         {
-            insertDto.CommentOwnerId = _userResolverService.GetUserId();
+            if (insertDto.OwnerId != _userResolverService.GetUserId())
+            {
+                return Forbid();
+            }
             int number = await _childBookCommentService.Add(insertDto);
             if (number == 0)
             {
-                return NotFound();
+                return BadRequest(number);
             }
             return Ok(number);
         }
@@ -54,14 +57,14 @@ namespace BookCrossingBackEnd.Controllers
         [Authorize]
         public async Task<ActionResult<int>> Delete([FromBody] ChildDeleteDto deleteDto)
         {
-            if (deleteDto.CommentOwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
+            if (deleteDto.OwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
             {
                 return Forbid();
             }
-            int number = await _childBookCommentService.Remove(deleteDto);
+            int number = await _childBookCommentService.Remove(deleteDto.Ids);
             if (number == 0)
             {
-                return NotFound();
+                return NotFound(number);
             }
             return Ok(number);
         }

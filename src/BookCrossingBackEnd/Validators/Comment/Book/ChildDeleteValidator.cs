@@ -2,16 +2,16 @@
 using FluentValidation;
 using System.Linq;
 
-namespace BookCrossingBackEnd.Validators
+namespace BookCrossingBackEnd.Validators.Comment.Book
 {
-    public class BookChildCommentDeleteValidator : AbstractValidator<ChildDeleteDto>
+    public class ChildDeleteValidator : AbstractValidator<ChildDeleteDto>
     {
-        public BookChildCommentDeleteValidator()
+        public ChildDeleteValidator()
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             RuleFor(x => x.Ids).Must(collection => collection != null && collection.Count() > 1).WithMessage("Should not be null and should have more than one element.");
-            RuleForEach(x => x.Ids).Matches(@"^[a-f\d]{24}$");
-            RuleFor(x => x.CommentOwnerId).NotNull().GreaterThan(0);
+            RuleForEach(x => x.Ids).NotNull().Matches(@"^[a-f\d]{24}$");
+            RuleFor(x => x.OwnerId).NotNull().GreaterThan(0);
         }
     }
 }
