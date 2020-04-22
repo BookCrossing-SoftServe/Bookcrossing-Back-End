@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace ApplicationTest.Services.Comment.Book
@@ -73,7 +74,17 @@ namespace ApplicationTest.Services.Comment.Book
                     BookId=2,
                     OwnerId = 2,
                     Comments=new List<BookChildComment>()
+                },
+                 new BookRootComment()
+                {
+                    Id="5e9c9ee859231a63bc853bf5",
+                    Text="Text5",
+                    Date=DateTime.UtcNow.ToString(),
+                    BookId=1,
+                    OwnerId = 2,
+                    Comments=new List<BookChildComment>()
                 }
+
             };
         }
         private IEnumerable<RootDto> GetTestCommentsDtos()
@@ -138,6 +149,23 @@ namespace ApplicationTest.Services.Comment.Book
                     Text="Text4",
                     Date=DateTime.UtcNow,
                     BookId=2,
+                    Owner=new OwnerDto()
+                    {
+                        Id=2,
+                        FirstName="A2",
+                        MiddleName="B2",
+                        LastName="C2",
+                        Email="qwert2@gmail.com",
+                        Role="Admin"
+                    },
+                    Comments=new List<ChildDto>()
+                },
+                new RootDto()
+                {
+                    Id="5e9c9ee859231a63bc853bf5",
+                    Text="Text5",
+                    Date=DateTime.UtcNow,
+                    BookId=1,
                     Owner=new OwnerDto()
                     {
                         Id=2,
@@ -260,9 +288,9 @@ namespace ApplicationTest.Services.Comment.Book
         [TestCase("5e9c9ee859231a63bc853bf0")]
         public async Task GetById_BookRootCommentExists_Returns_BookRootCommentDtoWithRequestedId(string id)
         {
-            var expectedEntity = new BookRootComment() { Id = "5e9c9ee859231a63bc853bf0" };
-            var expectedDto = new RootDto() { Id = "5e9c9ee859231a63bc853bf0" };
-            _mockRootRepository.Setup(s => s.FindByIdAsync("5e9c9ee859231a63bc853bf0")).ReturnsAsync(expectedEntity);
+            var expectedEntity = new BookRootComment() { Id = id };
+            var expectedDto = new RootDto() { Id = id };
+            _mockRootRepository.Setup(s => s.FindByIdAsync(id)).ReturnsAsync(expectedEntity);
             _mockMapper.Setup(s => s.MapAsync(expectedEntity)).ReturnsAsync(new RootDto() { Id = expectedDto.Id });
 
             var result = await _bookRootCommentService.GetById(id);
@@ -285,26 +313,60 @@ namespace ApplicationTest.Services.Comment.Book
         #endregion
 
         #region GetByBookId
-        //[Test]
-        //[TestCase(1)]
-        //public async Task GetByBookId_BookRootCommentExists_Returns_BookRootCommentDtosWithRequestedBookId(int bookId)
-        //{
-        //    var expectedEntities = GetTestCommentsEntities().Where(x => x.BookId == 1);
-        //    var expectedDtos = GetTestCommentsDtos().Where(x => x.BookId == 1);
 
-        //    _mockRootRepository.Setup(s => s.FindManyAsync(x => x.BookId == 1)).ReturnsAsync(expectedEntities);
-        //    _mockMapper.Setup(s => s.MapAsync(expectedEntities)).ReturnsAsync(expectedDtos);
+        [Test]
+        [TestCase(1)]
+        public async Task GetByBookId_BookRootCommentExists_Returns_BookRootCommentDtosWithRequestedBookId(int bookId)
+        {
+            IEnumerable<BookRootComment> expectedEntities = GetTestCommentsEntities().Where(x => x.BookId == bookId).ToList();
+            IEnumerable<RootDto> expectedDtos = GetTestCommentsDtos().Where(x => x.BookId == bookId).ToList();
 
-        //    var result = await _bookRootCommentService.GetByBookId(bookId);
+            _mockRootRepository.Setup(s => s.FindManyAsync(It.IsAny< Expression<Func<BookRootComment, bool>>>()))
+                .ReturnsAsync(expectedEntities);
+            _mockMapper.Setup(s => s.MapAsync(expectedEntities)).ReturnsAsync(expectedDtos);
 
-        //    result.Should().BeOfType<IEnumerable<RootDto>>();
-        //    result.Should().HaveCount(expectedDtos.Count());
-        //    result.Select(x => x.BookId).Should().Equal(1);
-        //}
+            var result = await _bookRootCommentService.GetByBookId(bookId);
+
+            result.Should().AllBeOfType<RootDto>();
+            result.Should().HaveCount(expectedDtos.Count());
+            result.Select(x => x.BookId).Should().AllBeEquivalentTo(bookId);
+        }
+
+        [Test]
+        [TestCase(-1)]
+        public async Task GetByBookId_BookRootCommentNotExists_Returns_EmptyIEnumerable(int bookId)
+        {
+            IEnumerable<BookRootComment> expectedEntities = GetTestCommentsEntities().Where(x => x.BookId == bookId).ToList();
+            IEnumerable<RootDto> expectedDtos = GetTestCommentsDtos().Where(x => x.BookId == bookId).ToList();
+
+            _mockRootRepository.Setup(s => s.FindManyAsync(It.IsAny<Expression<Func<BookRootComment, bool>>>()))
+                .ReturnsAsync(expectedEntities);
+            _mockMapper.Setup(s => s.MapAsync(expectedEntities)).ReturnsAsync(expectedDtos);
+
+            var result = await _bookRootCommentService.GetByBookId(bookId);
+
+            result.Should().AllBeOfType<RootDto>();
+            result.Should().HaveCount(expectedDtos.Count());
+        }
+
         #endregion
 
         #region GetAll
 
+        [Test]
+        public async Task GetAll_BookRootCommentExists_Returns_BookRootCommentDtosWithRequestedBookId()
+        {
+            var expectedEntities = GetTestCommentsEntities();
+            var expectedDtos = GetTestCommentsDtos();
+
+            _mockRootRepository.Setup(s => s.GetAllAsync()).ReturnsAsync(expectedEntities);
+            _mockMapper.Setup(s => s.MapAsync(expectedEntities)).ReturnsAsync(expectedDtos);
+
+            var result = await _bookRootCommentService.GetAll();
+
+            result.Should().AllBeOfType<RootDto>();
+            result.Should().HaveCount(expectedDtos.Count());
+        }
 
         #endregion
     }
