@@ -28,12 +28,12 @@ namespace Application.Services.Implementation
         {
             return _mapper.Map<List<GenreDto>>(await _genreRepository.GetAll().ToListAsync());
         }
-        public async Task<int> Add(GenreDto genreDto)
+        public async Task<GenreDto> Add(GenreDto genreDto)
         {
             var genre = _mapper.Map<Genre>(genreDto);
             _genreRepository.Add(genre);
             await _genreRepository.SaveChangesAsync();
-            return genre.Id;
+            return _mapper.Map<GenreDto>(genre);
         }
         public async Task<bool> Remove(int genreId)
         {
@@ -46,11 +46,12 @@ namespace Application.Services.Implementation
             await _genreRepository.SaveChangesAsync();
             return true;
         }
-        public async Task Update(GenreDto genreDto)
+        public async Task<bool> Update(GenreDto genreDto)
         {
             var genre = _mapper.Map<Genre>(genreDto);
             _genreRepository.Update(genre);
-            await _genreRepository.SaveChangesAsync();
+            var affectedRows = await _genreRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
     }
 }
