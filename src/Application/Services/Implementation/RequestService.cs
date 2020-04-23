@@ -78,7 +78,7 @@ namespace Application.Services.Implementation
                 RequestId = request.Id,
                 UserAddress = new MailboxAddress($"{book.User.Email}"),
             };
-            _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation, request.Id);
+            _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
 
             return _mapper.Map<RequestDto>(request);
         }

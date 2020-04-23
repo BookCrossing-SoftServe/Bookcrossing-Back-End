@@ -11,8 +11,7 @@ namespace Application.Services.Interfaces
         /// Sends email that asks user whether him get book or not in 9th day and make book available in 10th day after request 
         /// </summary>
         /// <param name="message">email mesage</param>
-        /// <param name="requestId">request Id</param>
-        void ScheduleRequestJob(RequestMessage message, int requestId);
+        void ScheduleRequestJob(RequestMessage message);
 
         /// <summary>
         /// Delete schedule from db for ScheduleRequestJob() method
