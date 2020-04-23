@@ -27,12 +27,12 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
-            var userId = _userResolverService.GetUserId();
-            var request = await _requestService.Make(userId, bookId);
+            //var userId = _userResolverService.GetUserId();
+            var request = await _requestService.Make(2, bookId);
 
             if (request == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             return Ok(request);
         }
@@ -63,9 +63,9 @@ namespace BookCrossingBackEnd.Controllers
         [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpPut]
-        public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
+        public async Task<ActionResult<RequestDto>> ApproveReceive([FromRoute] int requestId)
         {
-            var updated = await _requestService.Approve(requestId);
+            var updated = await _requestService.ApproveReceive(requestId);
             if (!updated)
             {
                 return NotFound();

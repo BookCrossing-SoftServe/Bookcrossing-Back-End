@@ -26,11 +26,11 @@ namespace Application.Services.Interfaces
         Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, QueryParameters query);
 
         /// <summary>
-        /// Ability to approve book request as book owner
+        /// Ability to approve that user receiver his requested book
         /// </summary>
         /// <param name="id">Request Id</param>
         /// <returns>boolean</returns>
-        Task<bool> Approve(int id);
+        Task<bool> ApproveReceive(int id);
        
         /// <summary>
         /// Remove request from database

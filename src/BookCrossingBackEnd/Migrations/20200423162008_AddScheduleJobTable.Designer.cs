@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200423162008_AddScheduleJobTable")]
+    partial class AddScheduleJobTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,10 +260,9 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("requestId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ScheduleId")
-                        .IsRequired()
+                    b.Property<int>("ScheduleId")
                         .HasColumnName("scheduleId")
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("int")
                         .HasMaxLength(50);
 
                     b.HasKey("Id");

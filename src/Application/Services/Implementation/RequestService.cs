@@ -25,9 +25,11 @@ namespace Application.Services.Implementation
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<User> _useRepository;
         private readonly IPaginationService _paginationService;
+        private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
 
         public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
-            IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService)
+            IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
+            IHangfireJobScheduleService hangfireJobScheduleService)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -35,20 +37,18 @@ namespace Application.Services.Implementation
             _emailSenderService = emailSenderService;
             _useRepository = userRepository;
             _paginationService = paginationService;
+            _hangfireJobScheduleService = hangfireJobScheduleService;
         }
         /// <inheritdoc />
         public async Task<RequestDto> Make(int userId, int bookId)
         {
             var book = await _bookRepository.GetAll().Include(x=> x.User).FirstOrDefaultAsync(x=> x.Id == bookId);
-            var isAvailableToRequest = book == null || book.Available == false;
+            var isNotAvailableForRequest = book == null || book.Available == false;
 
-            if (isAvailableToRequest)
+            if (isNotAvailableForRequest)
             {
                 return null;
             }
-
-            book.Available = false;
-            await _bookRepository.SaveChangesAsync();
 
             var request = new Request()
             {
@@ -59,19 +59,26 @@ namespace Application.Services.Implementation
             };
             _requestRepository.Add(request);
             await _requestRepository.SaveChangesAsync();
+            book.Available = false;
+            await _bookRepository.SaveChangesAsync();
             var user = _useRepository.FindByIdAsync(userId).Result;
-            var emailMessage = new RequestMessage()
+            var emailMessageForRequest = new RequestMessage()
             {
-                UserName = book.User.FirstName + " " + book.User.LastName, BookName = book.Name,
-                BookId = book.Id,
-                RequestDate = request.RequestDate, RequestNumber = request.Id, UserEmail = new MailboxAddress($"{book.User.Email}"),
-                RequestedUser = user.FirstName + " " + user.LastName, Subject = $"Request for {book.Name}"
+                OwnerName = book.User.FirstName + " " + book.User.LastName, BookName = book.Name,
+                RequestDate = request.RequestDate, RequestId = request.Id, OwnerAddress = new MailboxAddress($"{book.User.Email}"),
+                UserName = user.FirstName + " " + user.LastName
             };
-            await _emailSenderService.SendForRequestAsync(emailMessage);
+            await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
 
-            BackgroundJob.Schedule(
-                () => Console.WriteLine("Hello, world"),
-                TimeSpan.FromDays(7));
+            var emailMessageForReceiveConfirmation = new RequestMessage()
+            {
+                UserName = book.User.FirstName + " " + book.User.LastName,
+                BookName = book.Name,
+                BookId = book.Id,
+                RequestId = request.Id,
+                UserAddress = new MailboxAddress($"{book.User.Email}"),
+            };
+            _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation, request.Id);
 
             return _mapper.Map<RequestDto>(request);
         }
@@ -89,7 +96,7 @@ namespace Application.Services.Implementation
             return isEmpty ? null : requests;
         }
         /// <inheritdoc />
-        public async Task<bool> Approve(int requestId)
+        public async Task<bool> ApproveReceive(int requestId)
         {
             var request = await _requestRepository.GetAll()
                 .Include(x=>x.Book)
@@ -108,13 +115,13 @@ namespace Application.Services.Implementation
             var affectedRows = await _requestRepository.SaveChangesAsync();
             var emailMessage = new RequestMessage()
             {
-                UserName = request.User.FirstName + " " + request.User.LastName,
+                OwnerName = request.User.FirstName + " " + request.User.LastName,
                 BookName = request.Book.Name,
-                RequestNumber = request.Id,
-                UserEmail = new MailboxAddress($"{request.User.Email}"),
-                Subject = $"You successfully got {request.Book.Name}!"
+                RequestId = request.Id,
+                OwnerAddress = new MailboxAddress($"{request.User.Email}")
             };
-            await _emailSenderService.SendForGotBookAsync(emailMessage);
+            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
+            await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
             return affectedRows > 0;
         }
         /// <inheritdoc />
@@ -130,14 +137,13 @@ namespace Application.Services.Implementation
             }
             var emailMessage = new RequestMessage()
             {
-                UserName = request.Owner.FirstName + " " + request.Owner.LastName,
+                OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                 BookName = request.Book.Name,
-                RequestNumber = request.Id,
-                UserEmail = new MailboxAddress($"{request.Owner.Email}"),
-                Subject = $"Request for {request.Book.Name} was canceled!"
+                RequestId = request.Id,
+                OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
             };
             await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
-            var book = _bookRepository.FindByIdAsync(request.BookId).Result;
+            var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.Available = true;
             await _bookRepository.SaveChangesAsync();
             _requestRepository.Remove(request);

@@ -60,7 +60,7 @@ namespace BookCrossingBackEnd
 
             services.AddHangfire(config =>
                 config.UseSqlServerStorage(Configuration.GetConnectionString("AzureConnection")));
-            services.AddHangfireServer(options=> options.SchedulePollingInterval = TimeSpan.FromHours(1));
+            services.AddHangfireServer(options=> options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
 
             var emailConfig = Configuration
                 .GetSection("EmailConfiguration")
@@ -94,6 +94,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IUserResolverService,UserResolverService>();
             services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped<IHangfireJobScheduleService, HangfireJobSchedulerService>();
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 
@@ -167,8 +168,10 @@ namespace BookCrossingBackEnd
             //{
             //    Authorization = new[] { new HangfireAuthorizationFilter() },
             //});
-            app.UseHangfireServer();
-
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                WorkerCount = 1
+            });
 
             app.UseEndpoints(endpoints =>
             {
