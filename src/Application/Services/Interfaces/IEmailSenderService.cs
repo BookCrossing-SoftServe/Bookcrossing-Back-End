@@ -10,11 +10,22 @@ namespace Application.Services.Interfaces
     public interface IEmailSenderService
     {
         /// <summary>
+        /// Sending email to confirm whether book was delivered
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="bookName"></param>
+        /// <param name="bookId"></param>
+        /// <param name="requestId"></param>
+        /// <param name="userAddress"></param>
+        /// <returns></returns>
+        Task SendReceiveConfirmationAsync(string userName, string bookName, int bookId, int requestId, string userAddress);
+
+        /// <summary>
         /// Sending email to notify that book was delivered to user
         /// </summary>
         /// <param name="message">message</param>
         /// <returns></returns>
-        Task SendForGotBookAsync(RequestMessage message);
+        Task SendThatBookWasReceivedAsync(RequestMessage message);
 
         /// <summary>
         /// Sending email to notify that request was canceled

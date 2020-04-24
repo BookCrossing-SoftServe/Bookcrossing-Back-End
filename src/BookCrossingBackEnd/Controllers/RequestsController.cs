@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RequestsController : ControllerBase
@@ -29,9 +29,10 @@ namespace BookCrossingBackEnd.Controllers
         {
             var userId = _userResolverService.GetUserId();
             var request = await _requestService.Make(userId, bookId);
+
             if (request == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             return Ok(request);
         }
@@ -62,9 +63,9 @@ namespace BookCrossingBackEnd.Controllers
         [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpPut]
-        public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
+        public async Task<ActionResult<RequestDto>> ApproveReceive([FromRoute] int requestId)
         {
-            var updated = await _requestService.Approve(requestId);
+            var updated = await _requestService.ApproveReceive(requestId);
             if (!updated)
             {
                 return NotFound();
