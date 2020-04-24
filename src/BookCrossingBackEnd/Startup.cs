@@ -48,7 +48,7 @@ namespace BookCrossingBackEnd
             // Please download appsettings.json for connecting to Azure DB
             string azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
-                options.UseSqlServer(azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
          
             // requires using Microsoft.Extensions.Options

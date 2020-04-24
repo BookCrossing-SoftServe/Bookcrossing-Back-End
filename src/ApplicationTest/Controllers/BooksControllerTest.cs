@@ -28,14 +28,16 @@ namespace ApplicationTest.Controllers
         public async Task GetAllBooksAsync_Returns_OkObjectResultWithRequestedCount()
         {
             var testBooks = GetTestBooks();
-            _bookService.Setup(s => s.GetAll()).ReturnsAsync(testBooks);
+            var testPagination = new Application.Dto.PaginationDto<BookDto>() { Page = GetTestBooks() };
+            _bookService.Setup(s => s.GetAll(It.IsAny<QueryParameters>())).ReturnsAsync(testPagination);
+            var query = new QueryParameters() { Page = 1, PageSize = 2 };
 
-            var getAllBooksResult = await _booksController.GetAllBooksAsync();
+            var getAllBooksResult = await _booksController.GetAllBooksAsync(query);
 
             var okResult = getAllBooksResult.Result as OkObjectResult;
             okResult.Should().BeOfType<OkObjectResult>();
-            var books = okResult.Value as List<BookDto>;
-            books.Count().Should().Be(testBooks.Count);
+            var books = okResult.Value as PaginationDto<BookDto>;
+            books.Page.Should().HaveCount(testBooks.Count);
         }
 
         private List<BookDto> GetTestBooks()
