@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 
 namespace Application.Services.Interfaces
 {
@@ -18,9 +20,9 @@ namespace Application.Services.Interfaces
         /// Ability to get all requests for your book in certain book
         /// </summary>
         /// <param name="bookId">Book`s id</param>
-        /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
+        /// <param name="fullPaginationQuery">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
         /// <returns>List of all requests DTO by book id in certain page</returns>
-        Task<PaginationDto<RequestDto>> Get(int bookId, QueryParameters query);
+        Task<PaginationDto<RequestDto>> Get(int bookId, FullPaginationQueryParams fullPaginationQuery);
         /// <summary>
         /// Ability to approve book request as book owner
         /// </summary>

@@ -6,10 +6,14 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
@@ -31,7 +35,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters parameters)
+        public async Task<PaginationDto<AuthorDto>> GetAuthors(FullPaginationQueryParams parameters)
         {
             var query = _authorRepository.GetAll();
             return await _paginationService.GetPageAsync<AuthorDto, Author>(query, parameters);

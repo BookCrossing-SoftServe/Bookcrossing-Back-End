@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 
@@ -30,9 +32,9 @@ namespace BookCrossingBackEnd.Controllers
         //[Authorize]
         [Route("{bookId:min(1)}")]
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> Get([FromRoute] int bookId, [FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> Get([FromRoute] int bookId, [FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
-            return Ok(await _requestService.Get(bookId, query));
+            return Ok(await _requestService.Get(bookId, fullPaginationQuery));
         }
         //[Authorize]
         [ModelValidationFilter]

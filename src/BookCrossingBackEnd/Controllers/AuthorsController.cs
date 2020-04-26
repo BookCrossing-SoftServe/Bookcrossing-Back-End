@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -33,9 +36,10 @@ namespace BookCrossingBackEnd.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
-            return Ok(await _authorService.GetAuthors(query));
+            var uri = HttpContext.Request.QueryString;
+            return Ok(await _authorService.GetAuthors(fullPaginationQuery));
         }
         // PUT: api/Authors
         [HttpPut]
