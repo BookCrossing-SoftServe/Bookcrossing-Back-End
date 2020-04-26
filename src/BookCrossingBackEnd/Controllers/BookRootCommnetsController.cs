@@ -19,7 +19,7 @@ namespace BookCrossingBackEnd.Controllers
             _userResolverService = userResolverService;
     }
 
-        // GET: api/BookRootCommants/5
+        // GET: api/RootBookCommants/5
         [HttpGet("{bookId}")]
         public async Task<ActionResult<List<RootDto>>> GetByBookId([FromRoute]int bookId)
         {
@@ -27,7 +27,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(comments);
         }
 
-        // GET: api/BookRootCommants
+        // GET: api/RootBookCommants
         [HttpGet]
         public async Task<ActionResult<List<RootDto>>> GetAll()
         {
@@ -35,50 +35,53 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(comments);
         }
 
-        // PUT: api/BookRootCommants
+        // PUT: api/RootBookCommants
         [HttpPut]
         [Authorize]
         public async Task<ActionResult<int>> Put([FromBody] RootUpdateDto updateDto)
         {
-            if(updateDto.CommentOwnerId != _userResolverService.GetUserId())
+            if (updateDto.OwnerId != _userResolverService.GetUserId())
             {
                 return Forbid();
             }
             int number = await _rootBookCommentService.Update(updateDto);
             if (number == 0)
             {
-                return NotFound();
+                return NotFound(number);
             }
             return Ok(number);
         }
 
-        // POST: api/BookRootCommants
+        // POST: api/RootBookCommants
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<int>> Post([FromBody] RootInsertDto insertDto)
         {
-            insertDto.CommentOwnerId = _userResolverService.GetUserId();
+            if (insertDto.OwnerId != _userResolverService.GetUserId())
+            {
+                return Forbid();
+            }
             int number = await _rootBookCommentService.Add(insertDto);
             if (number == 0)
             {
-                return NotFound();
+                return BadRequest(number);
             }
             return Ok(number);
         }
 
-        // DELETE: api/BookRootCommants/5
+        // DELETE: api/RootBookCommants/5
         [HttpDelete]
         [Authorize]
-        public async Task<ActionResult<int>> Delete([FromBody]RootDeleteDto  deleteDto)
+        public async Task<ActionResult<int>> Delete([FromBody]RootDeleteDto deleteDto)
         {
-            if (deleteDto.CommentOwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
+            if (deleteDto.OwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())
             {
                 return Forbid();
             }
             int number = await _rootBookCommentService.Remove(deleteDto.Id);
             if (number == 0)
             {
-                return NotFound();
+                return NotFound(number);
             }
             return Ok(number);
         }

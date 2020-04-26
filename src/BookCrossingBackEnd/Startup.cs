@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using Application.Services.Implementation;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using BookCrossingBackEnd.Validators;
+using Domain;
 using FluentValidation.AspNetCore;
 using RequestService = Application.Services.Implementation.RequestService;
 using Infrastructure.NoSQL;
@@ -24,6 +26,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
+using Hangfire;
 
 namespace BookCrossingBackEnd
 {
@@ -43,7 +46,7 @@ namespace BookCrossingBackEnd
         {
             string localConnection = Configuration.GetConnectionString("DefaultConnection");
             // Please download appsettings.json for connecting to Azure DB
-            // string azureConnection = Configuration.GetConnectionString("AzureConnection");
+            string azureConnection = Configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
                 options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
@@ -54,6 +57,10 @@ namespace BookCrossingBackEnd
 
             services.AddSingleton<IMongoSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoSettings>>().Value);
+
+            services.AddHangfire(config =>
+                config.UseSqlServerStorage(Configuration.GetConnectionString("AzureConnection")));
+            services.AddHangfireServer(options=> options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
 
             var emailConfig = Configuration
                 .GetSection("EmailConfiguration")
@@ -87,6 +94,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IUserResolverService,UserResolverService>();
             services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped<IHangfireJobScheduleService, HangfireJobSchedulerService>();
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 
@@ -155,7 +163,15 @@ namespace BookCrossingBackEnd
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseHangfireDashboard();
+            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            //{
+            //    Authorization = new[] { new HangfireAuthorizationFilter() },
+            //});
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                WorkerCount = 1
+            });
 
             app.UseEndpoints(endpoints =>
             {

@@ -5,51 +5,74 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
-using Application.Dto.QueryParams;
-using Application.QueryableExtension;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RequestsController : ControllerBase
     {
         private readonly IRequestService _requestService;
-        public RequestsController(IRequestService requestService)
+        private readonly IUserResolverService _userResolverService;
+        public RequestsController(IRequestService requestService, IUserResolverService userResolverService)
         {
             _requestService = requestService;
+            _userResolverService = userResolverService;
         }
-        //[Authorize]
+
         [Route("{bookId:min(1)}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
-            var userId = int.Parse(User.Claims.FirstOrDefault(x => x.Type.Equals("id", StringComparison.CurrentCultureIgnoreCase))?.Value);
-            return await _requestService.Make(userId, bookId);
+            var userId = _userResolverService.GetUserId();
+            var request = await _requestService.Make(userId, bookId);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+            return Ok(request);
         }
-        //[Authorize]
+        [HttpGet]
+        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] QueryParameters query)
+        {
+            var userId = _userResolverService.GetUserId();
+            var requests = await _requestService.Get(x => x.UserId == userId, query);
+            if (requests == null)
+            {
+                return NotFound();
+            }
+            return Ok(requests);
+        }
+
         [Route("{bookId:min(1)}")]
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> Get([FromRoute] int bookId, [FromQuery] FullPaginationQueryParams fullPaginationQuery)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByBook([FromRoute] int bookId, [FromQuery] QueryParameters query)
         {
-            return Ok(await _requestService.Get(bookId, fullPaginationQuery));
+            var requests = await _requestService.Get(x => x.BookId == bookId, query);
+            if (requests == null)
+            {
+                return NotFound();
+            }
+            return Ok(requests);
         }
-        //[Authorize]
+
         [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpPut]
-        public async Task<ActionResult<RequestDto>> Approve([FromRoute] int requestId)
+        public async Task<ActionResult<RequestDto>> ApproveReceive([FromRoute] int requestId)
         {
-            var updated = await _requestService.Approve(requestId);
+            var updated = await _requestService.ApproveReceive(requestId);
             if (!updated)
             {
                 return NotFound();
             }
             return Ok();
         }
-        //[Authorize]
+
         [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpDelete]

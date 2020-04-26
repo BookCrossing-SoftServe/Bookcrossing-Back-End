@@ -18,7 +18,7 @@ namespace Application.Services.Interfaces
         /// Retrieve all books
         /// </summary>
         /// <returns>returns list of Book DTOs</returns>
-        Task<List<BookDto>> GetAll();
+        Task<PaginationDto<BookDto>> GetAll(QueryParameters parameters);
 
         Task<PaginationDto<BookDto>> GetAll(BookQueryParams parameters);
 

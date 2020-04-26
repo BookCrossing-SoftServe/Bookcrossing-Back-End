@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
-using Application.Dto.QueryParams;
-using Application.QueryableExtension;
+using Domain.RDBMS.Entities;
 
 namespace Application.Services.Interfaces
 {
@@ -17,18 +18,19 @@ namespace Application.Services.Interfaces
         Task<RequestDto> Make(int userId, int bookId);
 
         /// <summary>
-        /// Ability to get all requests for your book in certain book
+        /// Ability to get all requests for book
         /// </summary>
-        /// <param name="bookId">Book`s id</param>
-        /// <param name="fullPaginationQuery">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
+        /// <param name="predicate">Predicate</param>
+        /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
         /// <returns>List of all requests DTO by book id in certain page</returns>
-        Task<PaginationDto<RequestDto>> Get(int bookId, FullPaginationQueryParams fullPaginationQuery);
+        Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, QueryParameters query);
+
         /// <summary>
-        /// Ability to approve book request as book owner
+        /// Ability to approve that user receiver his requested book
         /// </summary>
         /// <param name="id">Request Id</param>
         /// <returns>boolean</returns>
-        Task<bool> Approve(int id);
+        Task<bool> ApproveReceive(int id);
        
         /// <summary>
         /// Remove request from database

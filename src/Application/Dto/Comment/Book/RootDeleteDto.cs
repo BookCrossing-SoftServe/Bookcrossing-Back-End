@@ -3,6 +3,6 @@
     public class RootDeleteDto
     {
         public string Id { get; set; }
-        public int CommentOwnerId { get; set; }
+        public int OwnerId { get; set; }
     }
 }

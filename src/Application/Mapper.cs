@@ -24,19 +24,9 @@ namespace Application
             CreateMap<UserUpdateDto, RdbmsEntities.User>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.Author>().ReverseMap();
             CreateMap<AuthorDto, RdbmsEntities.BookAuthor>()
-                .ForMember(a => a.AuthorId, opt => opt.MapFrom(dto => dto.Id))
-                .ForMember(a => a.Author, opt =>
-                {
-                    opt.Condition(dto => dto.Id == 0);
-                    opt.MapFrom(dto => dto);
-                });
+                .ForMember(a => a.AuthorId, opt => opt.MapFrom(dto => dto.Id));
             CreateMap<GenreDto, RdbmsEntities.BookGenre>()
-                .ForMember(a => a.GenreId, opt => opt.MapFrom(dto => dto.Id))
-                .ForMember(a => a.Genre, opt =>
-                {
-                    opt.Condition(dto => dto.Id == 0);
-                    opt.MapFrom(dto => dto);
-                });
+                .ForMember(a => a.GenreId, opt => opt.MapFrom(dto => dto.Id));
             CreateMap<BookDto, RdbmsEntities.Book>()
                 .ForMember(entity => entity.BookAuthor, opt => opt.MapFrom(x => x.Authors))
                 .ForMember(entity => entity.BookGenre, opt => opt.MapFrom(x => x.Genres))

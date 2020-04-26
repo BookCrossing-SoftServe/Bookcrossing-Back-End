@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Dto.Email;
 using Application.Services.Interfaces;
+using Hangfire;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Hosting;
@@ -23,14 +24,70 @@ namespace Application.Services.Implementation
             _env = env;
         }
 
-        public async Task SendEmailAsync(Message message)
+        public void Hello()
         {
-            var emailMessage = CreateEmailMessage(message);
+            Console.WriteLine("Hello world!");
+        }
+        /// <inheritdoc />
+        public async Task SendReceiveConfirmationAsync(string userName, string bookName, int bookId, int requestId, string userAddress)
+        {
+            string body = string.Empty;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestReceiveConfirmation.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
 
-            await SendAsync(emailMessage);
+            body = body.Replace("{USER.NAME}", userName);
+            body = body.Replace("{BOOK.NAME}", bookName);
+            body = body.Replace("{BOOK.ID}", bookId.ToString());
+
+            var message = new Message(new List<string>() { userAddress },
+                "Book crossing book receive confirmation!", body);
+
+            await SendAsync(CreateEmailMessage(message));
+        }
+        /// <inheritdoc />
+        public async Task SendThatBookWasReceivedAsync(RequestMessage requestMessage)
+        {
+            string body = string.Empty;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestReceived.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
+            body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
+            body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+
+            var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
+                $"Your book {requestMessage.BookName} was received!", body);
+
+            await SendAsync(CreateEmailMessage(message));
+        }
+        /// <inheritdoc />
+        public async Task SendForCanceledRequestAsync(RequestMessage requestMessage)
+        {
+            string body = string.Empty;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestCanceled.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
+            body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
+            body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+
+            var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
+                $"Request for {requestMessage.BookName} was canceled!", body);
+
+            await SendAsync(CreateEmailMessage(message));
         }
 
-        public async Task SendEmailForRequestAsync(RequestMessage message)
+        /// <inheritdoc />
+        public async Task SendForRequestAsync(RequestMessage requestMessage)
         {
             string body = string.Empty;
             using (StreamReader reader =
@@ -39,22 +96,20 @@ namespace Application.Services.Implementation
                 body = await reader.ReadToEndAsync();
             }
 
-            body = body.Replace("{USER}", message.UserName);
-            body = body.Replace("{REQUEST.USER}", message.RequestedUser);
-            body = body.Replace("{REQUEST.NUMBER}", Convert.ToString(message.RequestNumber));
-            body = body.Replace("{REQUEST.DATE}", message.RequestDate.ToString("MMMM dd, yyyy"));
-            body = body.Replace("{BOOK.NAME}", message.BookName);
-            body = body.Replace("{BOOK.ID}", message.BookId.ToString());
+            body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
+            body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
+            body = body.Replace("{REQUEST.DATE}", requestMessage.RequestDate.ToString("MMMM dd, yyyy"));
+            body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
 
-            var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("Book Crossing", _emailConfig.From));
-            emailMessage.To.Add(message.UserEmail);
-            emailMessage.Subject = message.Subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+            var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
+                $"Request for {requestMessage.BookName}!", body);
 
-            await SendAsync(emailMessage);
+            await SendAsync(CreateEmailMessage(message));
         }
-        public async Task SendEmailForPasswordResetAsync(string userName, string confirmNumber, string email)
+
+        /// <inheritdoc />
+        public async Task SendForPasswordResetAsync(string userName, string confirmNumber, string email)
         {
             string body = string.Empty;
             using (StreamReader reader =
@@ -63,17 +118,14 @@ namespace Application.Services.Implementation
                 body = await reader.ReadToEndAsync();
             }
 
-            body = body.Replace("{USER}", userName);
-            body = body.Replace("{CONFIRMNUMBER}", confirmNumber);
+            body = body.Replace("{USER.NAME}", userName);
+            body = body.Replace("{CONFIRM.NUMBER}", confirmNumber);
             body = body.Replace("{EMAIL}", email);
 
-            var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("Book Crossing", _emailConfig.From));
-            emailMessage.To.Add(new MailboxAddress(email));
-            emailMessage.Subject = "Book crossing password reset!";
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+            var message = new Message(new List<string>() { email },
+                "Book crossing password reset!", body);
 
-            await SendAsync(emailMessage);
+            await SendAsync(CreateEmailMessage(message));
         }
 
         private MimeMessage CreateEmailMessage(Message message)

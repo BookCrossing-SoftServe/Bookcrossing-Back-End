@@ -23,6 +23,7 @@ namespace Infrastructure.RDBMS
         public  DbSet<UserLocation> UserLocation { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<ResetPassword> ResetPassword { get; set; }
+        public DbSet<ScheduleJob> ScheduleJob { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -45,6 +46,7 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new BookAuthorConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new ResetPasswordConfiguration());
+            modelBuilder.ApplyConfiguration(new ScheduleJobConfiguration());
         }
     }
 }
