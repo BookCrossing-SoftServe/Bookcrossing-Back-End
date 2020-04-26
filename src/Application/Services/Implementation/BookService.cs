@@ -61,12 +61,16 @@ namespace Application.Services.Implementation
                 new FilterParameters() { PropertyName = "Genre.Name", Value = "Fantasy", Method = FilterMethod.Equal, Operand = FilterOperand.Or},
                 new FilterParameters() { PropertyName = "Genre.Name", Value = "Horror", Method = FilterMethod.Equal}
             };
+            var books = _bookRepository.GetAll().Where(bookFilters);
+            var genres = _bookGenreRepository.GetAll().Where(genreFilters);
+            var authors = _bookAuthorRepository.GetAll().Where(authorFilters);
+            var locations = _userLocationRepository.GetAll().Where(locationFilters);
 
             var bookIds =
-                from b in _bookRepository.GetAll().Where(bookFilters)
-                join g in _bookGenreRepository.GetAll().Where(genreFilters) on b.Id equals g.BookId
-                join a in _bookAuthorRepository.GetAll().Where(authorFilters) on b.Id equals a.BookId
-                join l in _userLocationRepository.GetAll().Where(locationFilters) on b.UserId equals l.UserId
+                from b in books
+                join g in genres on b.Id equals g.BookId
+                join a in authors on b.Id equals a.BookId
+                join l in locations on b.UserId equals l.UserId
                 select b.Id;
 
             var query = _bookRepository.GetAll().Where(x => bookIds.Contains(x.Id))
@@ -79,6 +83,15 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.Location);
 
             return await _paginationService.GetPageAsync<BookDto,Book>(query, parameters.Pagination);
+        }
+        public async Task<List<BookDto>> GetAll()
+        {
+            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAll()
+                                                                    .Include(p => p.BookAuthor)
+                                                                    .ThenInclude(x => x.Author)
+                                                                    .Include(p => p.BookGenre)
+                                                                    .ThenInclude(x => x.Genre)
+                                                                    .ToListAsync());
         }
 
         public async Task<BookDto> Add(BookDto bookDto)

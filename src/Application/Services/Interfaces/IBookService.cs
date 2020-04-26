@@ -15,9 +15,11 @@ namespace Application.Services.Interfaces
         Task<BookDto> GetById(int bookId);
 
         /// <summary>
-        /// 
+        /// Retrieve all books
         /// </summary>
-        /// <returns>returns page of Book DTOs</returns>
+        /// <returns>returns list of Book DTOs</returns>
+        Task<List<BookDto>> GetAll();
+
         Task<PaginationDto<BookDto>> GetAll(BookQueryParams parameters);
 
         /// <summary>
