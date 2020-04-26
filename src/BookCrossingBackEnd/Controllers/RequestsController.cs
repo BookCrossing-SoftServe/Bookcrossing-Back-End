@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 
@@ -37,7 +38,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(request);
         }
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] FullPaginationQueryParams query)
         {
             var userId = _userResolverService.GetUserId();
             var requests = await _requestService.Get(x => x.UserId == userId, query);
@@ -50,7 +51,7 @@ namespace BookCrossingBackEnd.Controllers
 
         [Route("{bookId:min(1)}")]
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByBook([FromRoute] int bookId, [FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByBook([FromRoute] int bookId, [FromQuery] FullPaginationQueryParams query)
         {
             var requests = await _requestService.Get(x => x.BookId == bookId, query);
             if (requests == null)

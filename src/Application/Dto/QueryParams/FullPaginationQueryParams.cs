@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace Application.Dto.QueryParams
+﻿namespace Application.Dto.QueryParams
 {
     public class FullPaginationQueryParams : PageableParams
     {

@@ -1,20 +1,15 @@
-﻿using System;
-using Application.Dto;
+﻿using Application.Dto;
 using AutoMapper;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using Application.Dto.QueryParams;
 using Application.Dto.QueryParams.Enums;
 using Application.QueryableExtension;
-using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using AutoMapper.QueryableExtensions;
 using Infrastructure.RDBMS;
 
 namespace Application.Services.Implementation
@@ -50,7 +45,9 @@ namespace Application.Services.Implementation
         }
         public async Task<PaginationDto<BookDto>> GetAll(BookQueryParams parameters)
         {
-            //TODO: Delete Test sample before merge, Swagger doesn't support query array input.
+            //TODO: Create or replace BookDto to fit requirements.
+            //TODO: Swagger doesn't support proper array queries, either do it by hand or use this.
+            //TODO: Delete Test sample before merge.
             FilterParameters[] bookFilters =
             {
             };
@@ -79,15 +76,6 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.Location);
 
             return await _paginationService.GetPageAsync<BookDto,Book>(query, parameters.Pagination);
-        }
-        public async Task<List<BookDto>> GetAll()
-        {
-            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAll()
-                                                                    .Include(p => p.BookAuthor)
-                                                                    .ThenInclude(x => x.Author)
-                                                                    .Include(p => p.BookGenre)
-                                                                    .ThenInclude(x => x.Genre)
-                                                                    .ToListAsync());
         }
 
         public async Task<BookDto> Add(BookDto bookDto)

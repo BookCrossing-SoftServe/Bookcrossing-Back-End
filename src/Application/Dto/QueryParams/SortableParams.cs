@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Dto.QueryParams
+﻿namespace Application.Dto.QueryParams
 {
     public class SortableParams
     {

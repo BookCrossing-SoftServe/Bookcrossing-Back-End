@@ -21,6 +21,7 @@ namespace Application.QueryableExtension
             {
                 return query;
             }
+
             Expression method = null;
             var param = Expression.Parameter(typeof(T), "x");
             for (var index = 0; index < filters.Length; index++)

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
-using Application.QueryableExtension;
 using Application.Services.Interfaces;
-using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
