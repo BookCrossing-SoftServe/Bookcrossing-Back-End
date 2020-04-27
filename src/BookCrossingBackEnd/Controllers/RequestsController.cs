@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RequestsController : ControllerBase
@@ -50,9 +50,9 @@ namespace BookCrossingBackEnd.Controllers
 
         [Route("{bookId:min(1)}")]
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByBook([FromRoute] int bookId, [FromQuery] QueryParameters query)
+        public async Task<ActionResult<RequestDto>> GetByBook([FromRoute] int bookId)
         {
-            var requests = await _requestService.Get(x => x.BookId == bookId, query);
+            var requests = await _requestService.GetByBook(x => x.BookId == bookId);
             if (requests == null)
             {
                 return NotFound();

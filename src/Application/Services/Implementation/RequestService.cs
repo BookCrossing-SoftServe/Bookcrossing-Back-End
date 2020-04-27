@@ -83,6 +83,21 @@ namespace Application.Services.Implementation
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
+        public async Task<RequestDto> GetByBook(Expression<Func<Request, bool>> predicate)
+        {
+            var request = _requestRepository.GetAll()
+                .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
+                .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                .FirstOrDefault(predicate);
+            if (request == null)
+            {
+                return null;
+            }
+            return _mapper.Map<RequestDto>(request);
+        }
+        /// <inheritdoc />
         public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, QueryParameters parameters)
         {
             var query = _requestRepository.GetAll()
