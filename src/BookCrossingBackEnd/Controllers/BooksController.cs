@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +19,9 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<BookDto>>> GetAllBooksAsync([FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<BookDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetAll(query));
+            return Ok(await _bookService.GetAll(parameters));
         }
 
         // GET: api/Books/5
