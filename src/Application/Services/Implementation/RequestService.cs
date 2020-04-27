@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.Email;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
@@ -98,7 +99,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
-        public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, QueryParameters parameters)
+        public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, FullPaginationQueryParams parameters)
         {
             var query = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)

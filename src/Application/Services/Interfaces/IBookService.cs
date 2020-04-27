@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Dto.QueryParams;
 
 namespace Application.Services.Interfaces
 {
@@ -17,7 +18,7 @@ namespace Application.Services.Interfaces
         /// Retrieve all books
         /// </summary>
         /// <returns>returns list of Book DTOs</returns>
-        Task<PaginationDto<BookDto>> GetAll(QueryParameters parameters);
+        Task<PaginationDto<BookDto>> GetAll(BookQueryParams parameters);
 
         /// <summary>
         /// Update specified book

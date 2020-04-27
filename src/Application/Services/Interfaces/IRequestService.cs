@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
 using Domain.RDBMS.Entities;
 
 namespace Application.Services.Interfaces
@@ -23,7 +24,7 @@ namespace Application.Services.Interfaces
         /// <param name="predicate">Predicate</param>
         /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
         /// <returns>List of all requests DTO by book id in certain page</returns>
-        Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, QueryParameters query);
+        Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, FullPaginationQueryParams query);
 
         /// <summary>
         /// Ability to get requests for a certain book
