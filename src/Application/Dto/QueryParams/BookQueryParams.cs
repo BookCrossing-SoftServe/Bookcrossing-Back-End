@@ -2,10 +2,8 @@
 
 namespace Application.Dto.QueryParams
 {
-    public class BookQueryParams
+    public class BookQueryParams : PageableParams
     {
-        [BindRequired]
-        public PageableParams Pagination { get; set; }
         public FilterParameters[] BookFilters { get; set; }
         public FilterParameters[] AuthorFilters { get; set; }
         public FilterParameters[] GenreFilters { get; set; }

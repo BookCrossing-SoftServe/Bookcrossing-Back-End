@@ -75,7 +75,7 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.UserLocation)
                 .ThenInclude(x => x.Location);
 
-            return await _paginationService.GetPageAsync<BookDto,Book>(query, parameters.Pagination);
+            return await _paginationService.GetPageAsync<BookDto,Book>(query, parameters);
         }
 
         public async Task<BookDto> Add(BookDto bookDto)

@@ -91,7 +91,7 @@ namespace ApplicationTest.Services
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
-            var query = new BookQueryParams() { Pagination = {Page = 1, PageSize = 2} };
+            var query = new BookQueryParams() {Page = 1, PageSize = 2};
             var testPagination = new Application.Dto.PaginationDto<BookDto>()
             {
                 Page = new List<BookDto>

@@ -31,7 +31,7 @@ namespace ApplicationTest.Controllers
             var testBooks = GetTestBooks();
             var testPagination = new Application.Dto.PaginationDto<BookDto>() { Page = GetTestBooks() };
             _bookService.Setup(s => s.GetAll(It.IsAny<BookQueryParams>())).ReturnsAsync(testPagination);
-            var query = new BookQueryParams() { Pagination = {Page = 1, PageSize = 2}};
+            var query = new BookQueryParams() { Page = 1, PageSize = 2};
 
             var getAllBooksResult = await _booksController.GetAllBooksAsync(query);
 
