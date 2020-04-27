@@ -20,6 +20,11 @@ namespace Application
 
         public async Task<IEnumerable<Dto.Comment.Book.RootDto>> MapAsync(IEnumerable<BookRootComment> rootEntities)
         {
+            if (rootEntities == null)
+            {
+                return new List<Dto.Comment.Book.RootDto>();
+            }
+
             IEnumerable<Dto.Comment.Book.RootDto> rootDtos = _mapper.Map<IEnumerable<Dto.Comment.Book.RootDto>>(rootEntities);
             Dictionary<int, Dto.Comment.OwnerDto> users = new Dictionary<int, Dto.Comment.OwnerDto>();
 
@@ -38,6 +43,11 @@ namespace Application
 
         public async Task<Dto.Comment.Book.RootDto> MapAsync(BookRootComment rootEntity)
         {
+            if (rootEntity == null)
+            {
+                return new Dto.Comment.Book.RootDto();
+            }
+
             Dto.Comment.Book.RootDto rootDto = _mapper.Map<Dto.Comment.Book.RootDto>(rootEntity);
             Dictionary<int, Dto.Comment.OwnerDto> users = new Dictionary<int, Dto.Comment.OwnerDto>();
 
@@ -54,6 +64,11 @@ namespace Application
 
         protected async Task<IEnumerable<Dto.Comment.Book.ChildDto>> MapChildRecursively(IEnumerable<Dto.Comment.Book.ChildDto> childDtos, Dictionary<int, Dto.Comment.OwnerDto> users)
         {
+            if (childDtos == null)
+            {
+                return new List<Dto.Comment.Book.ChildDto>();
+            }
+
             foreach (Dto.Comment.Book.ChildDto dto in childDtos)
             {
                 dto.Comments = await MapChildRecursively(dto.Comments, users);

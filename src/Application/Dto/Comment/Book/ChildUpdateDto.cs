@@ -6,5 +6,6 @@ namespace Application.Dto.Comment.Book
     {
         public IEnumerable<string> Ids { get; set; }
         public string Text { get; set; }
+        public int OwnerId { get; set; }
     }
 }

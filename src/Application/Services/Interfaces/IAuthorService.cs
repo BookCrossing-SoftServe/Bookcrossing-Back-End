@@ -37,9 +37,9 @@ namespace Application.Services.Interfaces
         /// <summary>
         /// Create new author and add it into Database
         /// </summary>
-        /// <param name="author">NewAuthor DTO instance</param>
+        /// <param name="author">Author DTO instance</param>
         /// <returns>Returns created Author's DTO </returns>
-        Task<AuthorDto> Add(InsertAuthorDto author);
+        Task<AuthorDto> Add(AuthorDto author);
 
     }
 }

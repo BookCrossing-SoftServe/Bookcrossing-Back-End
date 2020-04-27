@@ -65,10 +65,10 @@ namespace ApplicationTest.Services
             var author = new Author();
             var authorDto = new AuthorDto();
             _authorRepositoryMock.Setup(s => s.Add(It.IsAny<Author>()));
-            _mapper.Setup(s => s.Map<Author>(It.IsAny<InsertAuthorDto>())).Returns(author);
+            _mapper.Setup(s => s.Map<Author>(It.IsAny<AuthorDto>())).Returns(author);
             _mapper.Setup(s => s.Map<AuthorDto>(It.IsAny<Author>())).Returns(authorDto);
 
-            var authorResult = await _authorService.Add(new InsertAuthorDto());
+            var authorResult = await _authorService.Add(new AuthorDto());
 
             _authorRepositoryMock.Verify(x => x.Add(author), Times.Once);
             _authorRepositoryMock.Verify(x => x.SaveChangesAsync(), Times.Once);

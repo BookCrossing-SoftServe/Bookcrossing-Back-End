@@ -13,8 +13,18 @@ namespace Application.Services.Interfaces
 
         Task RemoveUser(int userId);
 
-   
+        /// <summary>
+        /// Sending an email with unique confirmation code for password reset
+        /// </summary>
+        /// <param name="email">The email the letter will be sent to</param>
+        /// <returns></returns>
         Task SendPasswordResetConfirmation(string email);
+
+        /// <summary>
+        /// Setting a new password
+        /// </summary>
+        /// <param name="newPassword">New password</param>
+        /// <returns></returns>
         Task ResetPassword(ResetPasswordDto newPassword);
 
     }
