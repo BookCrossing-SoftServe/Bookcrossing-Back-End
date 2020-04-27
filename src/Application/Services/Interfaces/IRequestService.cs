@@ -27,6 +27,13 @@ namespace Application.Services.Interfaces
         Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, FullPaginationQueryParams query);
 
         /// <summary>
+        /// Ability to get requests for a certain book
+        /// </summary>
+        /// <param name="predicate">Predicate</param>
+        /// <returns>RequestDto</returns>
+        Task<RequestDto> GetByBook(Expression<Func<Request, bool>> predicate);
+
+        /// <summary>
         /// Ability to approve that user receiver his requested book
         /// </summary>
         /// <param name="id">Request Id</param>
