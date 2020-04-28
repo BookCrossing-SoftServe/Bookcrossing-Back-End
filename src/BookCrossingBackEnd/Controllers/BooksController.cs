@@ -19,14 +19,14 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<BookDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
+        public async Task<ActionResult<PaginationDto<BookDetailsDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
         {
             return Ok(await _bookService.GetAll(parameters));
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDto>> GetBook([FromRoute] int id)
+        public async Task<ActionResult<BookDetailsDto>> GetBook([FromRoute] int id)
         {
             var book = await _bookService.GetById(id);
             if (book == null)

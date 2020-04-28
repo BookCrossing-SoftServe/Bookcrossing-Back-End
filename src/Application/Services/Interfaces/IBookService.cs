@@ -12,13 +12,13 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="bookId">Book's ID</param>
         /// <returns>returns Book DTO</returns>
-        Task<BookDto> GetById(int bookId);
+        Task<BookDetailsDto> GetById(int bookId);
 
         /// <summary>
         /// Retrieve all books
         /// </summary>
         /// <returns>returns list of Book DTOs</returns>
-        Task<PaginationDto<BookDto>> GetAll(BookQueryParams parameters);
+        Task<PaginationDto<BookDetailsDto>> GetAll(BookQueryParams parameters);
 
         /// <summary>
         /// Update specified book
