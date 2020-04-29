@@ -53,11 +53,14 @@ namespace BookCrossingBackEnd.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // GET api/<controller>/5
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
-        public IActionResult Get(int id)
+        [HttpGet("{userId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<UserDto>> Get([FromRoute] int userId)
         {
-            throw new NotImplementedException();
+            var user = await UserService.GetById(x=>x.Id == userId);
+            if (user == null)
+                return NotFound();
+            return Ok(user);
         }
 
 
