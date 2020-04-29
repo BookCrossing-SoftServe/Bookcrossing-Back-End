@@ -34,36 +34,25 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task<BookDto> GetById(int bookId)
+        public async Task<BookDetailsDto> GetById(int bookId)
         {
-            return _mapper.Map<BookDto>(await _bookRepository.GetAll()
+            return _mapper.Map<BookDetailsDto>(await _bookRepository.GetAll()
                                                                .Include(p => p.BookAuthor)
                                                                .ThenInclude(x => x.Author)
                                                                .Include(p => p.BookGenre)
                                                                .ThenInclude(x => x.Genre)
+                                                               .Include(p => p.User)
+                                                               .ThenInclude(x => x.UserLocation)
+                                                               .ThenInclude(x => x.Location)
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
         }
-        public async Task<PaginationDto<BookDto>> GetAll(BookQueryParams parameters)
+        public async Task<PaginationDto<BookDetailsDto>> GetAll(BookQueryParams parameters)
         {
-            //TODO: Create or replace BookDto to fit requirements.
-            //TODO: Swagger doesn't support proper array queries, either do it by hand or use this.
-            //TODO: Delete Test sample before merge.
-            FilterParameters[] bookFilters =
-            {
-            };
-            FilterParameters locationFilters = new FilterParameters() { PropertyName = "Location.Id", Value = "1", Method = FilterMethod.Equal };
-            FilterParameters authorFilters = new FilterParameters() { PropertyName = "Author.LastName", Value = "Martin", Method = FilterMethod.Contains };
-            FilterParameters[] genreFilters =
-            {
-                new FilterParameters() { PropertyName = "Genre.Name", Value = "Fantasy", Method = FilterMethod.Equal, Operand = FilterOperand.Or},
-                new FilterParameters() { PropertyName = "Genre.Name", Value = "Horror", Method = FilterMethod.Equal}
-            };
-
             var bookIds =
-                from b in _bookRepository.GetAll().Where(bookFilters)
-                join g in _bookGenreRepository.GetAll().Where(genreFilters) on b.Id equals g.BookId
-                join a in _bookAuthorRepository.GetAll().Where(authorFilters) on b.Id equals a.BookId
-                join l in _userLocationRepository.GetAll().Where(locationFilters) on b.UserId equals l.UserId
+                from b in _bookRepository.GetAll().Where(parameters.BookFilters)
+                join g in _bookGenreRepository.GetAll().Where(parameters.GenreFilters) on b.Id equals g.BookId
+                join a in _bookAuthorRepository.GetAll().Where(parameters.AuthorFilters) on b.Id equals a.BookId
+                join l in _userLocationRepository.GetAll().Where(parameters.LocationFilters) on b.UserId equals l.UserId
                 select b.Id;
 
             var query = _bookRepository.GetAll().Where(x => bookIds.Contains(x.Id))
@@ -75,7 +64,7 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.UserLocation)
                 .ThenInclude(x => x.Location);
 
-            return await _paginationService.GetPageAsync<BookDto,Book>(query, parameters);
+            return await _paginationService.GetPageAsync<BookDetailsDto, Book>(query, parameters);
         }
 
         public async Task<BookDto> Add(BookDto bookDto)
