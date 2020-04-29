@@ -62,7 +62,7 @@ namespace ApplicationTest.Services
 
             var bookResult = await _bookService.GetById(1);
 
-            bookResult.Should().BeOfType<BookDto>();
+            bookResult.Should().BeOfType<BookDetailsDto>();
             bookResult.Id.Should().Be(1);
         }
 
@@ -85,27 +85,27 @@ namespace ApplicationTest.Services
 
             bookResult.Should().BeNull();
         }
-        [Ignore("TODO FIX")]
+
         [Test]
         public async Task GetAll_Returns_ListOfBookWithSameCount()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             var query = new BookQueryParams() {Page = 1, PageSize = 2};
-            var testPagination = new Application.Dto.PaginationDto<BookDto>()
+            var testPagination = new Application.Dto.PaginationDto<BookDetailsDto>()
             {
-                Page = new List<BookDto>
+                Page = new List<BookDetailsDto>
                     {
-                        new BookDto(),
-                        new BookDto()
+                        new BookDetailsDto(),
+                        new BookDetailsDto()
                     }
             };
 
-            _paginationServiceMock.Setup(s => s.GetPageAsync<BookDto, Book>(It.IsAny<IQueryable<Book>>(), It.IsAny<PageableParams>())).ReturnsAsync(testPagination);
+            _paginationServiceMock.Setup(s => s.GetPageAsync<BookDetailsDto, Book>(It.IsAny<IQueryable<Book>>(), It.IsAny<PageableParams>())).ReturnsAsync(testPagination);
 
             var booksResult = await _bookService.GetAll(query);
 
-            booksResult.Should().BeOfType<PaginationDto<BookDto>>();
+            booksResult.Should().BeOfType<PaginationDto<BookDetailsDto>>();
             booksResult.Page.Should().HaveCount(2);
         }
 
