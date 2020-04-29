@@ -43,5 +43,12 @@ namespace Application.Services.Interfaces
         /// <returns>Returns created Author's DTO </returns>
         Task<AuthorDto> Add(AuthorDto author);
 
+        /// <summary>
+        /// Get authors filtered by filter
+        /// </summary>
+        /// <param name="filter">string filter</param>
+        /// <returns>Returns filtered authors </returns>
+        Task<List<AuthorDto>> FilterAuthors(string filter);
+
     }
 }
