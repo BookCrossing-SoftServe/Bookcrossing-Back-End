@@ -29,13 +29,27 @@ namespace BookCrossingBackEnd.Controllers
             }
             return Ok(author);
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
             var uri = HttpContext.Request.QueryString;
             return Ok(await _authorService.GetAuthors(fullPaginationQuery));
         }
+
+        // GET: api/Authors/"Tom"
+        [HttpGet("{filter}")]
+        public async Task<ActionResult> GetAuthor(string filter)
+        {
+            var authors = await _authorService.FilterAuthors(filter);
+            if (authors == null)
+            {
+                return NotFound();
+            }
+            return Ok(authors);
+        }
+
+
         // PUT: api/Authors
         [HttpPut]
         public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
