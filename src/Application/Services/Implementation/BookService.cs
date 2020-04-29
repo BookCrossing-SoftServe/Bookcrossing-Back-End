@@ -16,12 +16,15 @@ namespace Application.Services.Implementation
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<BookGenre> _bookGenreRepository;
         private readonly BookCrossingContext _context;
+        private readonly IRepository<Request> _requestRepository;
         private readonly IMapper _mapper;
-        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, BookCrossingContext context)
+        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository,
+            IRepository<BookGenre> bookGenreRepository, IRepository<Request> requestRepository, BookCrossingContext context)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
             _bookGenreRepository = bookGenreRepository;
+            _requestRepository = requestRepository;
             _context = context;
             _mapper = mapper;
         }
@@ -89,6 +92,52 @@ namespace Application.Services.Implementation
                 transaction.Commit();
                 return affectedRows > 0;
             }
+        }
+
+        public async Task<List<BookDto>> GetRegistered()
+        {
+            int userId = 1;
+
+            var filteredRequests = await _requestRepository.GetAll()
+                                           .Select(g => new { Book = g.Book, Time = g.RequestDate })
+                                            .ToListAsync();
+
+            var groupedRequests = filteredRequests.GroupBy(a => new { a.Book })
+                                           .Select(g => new
+                                           {
+                                               g.Key.Book,
+                                               MinTime = g.Min(book => book.Time)
+                                           }).ToList();
+
+            var bookId = groupedRequests.Select(g => g.Book.Id);
+
+            var userBooks = await _bookRepository.GetAll()
+                                       .Where(x => x.UserId == userId)
+                                       .Select(x => x.Id)
+                                       .ToListAsync();
+
+            var currentBooks = userBooks.Except(bookId);
+
+            var requests = await _requestRepository.GetAll()
+                                              .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
+                                              .ToListAsync();
+
+            var userRequests = (from book in requests
+                            join bt in groupedRequests
+                              on book.Book equals bt.Book
+                            where book.Time == bt.MinTime
+                            && book.Owner == userId
+                            select new { Book = book.Book.Id });
+
+            //all user books
+            var allBooks = currentBooks.Union(userRequests.Select(x => x.Book));
+
+            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAll().Where(x => allBooks.Contains(x.Id))
+                                                                    .Include(p => p.BookAuthor)
+                                                                    .ThenInclude(x => x.Author)
+                                                                    .Include(p => p.BookGenre)
+                                                                    .ThenInclude(x => x.Genre)
+                                                                    .ToListAsync());
         }
     }
 }

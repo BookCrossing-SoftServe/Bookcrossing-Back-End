@@ -24,6 +24,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<Book>> _bookRepositoryMock;
         private Mock<IRepository<BookAuthor>> _bookAuthorRepositoryMock;
         private Mock<IRepository<BookGenre>> _bookGenreRepositoryMock;
+        private Mock<IRepository<Request>> _bookRequestRepositoryMock;
         //private Mock<IMapper> _mapper;
         private BookCrossingContext _context;
 
@@ -41,7 +42,7 @@ namespace ApplicationTest.Services
             var _mapper = mappingConfig.CreateMapper();
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
-            _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object, _context);
+            _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,_bookRequestRepositoryMock.Object ,_context);
         }
 
         [SetUp]

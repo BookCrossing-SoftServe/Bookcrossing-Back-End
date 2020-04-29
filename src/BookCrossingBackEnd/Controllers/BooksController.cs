@@ -24,6 +24,12 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _bookService.GetAll());
         }
 
+        [HttpGet("registered")]
+        public async Task<ActionResult<List<BookDto>>> GetRegisteredBooks()
+        {
+            return Ok(await _bookService.GetRegistered());
+        }
+
         // GET: api/Books/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BookDto>> GetBook([FromRoute] int id)
