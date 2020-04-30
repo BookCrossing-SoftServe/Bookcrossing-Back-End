@@ -30,8 +30,8 @@ namespace Application.Services.Implementation
         {
             return _mapper.Map<List<LocationDto>>(await _locationRepository.GetAll()
                                                                    .Include(p => p.UserLocation)
-                                                                   .OrderBy(x=>x.City)
-                                                                   .ThenBy(x=>x.OfficeName)
+                                                                   .OrderBy(x => x.City)
+                                                                   .ThenBy(x => x.OfficeName)
                                                                    .ToListAsync());
         }
 

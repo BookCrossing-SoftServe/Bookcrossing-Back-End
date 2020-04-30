@@ -27,6 +27,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<BookGenre>> _bookGenreRepositoryMock;
         private Mock<IRepository<UserLocation>> _userLocationServiceMock;
         private Mock<IPaginationService> _paginationServiceMock;
+        private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
         private BookCrossingContext _context;
 
@@ -39,6 +40,7 @@ namespace ApplicationTest.Services
             _paginationServiceMock = new Mock<IPaginationService>();
             _requestServiceMock = new Mock<IRepository<Request>>();
             _userLocationServiceMock = new Mock<IRepository<UserLocation>>();
+            _userResolverServiceMock = new Mock<IUserResolverService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.Mapper());
@@ -46,7 +48,8 @@ namespace ApplicationTest.Services
             var _mapper = mappingConfig.CreateMapper();
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
-            _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object, _userLocationServiceMock.Object, _paginationServiceMock.Object,_requestServiceMock.Object, _context);
+            _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
+                _userLocationServiceMock.Object, _paginationServiceMock.Object,_requestServiceMock.Object, _context, _userResolverServiceMock.Object);
         }
 
         [SetUp]
