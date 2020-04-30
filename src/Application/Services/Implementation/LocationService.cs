@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using System.Linq;
 
 namespace Application.Services.Implementation
 {
@@ -28,7 +29,9 @@ namespace Application.Services.Implementation
         public async Task<List<LocationDto>> GetAll()
         {
             return _mapper.Map<List<LocationDto>>(await _locationRepository.GetAll()
-                                                                   .Include(p => p.UserLocation)                                                                 
+                                                                   .Include(p => p.UserLocation)
+                                                                   .OrderBy(x=>x.City)
+                                                                   .ThenBy(x=>x.OfficeName)
                                                                    .ToListAsync());
         }
 

@@ -21,11 +21,13 @@ namespace Application.Services.Implementation
         private readonly IRepository<BookGenre> _bookGenreRepository;
         private readonly IRepository<UserLocation> _userLocationRepository;
         private readonly IRepository<Request> _requestRepository;
+        private readonly IUserResolverService _userResolverService;
         private readonly IPaginationService _paginationService;
         private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
-            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context)
+            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context, 
+            IUserResolverService userResolverService)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
@@ -35,6 +37,7 @@ namespace Application.Services.Implementation
             _paginationService = paginationService;
             _context = context;
             _mapper = mapper;
+            _userResolverService = userResolverService;
         }
 
         public async Task<BookDetailsDto> GetById(int bookId)
@@ -117,7 +120,7 @@ namespace Application.Services.Implementation
 
         public async Task<List<BookDto>> GetRegistered()
         {
-            int userId = 1;
+            var userId = _userResolverService.GetUserId();
 
             var allRequests = await _requestRepository.GetAll()
                                               .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
