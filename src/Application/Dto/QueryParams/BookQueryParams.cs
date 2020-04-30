@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Application.Dto.QueryParams
 {
     public class BookQueryParams : PageableParams
     {
-        public FilterParameters[] BookFilters { get; set; }
-        public FilterParameters[] AuthorFilters { get; set; }
-        public FilterParameters[] GenreFilters { get; set; }
-        public FilterParameters[] LocationFilters { get; set; }
+        public string SearchTerm { get; set; }
+        public int[] GenreIds { get; set; }
+        public int? SelectedLocationId { get; set; }
+        public bool? ShowAvailable { get; set; }
     }
 }
