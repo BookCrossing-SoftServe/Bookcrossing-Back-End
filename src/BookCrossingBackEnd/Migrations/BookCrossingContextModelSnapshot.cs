@@ -184,11 +184,11 @@ namespace BookCrossingBackEnd.Migrations
 
                     b.Property<DateTime?>("ReceiveDate")
                         .HasColumnName("receive_date")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("RequestDate")
                         .HasColumnName("request_date")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("UserId")
                         .HasColumnName("user_id")
@@ -216,8 +216,7 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<string>("ConfirmationNumber")
                         .IsRequired()
                         .HasColumnName("confirmation_number")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ResetDate")
                         .HasColumnName("reset_date")
@@ -245,6 +244,29 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Role");
+                });
+
+            modelBuilder.Entity("Domain.RDBMS.Entities.ScheduleJob", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("RequestId")
+                        .HasColumnName("requestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ScheduleId")
+                        .IsRequired()
+                        .HasColumnName("scheduleId")
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ScheduleJob");
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.User", b =>

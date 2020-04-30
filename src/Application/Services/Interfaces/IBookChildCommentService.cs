@@ -1,4 +1,5 @@
 ﻿using Application.Dto.Comment.Book;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Application.Services.Interfaces
@@ -18,12 +19,11 @@ namespace Application.Services.Interfaces
         /// <summary>
         /// Remove commnet from database
         /// </summary>
-        /// <param name="insertDto">Commnet DTO instance</param>
-        /// <param name="deleteDto.Ids">
+        /// <param name="ids">
         /// If ids length greater than 1, child comment will be deleted. 
         /// </param>
         /// <returns>Number of removed comments</returns>
-        Task<int> Remove(ChildDeleteDto deleteDto);
+        Task<int> Remove(IEnumerable<string> ids);
 
         /// <summary>
         /// Create new comment and add it into Database

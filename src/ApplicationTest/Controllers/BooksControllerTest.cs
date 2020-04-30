@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Dto.QueryParams;
 
 namespace ApplicationTest.Controllers
 {
@@ -27,15 +28,21 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task GetAllBooksAsync_Returns_OkObjectResultWithRequestedCount()
         {
-            var testBooks = GetTestBooks();
-            _bookService.Setup(s => s.GetAll()).ReturnsAsync(testBooks);
+            var testBooks = new List<BookDetailsDto>()
+                {
+                    new BookDetailsDto(),
+                    new BookDetailsDto()
+                };
+            var testPagination = new Application.Dto.PaginationDto<BookDetailsDto>() { Page = testBooks };
+            _bookService.Setup(s => s.GetAll(It.IsAny<BookQueryParams>())).ReturnsAsync(testPagination);
+            var query = new BookQueryParams() { Page = 1, PageSize = 2 };
 
-            var getAllBooksResult = await _booksController.GetAllBooksAsync();
+            var getAllBooksResult = await _booksController.GetAllBooksAsync(query);
 
             var okResult = getAllBooksResult.Result as OkObjectResult;
             okResult.Should().BeOfType<OkObjectResult>();
-            var books = okResult.Value as List<BookDto>;
-            books.Count().Should().Be(testBooks.Count);
+            var books = okResult.Value as PaginationDto<BookDetailsDto>;
+            books.Page.Should().HaveCount(testBooks.Count);
         }
 
         private List<BookDto> GetTestBooks()
@@ -50,14 +57,15 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task GetBookAsync_BookExists_Returns_OkObjectResultWithRequestedId()
         {
-            var testBook = GetTestBook();
+            var testBook = new BookDetailsDto() { Id = 1 };
+
             _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(testBook);
 
             var getBookResult = await _booksController.GetBook(It.IsAny<int>());
 
             var okResult = getBookResult.Result as OkObjectResult;
             okResult.Should().BeOfType<OkObjectResult>();
-            var resultBook = okResult.Value as BookDto;
+            var resultBook = okResult.Value as BookDetailsDto;
             resultBook.Id.Should().Be(testBook.Id);
         }
 
@@ -69,7 +77,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task GetBookAsync_BookDoesNotExist_Returns_NotFoundResult()
         {
-            _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(null as BookDto);
+            _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(null as BookDetailsDto);
 
             var result = await _booksController.GetBook(It.IsAny<int>());
 

@@ -24,7 +24,7 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="genre">Genre's DTO instance</param>
         /// <returns></returns>
-        Task Update(GenreDto genre);
+        Task<bool> Update(GenreDto genre);
 
         /// <summary>
         /// Remove genre from database
@@ -38,6 +38,6 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="genre">NewGenre DTO instance</param>
         /// <returns>Returns created Genre's DTO </returns>
-        Task<int> Add(GenreDto genre);
+        Task<GenreDto> Add(GenreDto genre);
     }
 }

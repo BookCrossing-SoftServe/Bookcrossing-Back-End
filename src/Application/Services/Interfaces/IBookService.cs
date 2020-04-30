@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Dto.QueryParams;
 
 namespace Application.Services.Interfaces
 {
@@ -11,13 +12,13 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="bookId">Book's ID</param>
         /// <returns>returns Book DTO</returns>
-        Task<BookDto> GetById(int bookId);
+        Task<BookDetailsDto> GetById(int bookId);
 
         /// <summary>
         /// Retrieve all books
         /// </summary>
         /// <returns>returns list of Book DTOs</returns>
-        Task<List<BookDto>> GetAll();
+        Task<PaginationDto<BookDetailsDto>> GetAll(BookQueryParams parameters);
 
         /// <summary>
         /// Update specified book

@@ -5,6 +5,6 @@ namespace Application.Dto.Comment.Book
     public class ChildDeleteDto
     {
         public IEnumerable<string> Ids { get; set; }
-        public int CommentOwnerId { get; set; }
+        public int OwnerId { get; set; }
     }
 }

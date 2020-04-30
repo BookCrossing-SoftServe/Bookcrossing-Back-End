@@ -18,11 +18,11 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.ReceiveDate)
                 .HasColumnName("receive_date")
-                .HasColumnType("date");
+                .HasColumnType("datetime");
 
             builder.Property(e => e.RequestDate)
                 .HasColumnName("request_date")
-                .HasColumnType("date");
+                .HasColumnType("datetime");
 
             builder.Property(e => e.UserId).HasColumnName("user_id");
 
