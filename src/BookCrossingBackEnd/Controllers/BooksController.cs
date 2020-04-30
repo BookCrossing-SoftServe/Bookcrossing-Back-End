@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
@@ -77,5 +78,10 @@ namespace BookCrossingBackEnd.Controllers
             return Ok();
         }
 
+        [HttpGet("registered")]
+        public async Task<ActionResult<List<BookDto>>> GetRegisteredBooks()
+        {
+            return Ok(await _bookService.GetRegistered());
+        }
     }
 }

@@ -40,5 +40,12 @@ namespace Application.Services.Interfaces
         /// <param name="book">Book DTO instance</param>
         /// <returns>Returns inserted Book's ID</returns>
         Task<BookDto> Add(BookDto book);
+
+        /// <summary>
+        /// Retrieve books registered by user
+        /// </summary>
+        /// <param name="userId">User's ID</param>
+        /// <returns></returns>
+        Task<List<BookDto>> GetRegistered();
     }
 }
