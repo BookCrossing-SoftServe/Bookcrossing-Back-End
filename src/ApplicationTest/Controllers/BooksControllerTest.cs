@@ -28,12 +28,12 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task GetAllBooksAsync_Returns_OkObjectResultWithRequestedCount()
         {
-            var testBooks = new List<BookDetailsDto>()
+            var testBooks = new List<BookGetDto>()
                 {
-                    new BookDetailsDto(),
-                    new BookDetailsDto()
+                    new BookGetDto(),
+                    new BookGetDto()
                 };
-            var testPagination = new Application.Dto.PaginationDto<BookDetailsDto>() { Page = testBooks };
+            var testPagination = new Application.Dto.PaginationDto<BookGetDto>() { Page = testBooks };
             _bookService.Setup(s => s.GetAll(It.IsAny<BookQueryParams>())).ReturnsAsync(testPagination);
             var query = new BookQueryParams() { Page = 1, PageSize = 2 };
 
@@ -41,23 +41,23 @@ namespace ApplicationTest.Controllers
 
             var okResult = getAllBooksResult.Result as OkObjectResult;
             okResult.Should().BeOfType<OkObjectResult>();
-            var books = okResult.Value as PaginationDto<BookDetailsDto>;
+            var books = okResult.Value as PaginationDto<BookGetDto>;
             books.Page.Should().HaveCount(testBooks.Count);
         }
 
-        private List<BookDto> GetTestBooks()
+        private List<BookPutDto> GetTestBooks()
         {
-            return new List<BookDto>
+            return new List<BookPutDto>
             {
-                new BookDto(),
-                new BookDto()
+                new BookPutDto(),
+                new BookPutDto()
             };
         }
 
         [Test]
         public async Task GetBookAsync_BookExists_Returns_OkObjectResultWithRequestedId()
         {
-            var testBook = new BookDetailsDto() { Id = 1 };
+            var testBook = new BookGetDto() { Id = 1 };
 
             _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(testBook);
 
@@ -65,19 +65,19 @@ namespace ApplicationTest.Controllers
 
             var okResult = getBookResult.Result as OkObjectResult;
             okResult.Should().BeOfType<OkObjectResult>();
-            var resultBook = okResult.Value as BookDetailsDto;
+            var resultBook = okResult.Value as BookGetDto;
             resultBook.Id.Should().Be(testBook.Id);
         }
 
-        private BookDto GetTestBook()
+        private BookPutDto GetTestBook()
         {
-            return new BookDto() { Id = 1 };
+            return new BookPutDto() { Id = 1 };
         }
 
         [Test]
         public async Task GetBookAsync_BookDoesNotExist_Returns_NotFoundResult()
         {
-            _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(null as BookDetailsDto);
+            _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(null as BookGetDto);
 
             var result = await _booksController.GetBook(It.IsAny<int>());
 
@@ -88,7 +88,7 @@ namespace ApplicationTest.Controllers
         public async Task PutBookAsync_BookExists_Returns_NoContent()
         {
             var testBook = GetTestBook();
-            _bookService.Setup(m => m.Update(It.IsAny<BookDto>())).ReturnsAsync(true);
+            _bookService.Setup(m => m.Update(It.IsAny<BookPutDto>())).ReturnsAsync(true);
 
             var putBookResult = await _booksController.PutBookAsync(testBook.Id, testBook);
 
@@ -99,7 +99,7 @@ namespace ApplicationTest.Controllers
         public async Task PutBookAsync_BookDoesNotExist_Return_NotFound()
         {
             var testBook = GetTestBook();
-            _bookService.Setup(m => m.Update(It.IsAny<BookDto>())).ReturnsAsync(false);
+            _bookService.Setup(m => m.Update(It.IsAny<BookPutDto>())).ReturnsAsync(false);
 
             var putBookResult = await _booksController.PutBookAsync(testBook.Id, testBook);
 
@@ -129,13 +129,13 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task PostBookAsync_Returns_CreatedAtActionResult()
         {
-            var testBook = GetTestBook();
-            _bookService.Setup(m => m.Add(It.IsAny<BookDto>())).ReturnsAsync(testBook);
+            var testBook = new BookGetDto() { Id = 1};
+            _bookService.Setup(m => m.Add(It.IsAny<BookPostDto>())).ReturnsAsync(testBook);
 
-            var createdAtActionResult = await _booksController.PostBookAsync(It.IsAny<BookDto>());
-            var result = (BookDto)((CreatedAtActionResult)createdAtActionResult.Result).Value;
+            var createdAtActionResult = await _booksController.PostBookAsync(It.IsAny<BookPostDto>());
+            var result = (BookGetDto)((CreatedAtActionResult)createdAtActionResult.Result).Value;
 
-            result.Should().BeOfType<BookDto>();
+            result.Should().BeOfType<BookGetDto>();
             createdAtActionResult.Result.Should().BeOfType<CreatedAtActionResult>();
             result.Should().BeEquivalentTo(testBook, options => options.Excluding(a => a.Id));
         }
