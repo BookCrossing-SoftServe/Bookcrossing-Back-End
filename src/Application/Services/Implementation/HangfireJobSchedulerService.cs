@@ -24,7 +24,7 @@ namespace Application.Services.Implementation
                 TimeSpan.FromDays(9));
             _scheduleRepository.Add(new ScheduleJob{ ScheduleId = jobId, RequestId = message.RequestId});
             _scheduleRepository.SaveChangesAsync();
-            var secondJobId = BackgroundJob.Schedule<RequestService>(x => x.Remove(message.RequestId),
+            var secondJobId = BackgroundJob.Schedule<RequestService>(x => x.RemoveAsync(message.RequestId),
                 TimeSpan.FromDays(10));
             _scheduleRepository.Add(new ScheduleJob { ScheduleId = secondJobId, RequestId = message.RequestId });
             _scheduleRepository.SaveChangesAsync();

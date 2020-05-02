@@ -29,7 +29,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
             var userId = _userResolverService.GetUserId();
-            var request = await _requestService.Make(userId, bookId);
+            var request = await _requestService.MakeAsync(userId, bookId);
 
             if (request == null)
             {
@@ -41,7 +41,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] BookQueryParams query)
         {
             var userId = _userResolverService.GetUserId();
-            var requests = await _requestService.Get(x => x.UserId == userId && x.ReceiveDate == null, query);
+            var requests = await _requestService.GetAsync(x => x.UserId == userId && x.ReceiveDate == null, query);
             if (requests == null)
             {
                 return NotFound();
@@ -56,14 +56,14 @@ namespace BookCrossingBackEnd.Controllers
         {
             if (query.First || query.Last)
             {
-                var request = await _requestService.GetByBook(x => x.BookId == bookId, query);
+                var request = await _requestService.GetByBookAsync(x => x.BookId == bookId, query);
                 if (request == null)
                 {
                     return NotFound();
                 }
                 return Ok(request);
             }
-            var requests = await _requestService.GetAllByBook(x => x.BookId == bookId);
+            var requests = await _requestService.GetAllByBookAsync(x => x.BookId == bookId);
             if (requests == null)
             {
                 return NotFound();
@@ -77,7 +77,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut]
         public async Task<ActionResult<RequestDto>> ApproveReceive([FromRoute] int requestId)
         {
-            var updated = await _requestService.ApproveReceive(requestId);
+            var updated = await _requestService.ApproveReceiveAsync(requestId);
             if (!updated)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpDelete]
         public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
         {
-            var removed = await _requestService.Remove(requestId);
+            var removed = await _requestService.RemoveAsync(requestId);
             if (!removed)
             {
                 return NotFound();
