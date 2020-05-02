@@ -14,7 +14,7 @@ namespace Application
             CreateMap<NoSqlEntities.BookChildComment, Dto.Comment.Book.ChildDto>()
                 .ForMember(dto => dto.Date, opt => opt.MapFrom(entity => Convert.ToDateTime(entity.Date).ToLocalTime()))
                 .ForMember(dto => dto.Comments, opt => opt.MapFrom(entity => entity.Comments))
-                .ForMember(dto => dto.Owner, opt => opt.MapFrom(entity => new Dto.Comment.OwnerDto() {Id=entity.OwnerId }));
+                .ForMember(dto => dto.Owner, opt => opt.MapFrom(entity => new Dto.Comment.OwnerDto() { Id = entity.OwnerId }));
             CreateMap<NoSqlEntities.BookRootComment, Dto.Comment.Book.RootDto>()
                 .ForMember(dto => dto.Date, opt => opt.MapFrom(entity => Convert.ToDateTime(entity.Date).ToLocalTime()))
                 .ForMember(dto => dto.Comments, opt => opt.MapFrom(entity => entity.Comments))
@@ -40,7 +40,7 @@ namespace Application
                         {
                             item.BookId = entity.Id;
                         }
-                    }); 
+                    });
             CreateMap<RdbmsEntities.Book, BookDto>()
                 .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
                 .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()));
@@ -63,6 +63,20 @@ namespace Application
             CreateMap<RdbmsEntities.User, UserDto>().ReverseMap();
             CreateMap<UserProfileDto, RdbmsEntities.User>().ForMember(x => x.Book, opt => opt.MapFrom(x => x.Books))
                 .ReverseMap();
+            CreateMap<AddBookDto, RdbmsEntities.Book>()
+                .ForMember(entity => entity.BookAuthor, opt => opt.MapFrom(x => x.Authors))
+                .ForMember(entity => entity.BookGenre, opt => opt.MapFrom(x => x.Genres))
+                .AfterMap((model, entity) =>
+                {
+                    foreach (var item in entity.BookAuthor)
+                    {
+                        item.BookId = entity.Id;
+                    }
+                    foreach (var item in entity.BookGenre)
+                    {
+                        item.BookId = entity.Id;
+                    }
+                });
         }
-    }  
+    }
 }

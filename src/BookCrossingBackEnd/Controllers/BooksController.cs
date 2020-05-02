@@ -36,7 +36,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public async Task<ActionResult<BookDto>> PostBookAsync([FromBody] BookDto bookDto)
+        public async Task<ActionResult<BookDto>> PostBookAsync([FromForm] AddBookDto bookDto)
         {
             var insertedBook = await _bookService.Add(bookDto);
             return CreatedAtAction("GetBook", new { id = insertedBook.Id }, insertedBook);

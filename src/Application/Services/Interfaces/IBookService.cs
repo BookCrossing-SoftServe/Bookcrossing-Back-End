@@ -39,6 +39,6 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="book">Book DTO instance</param>
         /// <returns>Returns inserted Book's ID</returns>
-        Task<BookDto> Add(BookDto book);
+        Task<BookDto> Add(AddBookDto book);
     }
 }

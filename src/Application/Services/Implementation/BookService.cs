@@ -7,10 +7,10 @@ using Domain.RDBMS.Entities;
 using Domain.RDBMS;
 using System.Linq;
 using Application.Dto.QueryParams;
-using Application.Dto.QueryParams.Enums;
 using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using Infrastructure.RDBMS;
+using System;
 
 namespace Application.Services.Implementation
 {
@@ -21,9 +21,10 @@ namespace Application.Services.Implementation
         private readonly IRepository<BookGenre> _bookGenreRepository;
         private readonly IRepository<UserLocation> _userLocationRepository;
         private readonly IPaginationService _paginationService;
+        private readonly IImageService _imageService;
         private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
-        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, BookCrossingContext context)
+        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, BookCrossingContext context, IImageService imageService)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
@@ -32,6 +33,7 @@ namespace Application.Services.Implementation
             _paginationService = paginationService;
             _context = context;
             _mapper = mapper;
+            _imageService = imageService;
         }
 
         public async Task<BookDetailsDto> GetById(int bookId)
@@ -67,9 +69,13 @@ namespace Application.Services.Implementation
             return await _paginationService.GetPageAsync<BookDetailsDto, Book>(query, parameters);
         }
 
-        public async Task<BookDto> Add(BookDto bookDto)
+        public async Task<BookDto> Add(AddBookDto bookDto)
         {
             var book = _mapper.Map<Book>(bookDto);
+            if (bookDto.Image != null)
+            {
+                book.ImagePath = await _imageService.UploadImage(bookDto.Image);
+            }
             _bookRepository.Add(book);
             await _bookRepository.SaveChangesAsync();
             return _mapper.Map<BookDto>(book);
@@ -78,13 +84,10 @@ namespace Application.Services.Implementation
         public async Task<bool> Remove(int bookId)
         {
             var book = await _bookRepository.GetAll()
-                            .Include(p => p.BookAuthor)
-                            .ThenInclude(x => x.Author)
-                            .Include(p => p.BookGenre)
-                            .ThenInclude(x => x.Genre)
                             .FirstOrDefaultAsync(p => p.Id == bookId);
             if (book == null)
                 return false;
+            _imageService.DeleteImage(book.ImagePath);
             _bookRepository.Remove(book);
             var affectedRows = await _bookRepository.SaveChangesAsync();
             return affectedRows > 0;

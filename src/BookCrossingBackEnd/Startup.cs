@@ -98,6 +98,7 @@ namespace BookCrossingBackEnd
             services.AddLogging();
             services.AddApplicationInsightsTelemetry();
 
+            services.AddSingleton<IImageService, ImageService>();
             services.AddSingleton<IPaginationService, PaginationService>();
 
             services.AddCors(options =>
@@ -149,7 +150,8 @@ namespace BookCrossingBackEnd
 
             app.UseStaticFiles(new StaticFileOptions()
             {
-                OnPrepareResponse = ctx => {
+                OnPrepareResponse = ctx =>
+                {
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 },
