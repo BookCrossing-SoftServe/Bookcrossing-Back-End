@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto.QueryParams;
+using Microsoft.AspNetCore.Http;
 
 namespace ApplicationTest.Services
 {
@@ -29,6 +30,7 @@ namespace ApplicationTest.Services
         private Mock<IPaginationService> _paginationServiceMock;
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
+        private Mock<IImageService> _imageServiceMock;
         private BookCrossingContext _context;
 
         [OneTimeSetUp]
@@ -41,6 +43,7 @@ namespace ApplicationTest.Services
             _requestServiceMock = new Mock<IRepository<Request>>();
             _userLocationServiceMock = new Mock<IRepository<UserLocation>>();
             _userResolverServiceMock = new Mock<IUserResolverService>();
+            _imageServiceMock = new Mock<IImageService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.Mapper());
@@ -49,7 +52,7 @@ namespace ApplicationTest.Services
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                _userLocationServiceMock.Object, _paginationServiceMock.Object,_requestServiceMock.Object, _context, _userResolverServiceMock.Object);
+                _userLocationServiceMock.Object, _paginationServiceMock.Object,_requestServiceMock.Object, _context, _userResolverServiceMock.Object, _imageServiceMock.Object);
         }
 
         [SetUp]
@@ -117,13 +120,14 @@ namespace ApplicationTest.Services
         [Test]
         public async Task Add_BookIsValid_Returns_BookDto()
         {
-            var bookDto = new BookPutDto();
+            var bookDto = new BookPostDto();
             _bookRepositoryMock.Setup(s => s.Add(It.IsAny<Book>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            _imageServiceMock.Setup(x => x.UploadImage(It.IsAny<IFormFile>())).ReturnsAsync("name.png");
 
             var bookResult = await _bookService.Add(bookDto);
 
-            bookResult.Should().BeOfType<BookPutDto>();
+            bookResult.Should().BeOfType<BookGetDto>();
             _bookRepositoryMock.Verify(x => x.Add(It.IsAny<Book>()), Times.Once);
             _bookRepositoryMock.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
@@ -135,6 +139,7 @@ namespace ApplicationTest.Services
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             _bookRepositoryMock.Setup(s => s.Remove(It.IsAny<Book>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            _imageServiceMock.Setup(x => x.DeleteImage(It.IsAny<string>()));
 
             var deleteResult = await _bookService.Remove(1);
 
@@ -150,6 +155,7 @@ namespace ApplicationTest.Services
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             _bookRepositoryMock.Setup(s => s.Remove(It.IsAny<Book>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
+            _imageServiceMock.Setup(x => x.DeleteImage(It.IsAny<string>()));
 
             var deleteResult = await _bookService.Remove(3);
 

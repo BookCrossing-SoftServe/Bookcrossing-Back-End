@@ -129,13 +129,13 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task PostBookAsync_Returns_CreatedAtActionResult()
         {
-            var testBook = GetTestBook();
-            _bookService.Setup(m => m.Add(It.IsAny<BookPutDto>())).ReturnsAsync(testBook);
+            var testBook = new BookGetDto() { Id = 1};
+            _bookService.Setup(m => m.Add(It.IsAny<BookPostDto>())).ReturnsAsync(testBook);
 
-            var createdAtActionResult = await _booksController.PostBookAsync(It.IsAny<BookPutDto>());
-            var result = (BookPutDto)((CreatedAtActionResult)createdAtActionResult.Result).Value;
+            var createdAtActionResult = await _booksController.PostBookAsync(It.IsAny<BookPostDto>());
+            var result = (BookGetDto)((CreatedAtActionResult)createdAtActionResult.Result).Value;
 
-            result.Should().BeOfType<BookPutDto>();
+            result.Should().BeOfType<BookGetDto>();
             createdAtActionResult.Result.Should().BeOfType<CreatedAtActionResult>();
             result.Should().BeEquivalentTo(testBook, options => options.Excluding(a => a.Id));
         }
