@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.Password;
+using Domain.RDBMS.Entities;
 
 namespace Application.Services.Interfaces
 {
@@ -9,6 +12,13 @@ namespace Application.Services.Interfaces
     {
        
         Task<List<UserDto>> GetAllUsers();
+
+        /// <summary>
+        /// Get user by Id
+        /// </summary>
+        /// <param name="predicate">Predicate</param>
+        /// <returns></returns>
+        Task<UserDto> GetById(Expression<Func<User, bool>> predicate);
         Task UpdateUser(UserUpdateDto userDto);
 
         Task RemoveUser(int userId);

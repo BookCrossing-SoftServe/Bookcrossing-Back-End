@@ -22,19 +22,24 @@ namespace Application.Services.Implementation
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<BookGenre> _bookGenreRepository;
         private readonly IRepository<UserLocation> _userLocationRepository;
+        private readonly IRepository<Request> _requestRepository;
+        private readonly IUserResolverService _userResolverService;
         private readonly IPaginationService _paginationService;
         private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
-
-        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, BookCrossingContext context)
+        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
+            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context, 
+            IUserResolverService userResolverService)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
             _bookGenreRepository = bookGenreRepository;
             _userLocationRepository = userLocationRepository;
+            _requestRepository = requestRepository;
             _paginationService = paginationService;
             _context = context;
             _mapper = mapper;
+            _userResolverService = userResolverService;
         }
 
         public async Task<BookDetailsDto> GetById(int bookId)
@@ -155,6 +160,42 @@ namespace Application.Services.Implementation
                 transaction.Commit();
                 return affectedRows > 0;
             }
+        }
+
+        public async Task<List<BookDto>> GetRegistered()
+        {
+            var userId = _userResolverService.GetUserId();
+
+            var allRequests = await _requestRepository.GetAll()
+                                              .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
+                                              .ToListAsync();
+
+            var firstRequests = allRequests.GroupBy(a => new { a.Book })
+                                           .Select(g => new
+                                           {
+                                               g.Key.Book,
+                                               MinTime = g.Min(book => book.Time)
+                                           }).ToList();
+
+            var firstRequestsBookId = firstRequests.Select(g => g.Book.Id);
+
+            var userBooks = await _bookRepository.GetAll()
+                                       .Where(x => x.UserId == userId)
+                                       .Select(x => x.Id)
+                                       .ToListAsync();
+
+            var userCurrentBooks = userBooks.Except(firstRequestsBookId);
+
+            var userFirstBooks = allRequests.Where(a => a.Owner == userId && a.Time == firstRequests.Single(b => b.Book == a.Book).MinTime).Select(a => a.Book.Id);
+            //all user books
+            var allBooks = userCurrentBooks.Union(userFirstBooks);
+
+            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAll().Where(x => allBooks.Contains(x.Id))
+                                                                    .Include(p => p.BookAuthor)
+                                                                    .ThenInclude(x => x.Author)
+                                                                    .Include(p => p.BookGenre)
+                                                                    .ThenInclude(x => x.Genre)
+                                                                    .ToListAsync());
         }
     }
 }
