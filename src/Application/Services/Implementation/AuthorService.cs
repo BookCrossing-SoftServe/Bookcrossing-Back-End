@@ -1,10 +1,14 @@
 ﻿using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Application.Services.Implementation
 {
@@ -30,6 +34,15 @@ namespace Application.Services.Implementation
         {
             var query = _authorRepository.GetAll();
             return await _paginationService.GetPageAsync<AuthorDto, Author>(query, parameters);
+        }
+
+        public async Task<List<AuthorDto>> FilterAuthors(string filter)
+        {
+            return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll()
+                                                                 .Where(x => x.FirstName.StartsWith(filter) 
+                                                                     || x.LastName.StartsWith(filter) 
+                                                                     || x.MiddleName.StartsWith(filter))
+                                                                 .ToListAsync());
         }
 
         public async Task<AuthorDto> Add(AuthorDto authorDto)

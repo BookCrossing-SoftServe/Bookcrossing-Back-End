@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using Application.Dto;
 using System.Threading.Tasks;
 using System.Security.Authentication;
@@ -27,8 +29,20 @@ namespace Application.Services.Implementation
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
         }
-      
+        ///<inheritdoc/>
+        public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)
+        {
 
+            var user = await _userRepository.GetAll()
+                .Include(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Include(x=>x.Role)
+                .FirstOrDefaultAsync(predicate);
+            if (user == null)
+            {
+                return null;
+            }
+            return _mapper.Map<UserDto>(user);
+        }
         public async Task<List<UserDto>> GetAllUsers()
         {
             return _mapper.Map<List<UserDto>>(await _userRepository.GetAll().Include(p => p.UserLocation).ToListAsync());

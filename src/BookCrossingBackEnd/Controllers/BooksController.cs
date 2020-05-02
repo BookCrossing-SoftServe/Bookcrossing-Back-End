@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
@@ -19,14 +20,14 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<BookDetailsDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
+        public async Task<ActionResult<PaginationDto<BookGetDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
         {
             return Ok(await _bookService.GetAll(parameters));
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookDetailsDto>> GetBook([FromRoute] int id)
+        public async Task<ActionResult<BookGetDto>> GetBook([FromRoute] int id)
         {
             var book = await _bookService.GetById(id);
             if (book == null)
@@ -36,7 +37,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public async Task<ActionResult<BookDto>> PostBookAsync([FromForm] AddBookDto bookDto)
+        public async Task<ActionResult<BookPutDto>> PostBookAsync([FromForm] BookPostDto bookDto)
         {
             var insertedBook = await _bookService.Add(bookDto);
             return CreatedAtAction("GetBook", new { id = insertedBook.Id }, insertedBook);
@@ -44,7 +45,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookAsync([FromRoute] int id, [FromBody] BookDto bookDto)
+        public async Task<IActionResult> PutBookAsync([FromRoute] int id, [FromBody] BookPutDto bookDto)
         {
             if (id != bookDto.Id)
             {
@@ -77,5 +78,17 @@ namespace BookCrossingBackEnd.Controllers
             return Ok();
         }
 
+        [HttpGet("registered")]
+        public async Task<ActionResult<List<BookPutDto>>> GetRegisteredBooksAsync()
+        {
+            return Ok(await _bookService.GetRegistered());
+        }
+
+        // GET: api/Books
+        [HttpGet("current")]
+        public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentOwnedBooksAsync([FromQuery]BookQueryParams parameters)
+        {
+            return Ok(await _bookService.GetAll(parameters));
+        }
     }
 }

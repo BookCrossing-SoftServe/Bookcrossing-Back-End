@@ -10,7 +10,7 @@ namespace Application.Dto
         public string Email { get; set; }
         public List<RoomLocationDto> UserLocation { get; set; }
         
-        public virtual List<BookDto> Books { get; set; } 
+        public virtual List<BookPutDto> Books { get; set; } 
 
     }
 }

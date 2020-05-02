@@ -21,6 +21,11 @@ namespace Application.Services.Implementation
 
         public async Task<string> UploadImage(IFormFile img)
         {
+            if (img != null)
+            {
+                return null;
+            }
+
             var folderName = _configuration.GetSection("StorageConfiguration")["FolderForBookImages"];
             string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderName);
             if (!Directory.Exists(uploadsFolder))
@@ -35,6 +40,7 @@ namespace Application.Services.Implementation
                 await img.CopyToAsync(fileStream);
             }
             return dbPath;
+
         }
 
         public void DeleteImage(string imagePath)
