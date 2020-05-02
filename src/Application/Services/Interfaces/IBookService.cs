@@ -44,8 +44,13 @@ namespace Application.Services.Interfaces
         /// <summary>
         /// Retrieve books registered by user
         /// </summary>
-        /// <param name="userId">User's ID</param>
         /// <returns></returns>
         Task<List<BookDto>> GetRegistered();
+
+        /// <summary>
+        /// Retrieve books current owned by user
+        /// </summary>
+        /// <returns></returns>
+        Task<PaginationDto<BookDetailsDto>> GetCurrentOwned(BookQueryParams parameters);
     }
 }

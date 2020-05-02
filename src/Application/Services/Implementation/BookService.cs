@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
 using System.Linq;
+using LinqKit;
+using System.Reflection.Metadata.Ecma335;
 using Application.Dto.QueryParams;
 using Application.Dto.QueryParams.Enums;
 using Application.QueryableExtension;
@@ -54,11 +56,51 @@ namespace Application.Services.Implementation
         }
         public async Task<PaginationDto<BookDetailsDto>> GetAll(BookQueryParams parameters)
         {
+
+            var books = _bookRepository.GetAll();
+            var author = _bookAuthorRepository.GetAll();
+            if (parameters.SearchTerm != null)
+            {
+                var term = parameters.SearchTerm.Split(" ");
+                if (term.Length <= 1)
+                {
+                    author = author.Where(a =>
+                        a.Author.FirstName.Contains(term[0]) || a.Author.LastName.Contains(term[0]) || a.Book.Name.Contains(parameters.SearchTerm));
+                }
+                else
+                {
+                    author = author.Where(a =>
+                        a.Author.FirstName.Contains(term[0]) && a.Author.LastName.Contains(term[term.Length-1]) || a.Book.Name.Contains(parameters.SearchTerm));
+                }
+            }
+
+            var genre = _bookGenreRepository.GetAll();
+            if (parameters.Genres != null)
+            {
+                var predicate = PredicateBuilder.New<BookGenre>();
+                foreach (var id in parameters.Genres)
+                {
+                    var tempId = id;
+                    predicate = predicate.Or(g => g.Genre.Id == tempId);
+                }
+                genre = genre.Where(predicate);
+            }
+
+            if (parameters.ShowAvailable == true)
+            {
+                books = books.Where(b => b.Available);
+            }
+
+            var location = _userLocationRepository.GetAll();
+            if (parameters.location != null)
+            {
+                location = location.Where(l => l.Location.Id == parameters.location);
+            }
             var bookIds =
-                from b in _bookRepository.GetAll().Where(parameters.BookFilters)
-                join g in _bookGenreRepository.GetAll().Where(parameters.GenreFilters) on b.Id equals g.BookId
-                join a in _bookAuthorRepository.GetAll().Where(parameters.AuthorFilters) on b.Id equals a.BookId
-                join l in _userLocationRepository.GetAll().Where(parameters.LocationFilters) on b.UserId equals l.UserId
+                from b in books
+                join g in genre on b.Id equals g.BookId
+                join a in author on b.Id equals a.BookId
+                join l in location on b.UserId equals l.UserId
                 select b.Id;
 
             var query = _bookRepository.GetAll().Where(x => bookIds.Contains(x.Id))
@@ -71,6 +113,8 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.Location);
 
             return await _paginationService.GetPageAsync<BookDetailsDto, Book>(query, parameters);
+
+
         }
 
         public async Task<BookDto> Add(BookDto bookDto)
@@ -120,7 +164,7 @@ namespace Application.Services.Implementation
 
         public async Task<List<BookDto>> GetRegistered()
         {
-            var userId = _userResolverService.GetUserId();
+            var userId = 1;// _userResolverService.GetUserId();
 
             var allRequests = await _requestRepository.GetAll()
                                               .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
@@ -152,6 +196,30 @@ namespace Application.Services.Implementation
                                                                     .Include(p => p.BookGenre)
                                                                     .ThenInclude(x => x.Genre)
                                                                     .ToListAsync());
+        }
+
+        public async Task<PaginationDto<BookDetailsDto>> GetCurrentOwned(BookQueryParams parameters)
+        {
+            var userId = _userResolverService.GetUserId();
+
+            var bookIds =
+                from b in _bookRepository.GetAll().Where(parameters.BookFilters)
+                join g in _bookGenreRepository.GetAll().Where(parameters.GenreFilters) on b.Id equals g.BookId
+                join a in _bookAuthorRepository.GetAll().Where(parameters.AuthorFilters) on b.Id equals a.BookId
+                join l in _userLocationRepository.GetAll().Where(parameters.LocationFilters) on b.UserId equals l.UserId
+                select b.Id;
+
+            var query = _bookRepository.GetAll().Where(x => bookIds.Contains(x.Id))
+                .Where(p=>p.UserId==userId)
+                .Include(p => p.BookAuthor)
+                .ThenInclude(x => x.Author)
+                .Include(p => p.BookGenre)
+                .ThenInclude(x => x.Genre)
+                .Include(p => p.User)
+                .ThenInclude(x => x.UserLocation)
+                .ThenInclude(x => x.Location);
+
+            return await _paginationService.GetPageAsync<BookDetailsDto, Book>(query, parameters);
         }
     }
 }

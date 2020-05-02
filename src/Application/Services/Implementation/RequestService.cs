@@ -13,6 +13,7 @@ using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using Hangfire;
+using LinqKit;
 using MailKit;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
@@ -140,11 +141,50 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, BookQueryParams parameters)
         {
+            var books = _bookRepository.GetAll();
+            var author = _bookAuthorRepository.GetAll();
+            if (parameters.SearchTerm != null)
+            {
+                var term = parameters.SearchTerm.Split(" ");
+                if (term.Length <= 1)
+                {
+                    author = author.Where(a =>
+                        a.Author.FirstName.Contains(term[0]) || a.Author.LastName.Contains(term[0]) || a.Book.Name.Contains(parameters.SearchTerm));
+                }
+                else
+                {
+                    author = author.Where(a =>
+                        a.Author.FirstName.Contains(term[0]) && a.Author.LastName.Contains(term[term.Length - 1]) || a.Book.Name.Contains(parameters.SearchTerm));
+                }
+            }
+
+            var genre = _bookGenreRepository.GetAll();
+            if (parameters.Genres != null)
+            {
+                var wherePredicate = PredicateBuilder.New<BookGenre>();
+                foreach (var id in parameters.Genres)
+                {
+                    var tempId = id;
+                    wherePredicate = wherePredicate.Or(g => g.Genre.Id == tempId);
+                }
+                genre = genre.Where(wherePredicate);
+            }
+
+            if (parameters.ShowAvailable == true)
+            {
+                books = books.Where(b => b.Available);
+            }
+
+            var location = _userLocationRepository.GetAll();
+            if (parameters.location != null)
+            {
+                location = location.Where(l => l.Location.Id == parameters.location);
+            }
             var bookIds =
-                from b in _requestRepository.GetAll().Where(parameters.BookFilters)
-                join g in _bookGenreRepository.GetAll().Where(parameters.GenreFilters) on b.Book.Id equals g.BookId
-                join a in _bookAuthorRepository.GetAll().Where(parameters.AuthorFilters) on b.Book.Id equals a.BookId
-                join l in _userLocationRepository.GetAll().Where(parameters.LocationFilters) on b.OwnerId equals l.UserId
+                from b in books
+                join g in genre on b.Id equals g.BookId
+                join a in author on b.Id equals a.BookId
+                join l in location on b.UserId equals l.UserId
                 select b.Id;
             var query = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
