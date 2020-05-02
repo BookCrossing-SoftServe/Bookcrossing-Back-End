@@ -10,6 +10,9 @@ namespace Domain.RDBMS.Entities
         public int UserId { get; set; }
         public string Publisher { get; set; }
         public bool Available { get; set; }
+        public string Notice { get; set; }
+        public string ImagePath { get; set; }
+
 
         public virtual User User { get; set; }
         public virtual List<BookAuthor> BookAuthor { get; set; } 

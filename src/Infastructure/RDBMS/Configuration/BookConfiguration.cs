@@ -28,6 +28,14 @@ namespace Infrastructure.RDBMS.Configuration
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Book)
                 .HasForeignKey(d => d.UserId);
+
+            builder.Property(e => e.Notice)
+                .HasColumnName("notice")
+                .HasMaxLength(500);
+
+            builder.Property(a => a.ImagePath)
+                .HasColumnName("imagepath")
+                .HasMaxLength(260);
         }
     }
 }
