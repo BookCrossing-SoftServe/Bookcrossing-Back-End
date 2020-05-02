@@ -34,18 +34,20 @@ namespace Application
                     {
                         foreach (var item in entity.BookAuthor)
                         {
-                            item.Book = entity;
                             item.BookId = entity.Id;
                         }
                         foreach (var item in entity.BookGenre)
                         {
-                            item.Book = entity;
                             item.BookId = entity.Id;
                         }
                     }); 
             CreateMap<RdbmsEntities.Book, BookDto>()
                 .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
                 .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()));
+            CreateMap<RdbmsEntities.Book, BookDetailsDto>()
+               .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
+               .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()))
+               .ForMember(dto => dto.Locations, opt => opt.MapFrom(x => x.User.UserLocation));
             CreateMap<GenreDto, RdbmsEntities.Genre>().ReverseMap();
             CreateMap<LocationDto, RdbmsEntities.Location>().ReverseMap()
                 .ForMember(dto => dto.Rooms, opt => opt.MapFrom(x => x.UserLocation.Select(y => y.RoomNumber)))
@@ -61,6 +63,11 @@ namespace Application
             CreateMap<RdbmsEntities.User, UserDto>().ReverseMap();
             CreateMap<UserProfileDto, RdbmsEntities.User>().ForMember(x => x.Book, opt => opt.MapFrom(x => x.Books))
                 .ReverseMap();
+            CreateMap<UserDto, RdbmsEntities.User>().ReverseMap()
+                .ForMember(a => a.Id, opt => opt.Condition(a => a.Id != 0))
+                .ForMember(dto => dto.UserLocation, opt => opt.MapFrom(x => x.UserLocation))
+                .ForMember(dto => dto.Role, opt => opt.MapFrom(x => x.Role));
+
         }
     }  
 }

@@ -2,6 +2,7 @@
   "common": {
     "language": "Change language",
     "id": "Id",
+    "home": "Home",
     "routes": "All routes",
     "languages": {
       "gb": "English",
@@ -18,6 +19,10 @@
       "user-who-requested": "Who requested?",
       "previous": "Previous",
       "next": "Next"
+    },
+    "home": {
+      "rules": "Rules",
+      "register": "Register books"
     },
     "signIn": {
       "forgot-password": "Forgot password?"

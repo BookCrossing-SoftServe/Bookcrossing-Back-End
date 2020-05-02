@@ -6,8 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
 using System.Linq;
-using Infrastructure.RDBMS;
+using Application.Dto.QueryParams;
+using Application.Dto.QueryParams.Enums;
+using Application.QueryableExtension;
 using Application.Services.Interfaces;
+using Infrastructure.RDBMS;
 
 namespace Application.Services.Implementation
 {
@@ -16,38 +19,58 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<BookGenre> _bookGenreRepository;
+        private readonly IRepository<UserLocation> _userLocationRepository;
+        private readonly IRepository<Request> _requestRepository;
+        private readonly IUserResolverService _userResolverService;
+        private readonly IPaginationService _paginationService;
         private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
-        private readonly IPaginationService _paginationService;
-
-        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, BookCrossingContext context, IPaginationService paginationService)
+        public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
+            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context, 
+            IUserResolverService userResolverService)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
             _bookGenreRepository = bookGenreRepository;
+            _userLocationRepository = userLocationRepository;
+            _requestRepository = requestRepository;
+            _paginationService = paginationService;
             _context = context;
             _mapper = mapper;
-            _paginationService = paginationService;
+            _userResolverService = userResolverService;
         }
 
-        public async Task<BookDto> GetById(int bookId)
+        public async Task<BookDetailsDto> GetById(int bookId)
         {
-            return _mapper.Map<BookDto>(await _bookRepository.GetAll()
+            return _mapper.Map<BookDetailsDto>(await _bookRepository.GetAll()
                                                                .Include(p => p.BookAuthor)
                                                                .ThenInclude(x => x.Author)
                                                                .Include(p => p.BookGenre)
                                                                .ThenInclude(x => x.Genre)
+                                                               .Include(p => p.User)
+                                                               .ThenInclude(x => x.UserLocation)
+                                                               .ThenInclude(x => x.Location)
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
         }
-
-        public async Task<PaginationDto<BookDto>> GetAll(QueryParameters parameters)
+        public async Task<PaginationDto<BookDetailsDto>> GetAll(BookQueryParams parameters)
         {
-            var query = _bookRepository.GetAll()
-                                            .Include(p => p.BookAuthor)
-                                            .ThenInclude(x => x.Author)
-                                            .Include(p => p.BookGenre)
-                                            .ThenInclude(x => x.Genre);
-            return await _paginationService.GetPageAsync<BookDto, Book>(query, parameters);
+            var bookIds =
+                from b in _bookRepository.GetAll().Where(parameters.BookFilters)
+                join g in _bookGenreRepository.GetAll().Where(parameters.GenreFilters) on b.Id equals g.BookId
+                join a in _bookAuthorRepository.GetAll().Where(parameters.AuthorFilters) on b.Id equals a.BookId
+                join l in _userLocationRepository.GetAll().Where(parameters.LocationFilters) on b.UserId equals l.UserId
+                select b.Id;
+
+            var query = _bookRepository.GetAll().Where(x => bookIds.Contains(x.Id))
+                .Include(p => p.BookAuthor)
+                .ThenInclude(x => x.Author)
+                .Include(p => p.BookGenre)
+                .ThenInclude(x => x.Genre)
+                .Include(p => p.User)
+                .ThenInclude(x => x.UserLocation)
+                .ThenInclude(x => x.Location);
+
+            return await _paginationService.GetPageAsync<BookDetailsDto, Book>(query, parameters);
         }
 
         public async Task<BookDto> Add(BookDto bookDto)
@@ -93,6 +116,42 @@ namespace Application.Services.Implementation
                 transaction.Commit();
                 return affectedRows > 0;
             }
+        }
+
+        public async Task<List<BookDto>> GetRegistered()
+        {
+            var userId = _userResolverService.GetUserId();
+
+            var allRequests = await _requestRepository.GetAll()
+                                              .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
+                                              .ToListAsync();
+
+            var firstRequests = allRequests.GroupBy(a => new { a.Book })
+                                           .Select(g => new
+                                           {
+                                               g.Key.Book,
+                                               MinTime = g.Min(book => book.Time)
+                                           }).ToList();
+
+            var firstRequestsBookId = firstRequests.Select(g => g.Book.Id);
+
+            var userBooks = await _bookRepository.GetAll()
+                                       .Where(x => x.UserId == userId)
+                                       .Select(x => x.Id)
+                                       .ToListAsync();
+
+            var userCurrentBooks = userBooks.Except(firstRequestsBookId);
+
+            var userFirstBooks = allRequests.Where(a => a.Owner == userId && a.Time == firstRequests.Single(b => b.Book == a.Book).MinTime).Select(a => a.Book.Id);
+            //all user books
+            var allBooks = userCurrentBooks.Union(userFirstBooks);
+
+            return _mapper.Map<List<BookDto>>(await _bookRepository.GetAll().Where(x => allBooks.Contains(x.Id))
+                                                                    .Include(p => p.BookAuthor)
+                                                                    .ThenInclude(x => x.Author)
+                                                                    .Include(p => p.BookGenre)
+                                                                    .ThenInclude(x => x.Genre)
+                                                                    .ToListAsync());
         }
     }
 }

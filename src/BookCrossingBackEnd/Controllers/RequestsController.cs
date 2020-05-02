@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RequestsController : ControllerBase
@@ -37,10 +38,10 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(request);
         }
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] QueryParameters query)
+        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] BookQueryParams query)
         {
             var userId = _userResolverService.GetUserId();
-            var requests = await _requestService.Get(x => x.UserId == userId, query);
+            var requests = await _requestService.Get(x => x.UserId == userId && x.ReceiveDate == null, query);
             if (requests == null)
             {
                 return NotFound();
@@ -48,15 +49,26 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
 
+
         [Route("{bookId:min(1)}")]
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<RequestDto>>> GetByBook([FromRoute] int bookId, [FromQuery] QueryParameters query)
+        public async Task<ActionResult<IEnumerable<RequestDto>>> GetByBook([FromRoute] int bookId, [FromQuery] RequestsQueryParams query = null)
         {
-            var requests = await _requestService.Get(x => x.BookId == bookId, query);
+            if (query.First || query.Last)
+            {
+                var request = await _requestService.GetByBook(x => x.BookId == bookId, query);
+                if (request == null)
+                {
+                    return NotFound();
+                }
+                return Ok(request);
+            }
+            var requests = await _requestService.GetAllByBook(x => x.BookId == bookId);
             if (requests == null)
             {
                 return NotFound();
             }
+
             return Ok(requests);
         }
 

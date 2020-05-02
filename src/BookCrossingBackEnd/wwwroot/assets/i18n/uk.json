@@ -2,6 +2,7 @@
   "common": {
     "language": "Змінити мову",
     "id": "Номер",
+    "home": "Головна",
     "routes": "Всі маршрути",
     "languages": {
       "gb": "Англійська",
@@ -19,6 +20,10 @@
       "user-who-requested": "Хто кинув реквест?",
       "previous": "Попередня",
       "next": "Наступна"
+    },
+    "home": {
+      "rules": "Правила",
+      "register": "Зареєструвати книгу"
     },
     "signIn": {
       "forgot-password": "Забули пароль?"

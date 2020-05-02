@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.Email;
+using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
@@ -26,10 +29,15 @@ namespace Application.Services.Implementation
         private readonly IRepository<User> _useRepository;
         private readonly IPaginationService _paginationService;
         private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
+        private readonly IRepository<BookGenre> _bookGenreRepository;
+        private readonly IRepository<BookAuthor> _bookAuthorRepository;
+        private readonly IRepository<UserLocation> _userLocationRepository;
+
 
         public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
             IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
-            IHangfireJobScheduleService hangfireJobScheduleService)
+            IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository, 
+            IRepository<BookGenre> bookGenreRepository, IRepository<UserLocation> userLocationRepository)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -38,6 +46,9 @@ namespace Application.Services.Implementation
             _useRepository = userRepository;
             _paginationService = paginationService;
             _hangfireJobScheduleService = hangfireJobScheduleService;
+            _bookGenreRepository = bookGenreRepository;
+            _bookAuthorRepository = bookAuthorRepository;
+            _userLocationRepository = userLocationRepository;
         }
         /// <inheritdoc />
         public async Task<RequestDto> Make(int userId, int bookId)
@@ -83,15 +94,65 @@ namespace Application.Services.Implementation
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
-        public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, QueryParameters parameters)
+        public async Task<RequestDto> GetByBook(Expression<Func<Request, bool>> predicate, RequestsQueryParams query)
         {
-            var query = _requestRepository.GetAll()
+            Request request = null;
+            if (query.First)
+            {
+                request = await _requestRepository.GetAll()
+                    .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
+                    .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                    .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                    .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                    .FirstOrDefaultAsync(predicate);
+            }
+            else if(query.Last)
+            {
+                request = _requestRepository.GetAll()
+                    .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
+                    .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                    .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                    .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location).Where(predicate).ToList()
+                    .Last();
+            }
+            if (request == null)
+            {
+                return null;
+            }
+            return _mapper.Map<RequestDto>(request);
+        }
+        /// <inheritdoc />
+        public async Task<IEnumerable<RequestDto>> GetAllByBook(Expression<Func<Request, bool>> predicate)
+        {
+
+            var requests = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
                 .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
                 .Where(predicate);
-            var requests = await _paginationService.GetPageAsync<RequestDto, Request>(query, parameters);
+            if(requests == null)
+            {
+                return null;
+            }
+            return _mapper.Map<List<RequestDto>>(requests);
+        }
+        /// <inheritdoc />
+        public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, BookQueryParams parameters)
+        {
+            var bookIds =
+                from b in _requestRepository.GetAll().Where(parameters.BookFilters)
+                join g in _bookGenreRepository.GetAll().Where(parameters.GenreFilters) on b.Book.Id equals g.BookId
+                join a in _bookAuthorRepository.GetAll().Where(parameters.AuthorFilters) on b.Book.Id equals a.BookId
+                join l in _userLocationRepository.GetAll().Where(parameters.LocationFilters) on b.OwnerId equals l.UserId
+                select b.Id;
+            var query = _requestRepository.GetAll()
+                .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
+                .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Where(predicate).Where(x => bookIds.Contains(x.BookId));
+            var requests =  await _paginationService.GetPageAsync<RequestDto, Request>(query, parameters);
             var isEmpty = !requests.Page.Any();
             return isEmpty ? null : requests;
         }

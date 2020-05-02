@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
+using Application.QueryableExtension;
 
 namespace Application.Services.Interfaces
 {
@@ -16,9 +18,9 @@ namespace Application.Services.Interfaces
        /// <summary>
        /// Retrieve Pagination for Author
        /// </summary>
-       /// <param name="query">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
+       /// <param name="fullPaginationQuery">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
        /// <returns>Returns Pagination with Page result and Total amount of items</returns>
-        Task<PaginationDto<AuthorDto>> GetAuthors(QueryParameters query);
+        Task<PaginationDto<AuthorDto>> GetAuthors(FullPaginationQueryParams fullPaginationQuery);
 
         /// <summary>
         /// Update specified Author
@@ -40,6 +42,13 @@ namespace Application.Services.Interfaces
         /// <param name="author">Author DTO instance</param>
         /// <returns>Returns created Author's DTO </returns>
         Task<AuthorDto> Add(AuthorDto author);
+
+        /// <summary>
+        /// Get authors filtered by filter
+        /// </summary>
+        /// <param name="filter">string filter</param>
+        /// <returns>Returns filtered authors </returns>
+        Task<List<AuthorDto>> FilterAuthors(string filter);
 
     }
 }
