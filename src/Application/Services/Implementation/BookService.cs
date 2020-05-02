@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS.Entities;
 using Domain.RDBMS;
 using System.Linq;
+using LinqKit;
 using System.Reflection.Metadata.Ecma335;
 using Application.Dto.QueryParams;
 using Application.Dto.QueryParams.Enums;
@@ -24,6 +25,7 @@ namespace Application.Services.Implementation
         private readonly IPaginationService _paginationService;
         private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
+
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository, IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, BookCrossingContext context)
         {
             _bookRepository = bookRepository;
@@ -54,7 +56,7 @@ namespace Application.Services.Implementation
             var author = _bookAuthorRepository.GetAll();
             if (parameters.SearchTerm != null)
             {
-                var term = parameters.SearchTerm.Split("");
+                var term = parameters.SearchTerm.Split(" ");
                 if (term.Length <= 1)
                 {
                     author = author.Where(a =>
@@ -68,12 +70,15 @@ namespace Application.Services.Implementation
             }
 
             var genre = _bookGenreRepository.GetAll();
-            if (parameters.GenreIds != null)
+            if (parameters.Genres != null)
             {
-                foreach (var id in parameters.GenreIds)
+                var predicate = PredicateBuilder.New<BookGenre>();
+                foreach (var id in parameters.Genres)
                 {
-                    genre = genre.Where(g => g.Genre.Id == id);
+                    var tempId = id;
+                    predicate = predicate.Or(g => g.Genre.Id == tempId);
                 }
+                genre = genre.Where(predicate);
             }
 
             if (parameters.ShowAvailable == true)
@@ -82,9 +87,9 @@ namespace Application.Services.Implementation
             }
 
             var location = _userLocationRepository.GetAll();
-            if (parameters.SelectedLocationId != null)
+            if (parameters.location != null)
             {
-                location = location.Where(l => l.Location.Id == parameters.SelectedLocationId);
+                location = location.Where(l => l.Location.Id == parameters.location);
             }
             var bookIds =
                 from b in books
