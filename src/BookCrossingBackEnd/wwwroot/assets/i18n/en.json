@@ -22,7 +22,7 @@
     },
     "home": {
       "rules": "Rules",
-      "register": "Register books"
+      "register": "Register Book"
     },
     "signIn": {
       "forgot-password": "Forgot password?"
