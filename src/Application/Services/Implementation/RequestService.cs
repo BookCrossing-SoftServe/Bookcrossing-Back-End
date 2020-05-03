@@ -52,7 +52,7 @@ namespace Application.Services.Implementation
             _userLocationRepository = userLocationRepository;
         }
         /// <inheritdoc />
-        public async Task<RequestDto> Make(int userId, int bookId)
+        public async Task<RequestDto> MakeAsync(int userId, int bookId)
         {
             var book = await _bookRepository.GetAll().Include(x=> x.User).FirstOrDefaultAsync(x=> x.Id == bookId);
             var isNotAvailableForRequest = book == null || book.Available == false;
@@ -95,7 +95,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
-        public async Task<RequestDto> GetByBook(Expression<Func<Request, bool>> predicate, RequestsQueryParams query)
+        public async Task<RequestDto> GetByBookAsync(Expression<Func<Request, bool>> predicate, RequestsQueryParams query)
         {
             Request request = null;
             if (query.First)
@@ -123,7 +123,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
-        public async Task<IEnumerable<RequestDto>> GetAllByBook(Expression<Func<Request, bool>> predicate)
+        public async Task<IEnumerable<RequestDto>> GetAllByBookAsync(Expression<Func<Request, bool>> predicate)
         {
 
             var requests = _requestRepository.GetAll()
@@ -139,7 +139,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<List<RequestDto>>(requests);
         }
         /// <inheritdoc />
-        public async Task<PaginationDto<RequestDto>> Get(Expression<Func<Request, bool>> predicate, BookQueryParams parameters)
+        public async Task<PaginationDto<RequestDto>> GetAsync(Expression<Func<Request, bool>> predicate, BookQueryParams parameters)
         {
             var books = _bookRepository.GetAll();
             var author = _bookAuthorRepository.GetAll();
@@ -197,7 +197,7 @@ namespace Application.Services.Implementation
             return isEmpty ? null : requests;
         }
         /// <inheritdoc />
-        public async Task<bool> ApproveReceive(int requestId)
+        public async Task<bool> ApproveReceiveAsync(int requestId)
         {
             var request = await _requestRepository.GetAll()
                 .Include(x=>x.Book)
@@ -226,7 +226,7 @@ namespace Application.Services.Implementation
             return affectedRows > 0;
         }
         /// <inheritdoc />
-        public async Task<bool> Remove(int requestId)
+        public async Task<bool> RemoveAsync(int requestId)
         {
             var request = await _requestRepository.GetAll()
                 .Include(x => x.Book)

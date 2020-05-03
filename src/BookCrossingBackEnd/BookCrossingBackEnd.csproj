@@ -12,7 +12,10 @@
 
   <ItemGroup>
     <Content Include="Templates\*">
-    <CopyToPublishDirectory>always</CopyToPublishDirectory>
+      <CopyToPublishDirectory>always</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\book_images\*">
+      <CopyToPublishDirectory>always</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 
@@ -48,6 +51,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\i18n\" />
+    <Folder Include="wwwroot\book_images\" />
   </ItemGroup>
 
 
