@@ -48,19 +48,27 @@ namespace BookCrossingBackEnd.Controllers
 
 
         /// <summary>
-        /// Get user by id (only for admin)
+        /// Get user by id 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         // GET api/<controller>/5
         [HttpGet("{userId}")]
-        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDto>> Get([FromRoute] int userId)
         {
             var user = await UserService.GetById(x=>x.Id == userId);
             if (user == null)
                 return NotFound();
             return Ok(user);
+        }
+
+        // GET api/<controller>/5
+        [HttpGet("id")]
+        [Authorize]
+        public async Task<ActionResult<int>> GetUserId()
+        {
+            var userId = UserResolverService.GetUserId();
+            return Ok(userId);
         }
 
 
