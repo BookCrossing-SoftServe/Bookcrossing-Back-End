@@ -4,6 +4,7 @@
     "id": "Id",
     "home": "Home",
     "routes": "All routes",
+    "books":  "Books",
     "languages": {
       "gb": "English",
       "ua": "Ukrainian"
