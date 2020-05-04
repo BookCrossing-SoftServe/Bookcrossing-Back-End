@@ -79,9 +79,9 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpGet("registered")]
-        public async Task<ActionResult<List<BookPutDto>>> GetRegisteredBooksAsync()
+        public async Task<ActionResult<PaginationDto<BookGetDto>>> GetRegisteredBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetRegistered());
+            return Ok(await _bookService.GetAll(parameters));
         }
 
         // GET: api/Books
