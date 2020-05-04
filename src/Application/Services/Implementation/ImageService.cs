@@ -21,7 +21,7 @@ namespace Application.Services.Implementation
 
         public async Task<string> UploadImage(IFormFile img)
         {
-            if (img != null)
+            if (img == null)
             {
                 return null;
             }
