@@ -241,7 +241,6 @@ namespace Application.Services.Implementation
 
             var query = _bookRepository.GetAll().Where(x => bookIds.Contains(x.Id))
                 .Where(x => allBooks.Contains(x.Id))
-                .Where(p => p.UserId == userId)
                 .Include(p => p.BookAuthor)
                 .ThenInclude(x => x.Author)
                 .Include(p => p.BookGenre)
