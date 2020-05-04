@@ -238,6 +238,7 @@ namespace Application.Services.Implementation
             }
             var emailMessage = new RequestMessage()
             {
+                UserName = request.User.FirstName + " " + request.User.LastName,
                 OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                 BookName = request.Book.Name,
                 RequestId = request.Id,

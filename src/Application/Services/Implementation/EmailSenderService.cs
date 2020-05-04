@@ -23,11 +23,6 @@ namespace Application.Services.Implementation
             _emailConfig = emailConfig;
             _env = env;
         }
-
-        public void Hello()
-        {
-            Console.WriteLine("Hello world!");
-        }
         /// <inheritdoc />
         public async Task SendReceiveConfirmationAsync(string userName, string bookName, int bookId, int requestId, string userAddress)
         {
@@ -77,6 +72,7 @@ namespace Application.Services.Implementation
             }
 
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
 
