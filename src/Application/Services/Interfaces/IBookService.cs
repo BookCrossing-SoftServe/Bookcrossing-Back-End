@@ -45,7 +45,7 @@ namespace Application.Services.Interfaces
         /// Retrieve books registered by user
         /// </summary>
         /// <returns></returns>
-        Task<List<BookGetDto>> GetRegistered();
+         Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters);
 
         /// <summary>
         /// Retrieve books current owned by user
