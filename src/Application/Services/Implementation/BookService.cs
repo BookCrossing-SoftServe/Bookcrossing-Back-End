@@ -299,7 +299,19 @@ namespace Application.Services.Implementation
                 query = query.Where(predicate);
             }
 
-            return query.Include(p => p.BookAuthor)
+
+            var location = _userLocationRepository.GetAll();
+            var author = _bookAuthorRepository.GetAll();
+            var genre = _bookGenreRepository.GetAll();
+            var bookIds =
+                from b in query
+                join g in genre on b.Id equals g.BookId
+                join a in author on b.Id equals a.BookId
+                join l in location on b.UserId equals l.UserId
+                select b.Id;
+
+            return query.Where(x => bookIds.Contains(x.Id))
+                .Include(p => p.BookAuthor)
                 .ThenInclude(x => x.Author)
                 .Include(p => p.BookGenre)
                 .ThenInclude(x => x.Genre)
