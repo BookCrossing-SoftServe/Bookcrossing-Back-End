@@ -86,6 +86,7 @@ namespace BookCrossingBackEnd
             services.AddScoped<IBookChildCommentService, BookChildCommentService>();
             services.AddScoped<IBookRootCommentService, BookRootCommentService>();
             services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<ISmtpClient, SmtpClientService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UsersService>();
             services.AddScoped<IEmailSenderService, EmailSenderService>();
