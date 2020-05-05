@@ -27,7 +27,6 @@ namespace ApplicationTest.Services
         private Mock<IRepository<BookAuthor>> _bookAuthorRepositoryMock;
         private Mock<IRepository<BookGenre>> _bookGenreRepositoryMock;
         private Mock<IRepository<UserLocation>> _userLocationServiceMock;
-        private Mock<IPaginationService> _paginationServiceMock;
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
@@ -40,7 +39,6 @@ namespace ApplicationTest.Services
             _bookRepositoryMock = new Mock<IRepository<Book>>();
             _bookAuthorRepositoryMock = new Mock<IRepository<BookAuthor>>();
             _bookGenreRepositoryMock = new Mock<IRepository<BookGenre>>();
-            _paginationServiceMock = new Mock<IPaginationService>();
             _requestServiceMock = new Mock<IRepository<Request>>();
             _userLocationServiceMock = new Mock<IRepository<UserLocation>>();
             _userResolverServiceMock = new Mock<IUserResolverService>();
@@ -55,6 +53,13 @@ namespace ApplicationTest.Services
             _context = new BookCrossingContext(options);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
                 _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _context, _userResolverServiceMock.Object, _imageServiceMock.Object);
+
+            var authorMock = GetBookAuthor().AsQueryable();
+            var genreMock = GetBookGenre().AsQueryable();
+            var locationsMock = GetUserLocation().AsQueryable();
+            _bookAuthorRepositoryMock.Setup(s => s.GetAll()).Returns(authorMock);
+            _bookGenreRepositoryMock.Setup(s => s.GetAll()).Returns(genreMock);
+            _userLocationServiceMock.Setup(s => s.GetAll()).Returns(locationsMock);
         }
 
         [SetUp]
@@ -187,42 +192,63 @@ namespace ApplicationTest.Services
         #region Filtering_GetAll
         private List<Book> GetPopulatedBooks()
         {
-            var genre1 = new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 1 } };
-            var genre2 = new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 2 } };
-            var genre3 = new BookGenre() { Book = new Book() { Id = 2 }, Genre = new Genre() { Id = 1 } };
-            var genre5 = new BookGenre() { Book = new Book() { Id = 3 }, Genre = new Genre() { Id = 3 } };
-
-            var authorMartin = new Author() { FirstName = "George", LastName = "Martin", Id = 1 };
-            var authorJoaRowling = new Author() { FirstName = "Joanne", LastName = "Rowling", Id = 2 };
-            var authorJonRowling = new Author() { FirstName = "John", LastName = "Rowling", Id = 3 };
-            var author1 = new BookAuthor() { Book = new Book() { Id = 1 }, Author = authorMartin, AuthorId = 1, BookId = 1 };
-            var author2 = new BookAuthor() { Book = new Book() { Id = 1 }, Author = authorJoaRowling, AuthorId = 2, BookId = 2 };
-            var author3 = new BookAuthor() { Book = new Book() { Id = 1 }, Author = authorJonRowling, AuthorId = 3, BookId = 3 };
-
-            var user1 = new User() { UserLocation = new List<UserLocation>() { new UserLocation() { Location = new Location() { Id = 1 } } } };
-            var user2 = new User() { UserLocation = new List<UserLocation>() { new UserLocation() { Location = new Location() { Id = 2 } } } };
+            var genres = GetBookGenre();
+            var authors = GetBookAuthor();
+            var locations = GetUserLocation();
+            var firstUser = new User() { Id = 1, UserLocation = new List<UserLocation> {locations[0]}};
+            var secondUser = new User() { Id = 2, UserLocation = new List<UserLocation> {locations[1]}};
             var list = new List<Book>
             {
-                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genre1,genre2}, BookAuthor = new List<BookAuthor>() {author1}, Name = "CLR", Available = true, User = user1},
-                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genre3}, BookAuthor = new List<BookAuthor>() {author2},Name = "Test", Available = true, User = user2},
-                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genre5},  BookAuthor = new List<BookAuthor>() {author3},Name = "ICE CLR", Available = false, User = user1},
-                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {}, BookAuthor = new List<BookAuthor>() {author1,author2},Name = "FIRE", Available = false, User = user1},
+                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", Available = true, User = firstUser, UserId = 1},
+                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", Available = true, User = secondUser, UserId = 2},
+                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", Available = false, User = firstUser, UserId = 1},
+                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", Available = false, User = firstUser, UserId = 1},
             };
             return list;
         }
 
+        private List<BookGenre> GetBookGenre()
+        {
+            return new List<BookGenre>() { 
+                new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 1 }, BookId = 1, GenreId = 1},
+                new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 2 }, BookId = 1, GenreId = 2 },
+                new BookGenre() { Book = new Book() { Id = 2 }, Genre = new Genre() { Id = 1 }, BookId = 2, GenreId = 1 },
+                new BookGenre() { Book = new Book() { Id = 3 }, Genre = new Genre() { Id = 3 }, BookId = 3, GenreId = 3 },
+                new BookGenre() { Book = new Book() { Id = 4 }, Genre = new Genre() { Id = 3 }, BookId = 4, GenreId = 3 }
+            };
+        }
+        private List<BookAuthor> GetBookAuthor()
+        {
+            var authorMartin = new Author() { FirstName = "George", LastName = "Martin", Id = 1 };
+            var authorJoaRowling = new Author() { FirstName = "Joanne", LastName = "Rowling", Id = 2 };
+            var authorJonRowling = new Author() { FirstName = "John", LastName = "Rowling", Id = 3 };
+            return new List<BookAuthor>() {
+                new BookAuthor() {Book = new Book() {Id = 1}, Author = authorMartin, AuthorId = 1, BookId = 1},
+                new BookAuthor() {Book = new Book() {Id = 2}, Author = authorJoaRowling, AuthorId = 2, BookId = 2},
+                new BookAuthor() {Book = new Book() {Id = 3}, Author = authorJonRowling, AuthorId = 3, BookId = 3},
+                new BookAuthor() {Book = new Book() {Id = 4}, Author = authorJonRowling, AuthorId = 3, BookId = 4},
+                new BookAuthor() {Book = new Book() {Id = 4}, Author = authorJonRowling, AuthorId = 3, BookId = 4}
+            };
+        }
+        private List<UserLocation> GetUserLocation()
+        {
+            return new List<UserLocation>()
+            {
+                new UserLocation() {Location = new Location() {Id = 1}, UserId = 1, LocationId = 1}, 
+                new UserLocation() {Location = new Location() { Id = 2 }, UserId = 2, LocationId = 2}
+            };
+        }
         [Test]
         public async Task GetAll_WhenHasSearchTermWithOneWord_Returns_books_filtered_by_LastName()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
-
             var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "Martin" };
 
             var booksResult = await _bookService.GetAll(query);
 
-            booksResult.Page.Should().HaveCount(2);
+            booksResult.Page.Should().HaveCount(1);
         }
         [Test]
         public async Task GetAll_WhenHasSearchTerm_Returns_books_filtered_by_Book_Title()
@@ -249,7 +275,7 @@ namespace ApplicationTest.Services
 
             var booksResult = await _bookService.GetAll(query);
 
-            booksResult.Page.Should().HaveCount(1);
+            booksResult.Page.Should().HaveCount(2);
         }
         [Test]
         public async Task GetAll_WhenHasManyGenreIds_Returns_books_with_either_ids()
@@ -262,7 +288,7 @@ namespace ApplicationTest.Services
 
             var booksResult = await _bookService.GetAll(query);
 
-            booksResult.Page.Should().HaveCount(3);
+            booksResult.Page.Should().HaveCount(4);
         }
         [Test]
         public async Task GetAll_WhenHasOneGenreId_Returns_books_containing_the_id()
@@ -332,7 +358,7 @@ namespace ApplicationTest.Services
         [Test]
         public async Task GetAll_Returns_ListOfBookWithSameCount()
         {
-            var booksMock = GetTestBooks().AsQueryable().BuildMock();
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             var query = new BookQueryParams() { Page = 1, PageSize = 2 };
 
