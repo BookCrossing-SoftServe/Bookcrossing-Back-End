@@ -31,6 +31,7 @@ namespace ApplicationTest.Services
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
+        private IMapper _mapper;
         private BookCrossingContext _context;
 
         [OneTimeSetUp]
@@ -48,11 +49,12 @@ namespace ApplicationTest.Services
             {
                 mc.AddProfile(new Application.Mapper());
             });
-            var _mapper = mappingConfig.CreateMapper();
+            _mapper = mappingConfig.CreateMapper();
+            var pagination = new PaginationService(_mapper);
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                _userLocationServiceMock.Object, _paginationServiceMock.Object,_requestServiceMock.Object, _context, _userResolverServiceMock.Object, _imageServiceMock.Object);
+                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _context, _userResolverServiceMock.Object, _imageServiceMock.Object);
         }
 
         [SetUp]
@@ -82,7 +84,7 @@ namespace ApplicationTest.Services
                 new Book(){ Id = 2}
             };
         }
-
+ 
         [Test]
         public async Task GetById_BookDoesNotExist_Returns_Null()
         {
@@ -93,30 +95,6 @@ namespace ApplicationTest.Services
 
             bookResult.Should().BeNull();
         }
-
-        [Test]
-        public async Task GetAll_Returns_ListOfBookWithSameCount()
-        {
-            var booksMock = GetTestBooks().AsQueryable().BuildMock();
-            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
-            var query = new BookQueryParams() {Page = 1, PageSize = 2};
-            var testPagination = new Application.Dto.PaginationDto<BookGetDto>()
-            {
-                Page = new List<BookGetDto>
-                    {
-                        new BookGetDto(),
-                        new BookGetDto()
-                    }
-            };
-
-            _paginationServiceMock.Setup(s => s.GetPageAsync<BookGetDto, Book>(It.IsAny<IQueryable<Book>>(), It.IsAny<PageableParams>())).ReturnsAsync(testPagination);
-
-            var booksResult = await _bookService.GetAll(query);
-
-            booksResult.Should().BeOfType<PaginationDto<BookGetDto>>();
-            booksResult.Page.Should().HaveCount(2);
-        }
-
         [Test]
         public async Task Add_BookIsValid_Returns_BookDto()
         {
@@ -205,5 +183,164 @@ namespace ApplicationTest.Services
 
             result.Should().BeFalse();
         }
+
+        #region Filtering_GetAll
+        private List<Book> GetPopulatedBooks()
+        {
+            var genre1 = new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 1 } };
+            var genre2 = new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 2 } };
+            var genre3 = new BookGenre() { Book = new Book() { Id = 2 }, Genre = new Genre() { Id = 1 } };
+            var genre5 = new BookGenre() { Book = new Book() { Id = 3 }, Genre = new Genre() { Id = 3 } };
+
+            var authorMartin = new Author() { FirstName = "George", LastName = "Martin", Id = 1 };
+            var authorJoaRowling = new Author() { FirstName = "Joanne", LastName = "Rowling", Id = 2 };
+            var authorJonRowling = new Author() { FirstName = "John", LastName = "Rowling", Id = 3 };
+            var author1 = new BookAuthor() { Book = new Book() { Id = 1 }, Author = authorMartin, AuthorId = 1, BookId = 1 };
+            var author2 = new BookAuthor() { Book = new Book() { Id = 1 }, Author = authorJoaRowling, AuthorId = 2, BookId = 2 };
+            var author3 = new BookAuthor() { Book = new Book() { Id = 1 }, Author = authorJonRowling, AuthorId = 3, BookId = 3 };
+
+            var user1 = new User() { UserLocation = new List<UserLocation>() { new UserLocation() { Location = new Location() { Id = 1 } } } };
+            var user2 = new User() { UserLocation = new List<UserLocation>() { new UserLocation() { Location = new Location() { Id = 2 } } } };
+            var list = new List<Book>
+            {
+                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genre1,genre2}, BookAuthor = new List<BookAuthor>() {author1}, Name = "CLR", Available = true, User = user1},
+                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genre3}, BookAuthor = new List<BookAuthor>() {author2},Name = "Test", Available = true, User = user2},
+                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genre5},  BookAuthor = new List<BookAuthor>() {author3},Name = "ICE CLR", Available = false, User = user1},
+                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {}, BookAuthor = new List<BookAuthor>() {author1,author2},Name = "FIRE", Available = false, User = user1},
+            };
+            return list;
+        }
+
+        [Test]
+        public async Task GetAll_WhenHasSearchTermWithOneWord_Returns_books_filtered_by_LastName()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "Martin" };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(2);
+        }
+        [Test]
+        public async Task GetAll_WhenHasSearchTerm_Returns_books_filtered_by_Book_Title()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "CLR" };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(2);
+        }
+
+        [Test]
+        public async Task GetAll_WhenHasSearchTermWitTwoWords_Returns_books_filtered_By_FirstName_And_LastName()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "John Rowling" };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(1);
+        }
+        [Test]
+        public async Task GetAll_WhenHasManyGenreIds_Returns_books_with_either_ids()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, Genres = new[] { 1, 3 } };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(3);
+        }
+        [Test]
+        public async Task GetAll_WhenHasOneGenreId_Returns_books_containing_the_id()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, Genres = new[] { 2 } };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(1);
+        }
+        [Test]
+        public async Task GetAll_WhenHasShowAvailableTrue_Returns_available_books()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, ShowAvailable = true };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(2);
+        }
+        [Test]
+        public async Task GetAll_WhenHasShowAvailableFalse_Returns_all_books()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, ShowAvailable = false };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(GetPopulatedBooks().Count());
+        }
+        [Test]
+        public async Task GetAll_WhenHasLocation_Returns_books_with_LocationId()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, Location = 1 };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(3);
+        }
+        [Test]
+        public async Task GetAll_WheAllQueryParamsPresent_Returns_filtered_books()
+        {
+            var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
+
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, Location = 1, Genres = new[] { 1 }, SearchTerm = "Martin", ShowAvailable = true };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Page.Should().HaveCount(1);
+        }
+        [Test]
+        public async Task GetAll_Returns_ListOfBookWithSameCount()
+        {
+            var booksMock = GetTestBooks().AsQueryable().BuildMock();
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+            var query = new BookQueryParams() { Page = 1, PageSize = 2 };
+
+            var booksResult = await _bookService.GetAll(query);
+
+            booksResult.Should().BeOfType<PaginationDto<BookGetDto>>();
+            booksResult.Page.Should().HaveCount(2);
+        }
+        #endregion Filtering_GetAll
     }
 }
