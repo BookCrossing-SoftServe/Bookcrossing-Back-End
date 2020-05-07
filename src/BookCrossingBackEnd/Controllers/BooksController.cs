@@ -45,7 +45,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBookAsync([FromRoute] int id, [FromBody] BookPutDto bookDto)
+        public async Task<IActionResult> PutBookAsync([FromRoute] int id, [FromForm] BookPutDto bookDto)
         {
             if (id != bookDto.Id)
             {
@@ -60,7 +60,7 @@ namespace BookCrossingBackEnd.Controllers
             var isBookUpdated = await _bookService.Update(bookDto);
             if (!isBookUpdated)
             {
-                return NotFound();
+                return BadRequest();
             }
             return NoContent();
         }

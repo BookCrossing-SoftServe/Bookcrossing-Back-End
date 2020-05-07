@@ -54,6 +54,12 @@ namespace Domain.RDBMS
         /// <param name="entity">entity framework's entity</param>
         void Update(TEntity entity);
         /// <summary>
+        /// Updates existing entity using field masks
+        /// </summary>
+        /// <param name="entity">entity framework's entity</param>
+        /// <param name="fieldMasks">field masks, which indicate properties for update</param>
+        Task Update(TEntity entity, IEnumerable<string> fieldMasks);
+        /// <summary>
         /// Save changes into the database
         /// </summary>
         Task<int> SaveChangesAsync();

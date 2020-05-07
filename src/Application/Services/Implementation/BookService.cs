@@ -30,7 +30,7 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
-            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context, 
+            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context,
             IUserResolverService userResolverService, IImageService imageService)
         {
             _bookRepository = bookRepository;
@@ -75,8 +75,13 @@ namespace Application.Services.Implementation
             var book = await _bookRepository.GetAll()
                             .FirstOrDefaultAsync(p => p.Id == bookId);
             if (book == null)
+            {
                 return false;
-            _imageService.DeleteImage(book.ImagePath);
+            }
+            if (book.ImagePath != null)
+            {
+                _imageService.DeleteImage(book.ImagePath);
+            }
             _bookRepository.Remove(book);
             var affectedRows = await _bookRepository.SaveChangesAsync();
             return affectedRows > 0;
@@ -84,25 +89,36 @@ namespace Application.Services.Implementation
 
         public async Task<bool> Update(BookPutDto bookDto)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            var book = _mapper.Map<Book>(bookDto);
+            var oldBook = await _bookRepository.GetAll().AsNoTracking().FirstAsync(a => a.Id == book.Id);
+            if (oldBook == null)
             {
-                var book = _mapper.Map<Book>(bookDto);
-                var doesBookExist = await _bookRepository.GetAll().AnyAsync(a => a.Id == book.Id);
-                if (!doesBookExist)
-                {
-                    return false;
-                }
-                _bookAuthorRepository.RemoveRange(await _bookAuthorRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
-                _bookGenreRepository.RemoveRange(await _bookGenreRepository.GetAll().Where(a => a.BookId == book.Id).ToListAsync());
-                await _bookRepository.SaveChangesAsync();
-                _bookAuthorRepository.AddRange(book.BookAuthor);
-                _bookGenreRepository.AddRange(book.BookGenre);
-                _bookRepository.Update(book);
-                var affectedRows = await _bookRepository.SaveChangesAsync();
-                transaction.Commit();
-                return affectedRows > 0;
+                return false;
             }
+            if (bookDto.FieldMasks.Contains("Image"))
+            {
+                string imagePath;
+                bookDto.FieldMasks.Remove("Image");
+                bookDto.FieldMasks.Add("ImagePath");
+                if (oldBook.ImagePath != null)
+                {
+                    _imageService.DeleteImage(oldBook.ImagePath);
+                }
+                if (bookDto.Image != null)
+                {
+                    imagePath = await _imageService.UploadImage(bookDto.Image);
+                }
+                else
+                {
+                    imagePath = null;
+                }
+                book.ImagePath = imagePath;
+            }
+            await _bookRepository.Update(book, bookDto.FieldMasks);
+            var affectedRows = await _bookRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
+
         public async Task<PaginationDto<BookGetDto>> GetAll(BookQueryParams parameters)
         {
             var query = GetFilteredQuery(_bookRepository.GetAll(), parameters);
