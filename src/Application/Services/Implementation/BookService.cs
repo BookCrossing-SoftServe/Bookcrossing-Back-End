@@ -26,11 +26,10 @@ namespace Application.Services.Implementation
         private readonly IUserResolverService _userResolverService;
         private readonly IPaginationService _paginationService;
         private readonly IImageService _imageService;
-        private readonly BookCrossingContext _context;
         private readonly IMapper _mapper;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
-            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository, BookCrossingContext context,
+            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
             IUserResolverService userResolverService, IImageService imageService)
         {
             _bookRepository = bookRepository;
@@ -39,13 +38,12 @@ namespace Application.Services.Implementation
             _userLocationRepository = userLocationRepository;
             _requestRepository = requestRepository;
             _paginationService = paginationService;
-            _context = context;
             _mapper = mapper;
             _imageService = imageService;
             _userResolverService = userResolverService;
         }
 
-        public async Task<BookGetDto> GetById(int bookId)
+        public async Task<BookGetDto> GetByIdAsync(int bookId)
         {
             return _mapper.Map<BookGetDto>(await _bookRepository.GetAll()
                                                                .Include(p => p.BookAuthor)
@@ -58,7 +56,7 @@ namespace Application.Services.Implementation
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
         }
 
-        public async Task<BookGetDto> Add(BookPostDto bookDto)
+        public async Task<BookGetDto> AddAsync(BookPostDto bookDto)
         {
             var book = _mapper.Map<Book>(bookDto);
             if (bookDto.Image != null)
@@ -70,10 +68,9 @@ namespace Application.Services.Implementation
             return _mapper.Map<BookGetDto>(book);
         }
 
-        public async Task<bool> Remove(int bookId)
+        public async Task<bool> RemoveAsync(int bookId)
         {
-            var book = await _bookRepository.GetAll()
-                            .FirstOrDefaultAsync(p => p.Id == bookId);
+            var book = await _bookRepository.FindByIdAsync(bookId);
             if (book == null)
             {
                 return false;
@@ -87,10 +84,10 @@ namespace Application.Services.Implementation
             return affectedRows > 0;
         }
 
-        public async Task<bool> Update(BookPutDto bookDto)
+        public async Task<bool> UpdateAsync(BookPutDto bookDto)
         {
             var book = _mapper.Map<Book>(bookDto);
-            var oldBook = await _bookRepository.GetAll().AsNoTracking().FirstAsync(a => a.Id == book.Id);
+            var oldBook = await _bookRepository.GetAll().AsNoTracking().FirstOrDefaultAsync(a => a.Id == book.Id);
             if (oldBook == null)
             {
                 return false;
@@ -119,7 +116,7 @@ namespace Application.Services.Implementation
             return affectedRows > 0;
         }
 
-        public async Task<PaginationDto<BookGetDto>> GetAll(BookQueryParams parameters)
+        public async Task<PaginationDto<BookGetDto>> GetAllAsync(BookQueryParams parameters)
         {
             var query = GetFilteredQuery(_bookRepository.GetAll(), parameters);
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);

@@ -22,14 +22,14 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetAll(parameters));
+            return Ok(await _bookService.GetAllAsync(parameters));
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
         public async Task<ActionResult<BookGetDto>> GetBook([FromRoute] int id)
         {
-            var book = await _bookService.GetById(id);
+            var book = await _bookService.GetByIdAsync(id);
             if (book == null)
                 return NotFound();
             return Ok(book);
@@ -39,7 +39,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<BookPutDto>> PostBookAsync([FromForm] BookPostDto bookDto)
         {
-            var insertedBook = await _bookService.Add(bookDto);
+            var insertedBook = await _bookService.AddAsync(bookDto);
             return CreatedAtAction("GetBook", new { id = insertedBook.Id }, insertedBook);
         }
 
@@ -57,7 +57,7 @@ namespace BookCrossingBackEnd.Controllers
                 return BadRequest();
             }
 
-            var isBookUpdated = await _bookService.Update(bookDto);
+            var isBookUpdated = await _bookService.UpdateAsync(bookDto);
             if (!isBookUpdated)
             {
                 return BadRequest();
@@ -70,7 +70,7 @@ namespace BookCrossingBackEnd.Controllers
 
         public async Task<ActionResult> DeleteBookAsync([FromRoute] int id)
         {
-            var isBookRemoved = await _bookService.Remove(id);
+            var isBookRemoved = await _bookService.RemoveAsync(id);
             if (!isBookRemoved)
             {
                 return NotFound();

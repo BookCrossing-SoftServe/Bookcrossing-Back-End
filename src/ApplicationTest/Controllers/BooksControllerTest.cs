@@ -34,7 +34,7 @@ namespace ApplicationTest.Controllers
                     new BookGetDto()
                 };
             var testPagination = new Application.Dto.PaginationDto<BookGetDto>() { Page = testBooks };
-            _bookService.Setup(s => s.GetAll(It.IsAny<BookQueryParams>())).ReturnsAsync(testPagination);
+            _bookService.Setup(s => s.GetAllAsync(It.IsAny<BookQueryParams>())).ReturnsAsync(testPagination);
             var query = new BookQueryParams() { Page = 1, PageSize = 2 };
 
             var getAllBooksResult = await _booksController.GetAllBooksAsync(query);
@@ -59,7 +59,7 @@ namespace ApplicationTest.Controllers
         {
             var testBook = new BookGetDto() { Id = 1 };
 
-            _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(testBook);
+            _bookService.Setup(s => s.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(testBook);
 
             var getBookResult = await _booksController.GetBook(It.IsAny<int>());
 
@@ -77,7 +77,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task GetBookAsync_BookDoesNotExist_Returns_NotFoundResult()
         {
-            _bookService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(null as BookGetDto);
+            _bookService.Setup(s => s.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(null as BookGetDto);
 
             var result = await _booksController.GetBook(It.IsAny<int>());
 
@@ -88,7 +88,7 @@ namespace ApplicationTest.Controllers
         public async Task PutBookAsync_BookExists_Returns_NoContent()
         {
             var testBook = GetTestBook();
-            _bookService.Setup(m => m.Update(It.IsAny<BookPutDto>())).ReturnsAsync(true);
+            _bookService.Setup(m => m.UpdateAsync(It.IsAny<BookPutDto>())).ReturnsAsync(true);
 
             var putBookResult = await _booksController.PutBookAsync(testBook.Id, testBook);
 
@@ -99,17 +99,17 @@ namespace ApplicationTest.Controllers
         public async Task PutBookAsync_BookDoesNotExist_Return_NotFound()
         {
             var testBook = GetTestBook();
-            _bookService.Setup(m => m.Update(It.IsAny<BookPutDto>())).ReturnsAsync(false);
+            _bookService.Setup(m => m.UpdateAsync(It.IsAny<BookPutDto>())).ReturnsAsync(false);
 
             var putBookResult = await _booksController.PutBookAsync(testBook.Id, testBook);
 
-            putBookResult.Should().BeOfType<NotFoundResult>();
+            putBookResult.Should().BeOfType<BadRequestResult>();
         }
 
         [Test]
         public async Task DeleteBookAsync_BookExists_Returns_OkResult()
         {
-            _bookService.Setup(m => m.Remove(It.IsAny<int>())).ReturnsAsync(true);
+            _bookService.Setup(m => m.RemoveAsync(It.IsAny<int>())).ReturnsAsync(true);
 
             var deleteBookResult = await _booksController.DeleteBookAsync(It.IsAny<int>());
 
@@ -119,7 +119,7 @@ namespace ApplicationTest.Controllers
         [Test]
         public async Task DeleteBookAsync_BookDoesNotExist_Returns_NotFoundResult()
         {
-            _bookService.Setup(m => m.Remove(It.IsAny<int>())).ReturnsAsync(false);
+            _bookService.Setup(m => m.RemoveAsync(It.IsAny<int>())).ReturnsAsync(false);
 
             var deleteBookResult = await _booksController.DeleteBookAsync(It.IsAny<int>());
 
@@ -130,7 +130,7 @@ namespace ApplicationTest.Controllers
         public async Task PostBookAsync_Returns_CreatedAtActionResult()
         {
             var testBook = new BookGetDto() { Id = 1};
-            _bookService.Setup(m => m.Add(It.IsAny<BookPostDto>())).ReturnsAsync(testBook);
+            _bookService.Setup(m => m.AddAsync(It.IsAny<BookPostDto>())).ReturnsAsync(testBook);
 
             var createdAtActionResult = await _booksController.PostBookAsync(It.IsAny<BookPostDto>());
             var result = (BookGetDto)((CreatedAtActionResult)createdAtActionResult.Result).Value;
