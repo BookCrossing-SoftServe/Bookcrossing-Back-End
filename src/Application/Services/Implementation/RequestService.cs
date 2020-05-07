@@ -176,9 +176,9 @@ namespace Application.Services.Implementation
             }
 
             var location = _userLocationRepository.GetAll();
-            if (parameters.location != null)
+            if (parameters.Location != null)
             {
-                location = location.Where(l => l.Location.Id == parameters.location);
+                location = location.Where(l => l.Location.Id == parameters.Location);
             }
             var bookIds =
                 from b in books
