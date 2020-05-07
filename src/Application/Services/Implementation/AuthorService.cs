@@ -15,12 +15,14 @@ namespace Application.Services.Implementation
     public class AuthorService : IAuthorService
     {
         private readonly IRepository<Author> _authorRepository;
+        private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IMapper _mapper;
         private readonly IPaginationService _paginationService;
 
-        public AuthorService(IRepository<Author> authorRepository, IMapper mapper, IPaginationService paginationService)
+        public AuthorService(IRepository<Author> authorRepository, IMapper mapper, IPaginationService paginationService,IRepository<BookAuthor> bookAuthorRepository)
         {
             _authorRepository = authorRepository;
+            _bookAuthorRepository = bookAuthorRepository;
             _mapper = mapper;
             _paginationService = paginationService;
         }
@@ -30,7 +32,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
-        public async Task<PaginationDto<AuthorDto>> GetAuthors(FullPaginationQueryParams parameters)
+        public async Task<PaginationDto<AuthorDto>> GetAll(FullPaginationQueryParams parameters)
         {
             var query = _authorRepository.GetAll();
             return await _paginationService.GetPageAsync<AuthorDto, Author>(query, parameters);
@@ -67,6 +69,24 @@ namespace Application.Services.Implementation
             return affectedRows > 0;
         }
 
+        public async Task<bool> Merge(AuthorDto authorDto, int[] ids)
+        {
+            authorDto.Id = ids[0];
+            _authorRepository.Update(_mapper.Map<Author>(authorDto));
+            ids = ids.Skip(1).ToArray();
+            var authors = _authorRepository.GetAll().Where(x => ids.Contains(x.Id));
+            var bookAuthors = _bookAuthorRepository.GetAll().Where(x => ids.Contains(x.AuthorId));
+            _bookAuthorRepository.RemoveRange(bookAuthors);
+            foreach (var record in bookAuthors)
+            {
+                record.AuthorId = ids[0];
+            }
+            _bookAuthorRepository.AddRange(bookAuthors.Distinct());
+            _authorRepository.RemoveRange(authors);
+            var affectedRows = await _authorRepository.SaveChangesAsync();
+            return affectedRows > 0;
+
+        }
         public async Task<bool> Update(AuthorDto authorDto)
         {
             var author = _mapper.Map<Author>(authorDto);

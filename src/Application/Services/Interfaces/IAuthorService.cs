@@ -20,7 +20,7 @@ namespace Application.Services.Interfaces
        /// </summary>
        /// <param name="fullPaginationQuery">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
        /// <returns>Returns Pagination with Page result and Total amount of items</returns>
-        Task<PaginationDto<AuthorDto>> GetAuthors(FullPaginationQueryParams fullPaginationQuery);
+        Task<PaginationDto<AuthorDto>> GetAll(FullPaginationQueryParams fullPaginationQuery);
 
         /// <summary>
         /// Update specified Author
@@ -42,7 +42,13 @@ namespace Application.Services.Interfaces
         /// <param name="author">Author DTO instance</param>
         /// <returns>Returns created Author's DTO </returns>
         Task<AuthorDto> Add(AuthorDto author);
-
+        /// <summary>
+        /// Merge authors into one
+        /// </summary>
+        /// <param name="author">surviving author</param>
+        /// <param name="authorIds">authors to be merged into surviving author</param>
+        /// <returns></returns>
+        Task<bool> Merge(AuthorDto author, int[] authorIds);
         /// <summary>
         /// Get authors filtered by filter
         /// </summary>
