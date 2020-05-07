@@ -83,8 +83,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        [TestCase(201)]
-        public async Task GetRequestsForBook_BookDoesNotExists_RequestQueryParamExists_Returns_NotFoundResult(int bookId)
+        public async Task GetRequestsForBook_BookDoesNotExists_RequestQueryParamExists_Returns_NotFoundResult()
         {
             var queryParameter = new RequestsQueryParams()
             {
