@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -52,10 +53,40 @@ namespace Infrastructure.RDBMS
         {
             Entities.Update(entity);
         }
+        public virtual async Task Update(TEntity entity, IEnumerable<string> fieldMasks)
+        {
+            var entry = Context.Entry(entity);
+            foreach (var name in fieldMasks)
+            {
+                if (entry.Collections.Any(a => a.Metadata.Name == name))
+                {
+                    var oldEntity = await Entities.FindAsync(entry.Property("Id").CurrentValue);
+                    var oldCollection = Context.Entry(oldEntity).Collection(name);
+                    await oldCollection.LoadAsync();
+                    Context.Entry(oldEntity).State = EntityState.Detached;
+                    foreach (var del in oldCollection.CurrentValue)
+                    {
+                        var newEntry = Context.Entry(del);
+                        newEntry.State = EntityState.Deleted;
+                    }
+                    var newCollection = entry.Collections.Single(a => a.Metadata.Name == name);
+                    foreach (var ent in newCollection.CurrentValue)
+                    {
+                        var newEntry = Context.Entry(ent);
+                        newEntry.State = EntityState.Added;
+                    }
+                }
+                else
+                {
+                    entry.Property(name).IsModified = true;
+                }
+            }
+        }
+
         public async Task<int> SaveChangesAsync()
         {
             return await Context.SaveChangesAsync();
-        } 
+        }
 
         #region IDisposable Support
         private bool _disposedValue = false;

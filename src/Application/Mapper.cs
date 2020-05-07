@@ -28,8 +28,8 @@ namespace Application
             CreateMap<GenreDto, RdbmsEntities.BookGenre>()
                 .ForMember(a => a.GenreId, opt => opt.MapFrom(dto => dto.Id));
             CreateMap<BookPutDto, RdbmsEntities.Book>()
-                .ForMember(entity => entity.BookAuthor, opt => opt.MapFrom(x => x.Authors))
-                .ForMember(entity => entity.BookGenre, opt => opt.MapFrom(x => x.Genres))
+                .ForMember(entity => entity.BookAuthor, opt => opt.MapFrom(x => x.BookAuthor))
+                .ForMember(entity => entity.BookGenre, opt => opt.MapFrom(x => x.bookGenre))
                 .AfterMap((model, entity) =>
                     {
                         foreach (var item in entity.BookAuthor)
@@ -42,8 +42,8 @@ namespace Application
                         }
                     });
             CreateMap<RdbmsEntities.Book, BookPutDto>()
-                .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
-                .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()));
+                .ForMember(dto => dto.BookAuthor, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
+                .ForMember(dto => dto.bookGenre, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()));
             CreateMap<RdbmsEntities.Book, BookGetDto>()
                .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
                .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()))
