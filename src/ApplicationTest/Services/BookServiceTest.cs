@@ -31,7 +31,6 @@ namespace ApplicationTest.Services
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
         private IMapper _mapper;
-        private BookCrossingContext _context;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -49,10 +48,8 @@ namespace ApplicationTest.Services
             });
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
-            var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
-            _context = new BookCrossingContext(options);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _context, _userResolverServiceMock.Object, _imageServiceMock.Object);
+                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object);
 
             var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
@@ -70,12 +67,12 @@ namespace ApplicationTest.Services
 
 
         [Test]
-        public async Task GetById_BookExists_Returns_BookDtoWithRequestedId()
+        public async Task GetByIdAsync_BookExists_Returns_BookDtoWithRequestedId()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
 
-            var bookResult = await _bookService.GetById(1);
+            var bookResult = await _bookService.GetByIdAsync(1);
 
             bookResult.Should().BeOfType<BookGetDto>();
             bookResult.Id.Should().Be(1);
@@ -91,24 +88,24 @@ namespace ApplicationTest.Services
         }
  
         [Test]
-        public async Task GetById_BookDoesNotExist_Returns_Null()
+        public async Task GetByIdAsync_BookDoesNotExist_Returns_Null()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
 
-            var bookResult = await _bookService.GetById(3);
+            var bookResult = await _bookService.GetByIdAsync(3);
 
             bookResult.Should().BeNull();
         }
         [Test]
-        public async Task Add_BookIsValid_Returns_BookDto()
+        public async Task AddAsync_BookIsValid_Returns_BookDto()
         {
             var bookDto = new BookPostDto();
             _bookRepositoryMock.Setup(s => s.Add(It.IsAny<Book>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
             _imageServiceMock.Setup(x => x.UploadImage(It.IsAny<IFormFile>())).ReturnsAsync("name.png");
 
-            var bookResult = await _bookService.Add(bookDto);
+            var bookResult = await _bookService.AddAsync(bookDto);
 
             bookResult.Should().BeOfType<BookGetDto>();
             _bookRepositoryMock.Verify(x => x.Add(It.IsAny<Book>()), Times.Once);
@@ -116,15 +113,15 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task Remove_BookExists_Returns_True()
+        public async Task RemoveAsync_BookExists_Returns_True()
         {
-            var booksMock = GetTestBooks().AsQueryable().BuildMock();
-            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+            var book = new Book();
+            _bookRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(book);
             _bookRepositoryMock.Setup(s => s.Remove(It.IsAny<Book>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
             _imageServiceMock.Setup(x => x.DeleteImage(It.IsAny<string>()));
 
-            var deleteResult = await _bookService.Remove(1);
+            var deleteResult = await _bookService.RemoveAsync(1);
 
             deleteResult.Should().BeTrue();
             _bookRepositoryMock.Verify(x => x.Remove(It.IsAny<Book>()), Times.Once);
@@ -132,15 +129,15 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task Remove_BookDoesNotExist_Returns_False()
+        public async Task RemoveAsync_BookDoesNotExist_Returns_False()
         {
-            var booksMock = GetTestBooks().AsQueryable().BuildMock();
-            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+            var book = new Book();
+            _bookRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(null as Book);
             _bookRepositoryMock.Setup(s => s.Remove(It.IsAny<Book>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
             _imageServiceMock.Setup(x => x.DeleteImage(It.IsAny<string>()));
 
-            var deleteResult = await _bookService.Remove(3);
+            var deleteResult = await _bookService.RemoveAsync(3);
 
             deleteResult.Should().BeFalse();
         }
@@ -150,19 +147,11 @@ namespace ApplicationTest.Services
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
-            _bookRepositoryMock.Setup(s => s.Update(It.IsAny<Book>()));
+            _bookRepositoryMock.Setup(s => s.Update(It.IsAny<Book>(), It.IsAny<List<string>>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-            var bookAuthorsMock = new List<BookAuthor>().AsQueryable().BuildMock();
-            var bookGenresMock = new List<BookGenre>().AsQueryable().BuildMock();
-            _bookAuthorRepositoryMock.Setup(x => x.GetAll()).Returns(bookAuthorsMock.Object);
-            _bookGenreRepositoryMock.Setup(x => x.GetAll()).Returns(bookGenresMock.Object);
-            _bookAuthorRepositoryMock.Setup(s => s.RemoveRange(It.IsAny<IEnumerable<BookAuthor>>()));
-            _bookGenreRepositoryMock.Setup(s => s.RemoveRange(It.IsAny<IEnumerable<BookGenre>>()));
-            _bookAuthorRepositoryMock.Setup(s => s.AddRange(It.IsAny<IEnumerable<BookAuthor>>()));
-            _bookGenreRepositoryMock.Setup(s => s.AddRange(It.IsAny<IEnumerable<BookGenre>>()));
-            var bookDto = new BookPutDto() { Id = 1 };
+            var bookDto = new BookPutDto() { Id = 1, FieldMasks = new List<string>{"Name"}  };
 
-            var result = await _bookService.Update(bookDto);
+            var result = await _bookService.UpdateAsync(bookDto);
 
             result.Should().BeTrue();
         }
@@ -172,19 +161,11 @@ namespace ApplicationTest.Services
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
-            _bookRepositoryMock.Setup(s => s.Update(It.IsAny<Book>()));
+            _bookRepositoryMock.Setup(s => s.Update(It.IsAny<Book>(), It.IsAny<List<string>>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-            var bookAuthorsMock = new List<BookAuthor>().AsQueryable().BuildMock();
-            var bookGenresMock = new List<BookGenre>().AsQueryable().BuildMock();
-            _bookAuthorRepositoryMock.Setup(x => x.GetAll()).Returns(bookAuthorsMock.Object);
-            _bookGenreRepositoryMock.Setup(x => x.GetAll()).Returns(bookGenresMock.Object);
-            _bookAuthorRepositoryMock.Setup(s => s.RemoveRange(It.IsAny<IEnumerable<BookAuthor>>()));
-            _bookGenreRepositoryMock.Setup(s => s.RemoveRange(It.IsAny<IEnumerable<BookGenre>>()));
-            _bookAuthorRepositoryMock.Setup(s => s.AddRange(It.IsAny<IEnumerable<BookAuthor>>()));
-            _bookGenreRepositoryMock.Setup(s => s.AddRange(It.IsAny<IEnumerable<BookGenre>>()));
-            var bookDto = new BookPutDto() { Id = 3 };
+            var bookDto = new BookPutDto() { Id = 3, FieldMasks = new List<string> { "Name" } };
 
-            var result = await _bookService.Update(bookDto);
+            var result = await _bookService.UpdateAsync(bookDto);
 
             result.Should().BeFalse();
         }
@@ -246,7 +227,7 @@ namespace ApplicationTest.Services
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "Martin" };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(1);
         }
@@ -259,7 +240,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "CLR" };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(2);
         }
@@ -273,7 +254,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "John Rowling" };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(2);
         }
@@ -286,7 +267,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, Genres = new[] { 1, 3 } };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(4);
         }
@@ -299,7 +280,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, Genres = new[] { 2 } };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(1);
         }
@@ -312,7 +293,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, ShowAvailable = true };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(2);
         }
@@ -325,7 +306,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, ShowAvailable = false };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(GetPopulatedBooks().Count());
         }
@@ -338,7 +319,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, Location = 1 };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(3);
         }
@@ -351,7 +332,7 @@ namespace ApplicationTest.Services
 
             var query = new BookQueryParams() { Page = 1, PageSize = 10, Location = 1, Genres = new[] { 1 }, SearchTerm = "Martin", ShowAvailable = true };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(1);
         }
@@ -362,7 +343,7 @@ namespace ApplicationTest.Services
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             var query = new BookQueryParams() { Page = 1, PageSize = 2 };
 
-            var booksResult = await _bookService.GetAll(query);
+            var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Should().BeOfType<PaginationDto<BookGetDto>>();
             booksResult.Page.Should().HaveCount(2);

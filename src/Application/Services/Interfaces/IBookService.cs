@@ -12,44 +12,46 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="bookId">Book's ID</param>
         /// <returns>returns Book DTO</returns>
-        Task<BookGetDto> GetById(int bookId);
+        Task<BookGetDto> GetByIdAsync(int bookId);
 
         /// <summary>
         /// Retrieve all books
         /// </summary>
         /// <returns>returns list of Book DTOs</returns>
-        Task<PaginationDto<BookGetDto>> GetAll(BookQueryParams parameters);
+        Task<PaginationDto<BookGetDto>> GetAllAsync(BookQueryParams parameters);
 
         /// <summary>
         /// Update specified book
         /// </summary>
         /// <param name="book">Book DTO instance</param>
         /// <returns></returns>
-        Task<bool> Update(BookPutDto book);
+        Task<bool> UpdateAsync(BookPutDto book);
 
         /// <summary>
         /// Remove book from database
         /// </summary>
         /// <param name="bookId">Book's ID</param>
         /// <returns></returns>
-        Task<bool> Remove(int bookId);
+        Task<bool> RemoveAsync(int bookId);
 
         /// <summary>
         /// Create new book and add it into Database
         /// </summary>
         /// <param name="book">Book DTO instance</param>
         /// <returns>Returns inserted Book's ID</returns>
-        Task<BookGetDto> Add(BookPostDto book);
+        Task<BookGetDto> AddAsync(BookPostDto book);
 
         /// <summary>
         /// Retrieve books registered by user
         /// </summary>
+        ///  <param name="parameters">filter parametrs</param>
         /// <returns></returns>
-         Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters);
+        Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters);
 
         /// <summary>
         /// Retrieve books current owned by user
         /// </summary>
+        ///  <param name="parameters">filter parametrs</param>
         /// <returns></returns>
         Task<PaginationDto<BookGetDto>> GetCurrentOwned(BookQueryParams parameters);
     }

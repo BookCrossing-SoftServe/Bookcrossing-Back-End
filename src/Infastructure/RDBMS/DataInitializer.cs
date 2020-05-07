@@ -34,8 +34,8 @@ namespace Infrastructure.RDBMS
                 {
                     FirstName = "List",
                     MiddleName = "Superman",
-                    LastName = "Ferents"
-
+                    LastName = "Ferents",
+                    IsConfirmed = true
                 });
                 context.SaveChanges();
             }
