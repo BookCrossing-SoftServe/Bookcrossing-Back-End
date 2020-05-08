@@ -103,7 +103,7 @@ namespace ApplicationTest.Controllers
         {
             _authorServiceMock.Setup(s => s.Update(It.IsAny<AuthorDto>())).ReturnsAsync(true);
 
-            var result = await _authorController.PutAuthor(It.IsAny<AuthorDto>());
+            var result = await _authorController.PutAuthor(It.IsAny<AuthorDto>(),null);
 
             result.Should().BeOfType<NoContentResult>();
         }
@@ -113,7 +113,7 @@ namespace ApplicationTest.Controllers
         {
             _authorServiceMock.Setup(s => s.Update(It.IsAny<AuthorDto>())).ReturnsAsync(false);
 
-            var result = await _authorController.PutAuthor(It.IsAny<AuthorDto>());
+            var result = await _authorController.PutAuthor(It.IsAny<AuthorDto>(),null);
 
             result.Should().BeOfType<NotFoundResult>();
         }
