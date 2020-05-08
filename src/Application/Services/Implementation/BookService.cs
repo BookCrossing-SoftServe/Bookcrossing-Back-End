@@ -279,6 +279,16 @@ namespace Application.Services.Implementation
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
+        public async Task<PaginationDto<BookGetDto>> GetReadBooksAsync(BookQueryParams parameters)
+        {
+            var userId = _userResolverService.GetUserId();
+            var ownedBooks = _requestRepository.GetAll().Where(a => a.OwnerId == userId).Select(a => a.Book);
+            var currentlyOwnedBooks = _bookRepository.GetAll().Where(a => a.UserId == userId);
+            var readBooks = ownedBooks.Union(currentlyOwnedBooks);
+            var query = GetFilteredQuery(readBooks, parameters);
+            return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
+        }
+
         private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)
         {
             if (parameters.ShowAvailable == true)

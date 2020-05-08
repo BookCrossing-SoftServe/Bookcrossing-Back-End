@@ -54,5 +54,12 @@ namespace Application.Services.Interfaces
         ///  <param name="parameters">filter parametrs</param>
         /// <returns></returns>
         Task<PaginationDto<BookGetDto>> GetCurrentOwned(BookQueryParams parameters);
+
+        /// <summary>
+        /// Retrieve books read by current user
+        /// </summary>
+        ///  <param name="parameters">filter parametrs</param>
+        /// <returns></returns>
+        Task<PaginationDto<BookGetDto>> GetReadBooksAsync(BookQueryParams parameters);
     }
 }
