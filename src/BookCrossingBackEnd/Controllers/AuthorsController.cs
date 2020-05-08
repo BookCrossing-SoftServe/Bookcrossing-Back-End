@@ -53,15 +53,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut("Merge")]
         public async Task<IActionResult> PutAuthor([FromBody]AuthorDto authorDto, [FromQuery] int[] authors)
         {
-            bool success;
-            if (authors?.Length > 0)
-            {
-                success = await _authorService.Merge(authorDto, authors);
-            }
-            else
-            {
-                success = await _authorService.Update(authorDto);
-            }
+            var success = await _authorService.Merge(authorDto, authors);
             if (!success)
             {
                 return NotFound();
