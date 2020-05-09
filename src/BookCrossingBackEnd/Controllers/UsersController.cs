@@ -80,18 +80,18 @@ namespace BookCrossingBackEnd.Controllers
         /// </summary>
         /// <param name="user"></param>
         [HttpPut("{id}")]
-        [Authorize]
+        //[Authorize]
         //[UserUpdateFilter]
         public async Task<IActionResult> Update([FromRoute] int id,[FromBody]UserUpdateDto user)
         {
-            if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
-            {
+            /*if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
+            {*/
                 user.Id = id;
                 await UserService.UpdateUser(user);
-                return NoContent();
-            }
+                return Ok();
+            ///}
 
-            return Forbid();
+            //return Forbid();
         }
 
         /// <summary>
