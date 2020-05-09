@@ -84,14 +84,14 @@ namespace BookCrossingBackEnd.Controllers
         //[UserUpdateFilter]
         public async Task<IActionResult> Update([FromRoute] int id,[FromBody]UserUpdateDto user)
         {
-            /*if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
-            {*/
+            if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
+            {
                 user.Id = id;
                 await UserService.UpdateUser(user);
                 return Ok();
-            ///}
+            }
 
-            //return Forbid();
+            return Forbid();
         }
 
         /// <summary>
