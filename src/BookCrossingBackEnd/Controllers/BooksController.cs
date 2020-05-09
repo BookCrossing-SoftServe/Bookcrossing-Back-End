@@ -84,11 +84,17 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _bookService.GetRegistered(parameters));
         }
 
-        // GET: api/Books
         [HttpGet("current")]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentOwnedBooksAsync([FromQuery]BookQueryParams parameters)
         {
             return Ok(await _bookService.GetCurrentOwned(parameters));
         }
+
+        [HttpGet("read")]
+        public async Task<ActionResult<PaginationDto<BookGetDto>>> GetReadBooksAsync([FromQuery]BookQueryParams parameters)
+        {
+            return Ok(await _bookService.GetReadBooksAsync(parameters));
+        }
+
     }
 }
