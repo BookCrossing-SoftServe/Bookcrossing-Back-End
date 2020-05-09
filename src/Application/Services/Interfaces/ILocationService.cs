@@ -1,6 +1,7 @@
 ﻿using Application.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Dto.QueryParams;
 
 namespace Application.Services.Interfaces
 {
@@ -18,6 +19,12 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <returns>returns list of Location DTOs</returns>
         Task<List<LocationDto>> GetAll();
+        /// <summary>
+        /// Retrieve Pagination for Genre
+        /// </summary>
+        /// <param name="fullPaginationQuery">QueryParameters containing page index, pageSize, searchQuery and if it's a first Request</param>
+        /// <returns>Returns Pagination with Page result and Total amount of items</returns>
+        Task<PaginationDto<LocationDto>> GetAll(FullPaginationQueryParams fullPaginationQuery);
 
         /// <summary>
         /// Update specified location

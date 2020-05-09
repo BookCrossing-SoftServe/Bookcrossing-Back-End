@@ -7,6 +7,9 @@ using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using FluentAssertions;
+using Infrastructure.RDBMS;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moq;
 
 namespace ApplicationTest.Services
@@ -15,17 +18,22 @@ namespace ApplicationTest.Services
     internal class AuthorServiceTest
     {
         private AuthorService _authorService;
+        private BookCrossingContext _context;
         private Mock<IRepository<Author>> _authorRepositoryMock;
+        private Mock<IRepository<BookAuthor>> _bookAuthorRepositoryMock;
         private Mock<IPaginationService> _paginationMock;
         private Mock<IMapper> _mapper;
 
         [SetUp]
         public void Setup()
         {
+            var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
+            _context = new BookCrossingContext(options);
             _authorRepositoryMock = new Mock<IRepository<Author>>();
+            _bookAuthorRepositoryMock = new Mock<IRepository<BookAuthor>>();
             _mapper = new Mock<IMapper>();
             _paginationMock = new Mock<IPaginationService>();
-            _authorService = new AuthorService(_authorRepositoryMock.Object, _mapper.Object, _paginationMock.Object);
+            _authorService = new AuthorService(_authorRepositoryMock.Object, _mapper.Object, _paginationMock.Object, _bookAuthorRepositoryMock.Object, _context);
         }
 
         #region GetById

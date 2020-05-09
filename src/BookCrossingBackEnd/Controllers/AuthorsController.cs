@@ -33,8 +33,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
-            var uri = HttpContext.Request.QueryString;
-            return Ok(await _authorService.GetAuthors(fullPaginationQuery));
+            return Ok(await _authorService.GetAll(fullPaginationQuery));
         }
 
         // GET: api/Authors/"Tom"
@@ -51,11 +50,22 @@ namespace BookCrossingBackEnd.Controllers
 
 
         // PUT: api/Authors
-        [HttpPut]
-        public async Task<IActionResult> PutAuthor(AuthorDto authorDto)
+        [HttpPut("Merge")]
+        public async Task<IActionResult> PutAuthor([FromBody]AuthorDto authorDto, [FromQuery] int[] authors)
         {
-            var updated = await _authorService.Update(authorDto);
-            if (!updated)
+            var success = await _authorService.Merge(authorDto, authors);
+            if (!success)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutAuthor([FromBody]AuthorDto authorDto)
+        {
+            var success = await _authorService.Update(authorDto);
+            if (!success)
             {
                 return NotFound();
             }

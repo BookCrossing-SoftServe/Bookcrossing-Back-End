@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
@@ -13,9 +14,11 @@ namespace Application.Services.Implementation
     {
         private readonly IRepository<Genre> _genreRepository;
         private readonly IMapper _mapper;
-        public GenreService(IRepository<Genre> genreRepository, IMapper mapper)
+        private readonly IPaginationService _paginationService;
+        public GenreService(IRepository<Genre> genreRepository, IMapper mapper, IPaginationService paginationService)
         {
             _genreRepository = genreRepository;
+            _paginationService = paginationService;
             _mapper = mapper;
         }
 
@@ -28,6 +31,7 @@ namespace Application.Services.Implementation
         {
             return _mapper.Map<List<GenreDto>>(await _genreRepository.GetAll().ToListAsync());
         }
+
         public async Task<GenreDto> Add(GenreDto genreDto)
         {
             var genre = _mapper.Map<Genre>(genreDto);
@@ -52,6 +56,12 @@ namespace Application.Services.Implementation
             _genreRepository.Update(genre);
             var affectedRows = await _genreRepository.SaveChangesAsync();
             return affectedRows > 0;
+        }
+
+        public async Task<PaginationDto<GenreDto>> GetAll(FullPaginationQueryParams parameters)
+        {
+            var query = _genreRepository.GetAll();
+            return await _paginationService.GetPageAsync<GenreDto, Genre>(query, parameters);
         }
     }
 }
