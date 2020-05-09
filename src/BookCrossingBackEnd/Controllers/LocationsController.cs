@@ -3,6 +3,7 @@ using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Dto.QueryParams;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -60,5 +61,11 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             return Ok(location);
         }
+        [HttpGet("paginated")]
+        public async Task<ActionResult<PaginationDto<LocationDto>>> GetAllGenres([FromQuery] FullPaginationQueryParams fullPaginationQuery)
+        {
+            return Ok(await _locationService.GetAll(fullPaginationQuery));
+        }
+
     }
 }

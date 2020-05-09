@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _genreService.GetAll());
         }
 
+
         // PUT: api/Genre
         [HttpPut]
         public async Task<IActionResult> PutGenre(GenreDto genreDto)
@@ -67,6 +69,11 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             }
             return Ok();
+        }
+        [HttpGet("paginated")]
+        public async Task<ActionResult<PaginationDto<GenreDto>>> GetAllGenres([FromQuery] FullPaginationQueryParams fullPaginationQuery)
+        {
+            return Ok(await _genreService.GetAll(fullPaginationQuery));
         }
     }
 }
