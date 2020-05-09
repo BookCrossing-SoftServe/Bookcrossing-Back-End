@@ -88,7 +88,7 @@ namespace BookCrossingBackEnd.Controllers
             {
                 user.Id = id;
                 await UserService.UpdateUser(user);
-                return Ok();
+                return NoContent();
             }
 
             return Forbid();
