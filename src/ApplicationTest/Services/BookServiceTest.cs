@@ -44,7 +44,14 @@ namespace ApplicationTest.Services
             _imageServiceMock = new Mock<IImageService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new Application.Mapper());
+                mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
+                mc.AddProfile(new Application.MapperProfilers.BookChildCommentProfile());
+                mc.AddProfile(new Application.MapperProfilers.BookRootCommentProfile());
+                mc.AddProfile(new Application.MapperProfilers.GenreProfile());
+                mc.AddProfile(new Application.MapperProfilers.LocationProfile());
+                mc.AddProfile(new Application.MapperProfilers.RequestProfile());
+                mc.AddProfile(new Application.MapperProfilers.UserProfile());
+                mc.AddProfile(new Application.MapperProfilers.BookProfile());
             });
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
