@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Infrastructure.RDBMS;
+using LinqKit;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Application.Services.Implementation
@@ -37,6 +38,17 @@ namespace Application.Services.Implementation
             return _mapper.Map<AuthorDto>(await _authorRepository.FindByIdAsync(authorId));
         }
 
+        public async Task<List<AuthorDto>> GetAll(int[] ids)
+        {
+            var predicate = PredicateBuilder.New<Author>();
+            foreach (var id in ids)
+            {
+                var tempId = id;
+                predicate = predicate.Or(a => a.Id == tempId);
+            }
+            var authors = _authorRepository.GetAll().Where(predicate);
+            return _mapper.Map<List<AuthorDto>>(await authors.ToListAsync());
+        }
         public async Task<PaginationDto<AuthorDto>> GetAll(FullPaginationQueryParams parameters)
         {
             var query = _authorRepository.GetAll();
@@ -74,17 +86,17 @@ namespace Application.Services.Implementation
             return affectedRows > 0;
         }
 
-        public async Task<bool> Merge(AuthorDto authorDto, int[] ids)
+        public async Task<AuthorDto> Merge(AuthorMergeDto authorMergeDto)
         {
             await using var transaction = _context.Database.BeginTransaction();
 
-            authorDto.IsConfirmed = true;
-            authorDto.Id = null;
-            var author = _mapper.Map<Author>(authorDto);
+            authorMergeDto.Author.IsConfirmed = true;
+            authorMergeDto.Author.Id = null;
+            var author = _mapper.Map<Author>(authorMergeDto.Author);
 
-            var bookIds = await _bookAuthorRepository.GetAll().Where(x => ids.Contains(x.AuthorId)).Select(x => x.BookId).Distinct().ToListAsync();
+            var bookIds = await _bookAuthorRepository.GetAll().Where(x => authorMergeDto.Authors.Contains(x.AuthorId)).Select(x => x.BookId).Distinct().ToListAsync();
 
-            var authors = await _authorRepository.GetAll().Where(x => ids.Contains(x.Id)).ToListAsync();
+            var authors = await _authorRepository.GetAll().Where(x => authorMergeDto.Authors.Contains(x.Id)).ToListAsync();
             _authorRepository.RemoveRange(authors);
             await _authorRepository.SaveChangesAsync();
 
@@ -99,7 +111,7 @@ namespace Application.Services.Implementation
 
             var affectedRows = await _authorRepository.SaveChangesAsync();
             transaction.Commit();
-            return affectedRows > 0;
+            return affectedRows > 0 ? _mapper.Map<AuthorDto>(author) : null;
 
         }
         public async Task<bool> Update(AuthorDto authorDto)
