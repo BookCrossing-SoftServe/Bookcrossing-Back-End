@@ -29,11 +29,17 @@ namespace BookCrossingBackEnd.Controllers
             }
             return Ok(author);
         }
-
-        [HttpGet]
-        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams fullPaginationQuery)
+        // GET: api/Authors/Paginated?page=
+        [HttpGet("paginated")]
+        public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams paginationQuery)
         {
-            return Ok(await _authorService.GetAll(fullPaginationQuery));
+            return Ok(await _authorService.GetAll(paginationQuery));
+        }
+        // GET: api/Authors
+        [HttpGet]
+        public async Task<ActionResult> GetAuthors([FromQuery] int[] ids)
+        {
+            return Ok(await _authorService.GetAll(ids));
         }
 
         // GET: api/Authors/"Tom"
@@ -50,15 +56,15 @@ namespace BookCrossingBackEnd.Controllers
 
 
         // PUT: api/Authors
-        [HttpPut("Merge")]
-        public async Task<IActionResult> PutAuthor([FromBody]AuthorDto authorDto, [FromQuery] int[] authors)
+        [HttpPut("merge")]
+        public async Task<IActionResult> PutAuthor([FromBody]AuthorMergeDto authorDto)
         {
-            var success = await _authorService.Merge(authorDto, authors);
-            if (!success)
+            var author = await _authorService.Merge(authorDto);
+            if (author == null)
             {
-                return NotFound();
+                return BadRequest();
             }
-            return NoContent();
+            return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
         }
 
         [HttpPut]

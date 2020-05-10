@@ -113,7 +113,7 @@ namespace ApplicationTest.Controllers
         {
             _authorServiceMock.Setup(s => s.Update(It.IsAny<AuthorDto>())).ReturnsAsync(false);
 
-            var result = await _authorController.PutAuthor(It.IsAny<AuthorDto>(),null);
+            var result = await _authorController.PutAuthor(It.IsAny<AuthorDto>());
 
             result.Should().BeOfType<NotFoundResult>();
         }
