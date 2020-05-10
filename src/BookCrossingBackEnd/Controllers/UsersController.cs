@@ -80,7 +80,7 @@ namespace BookCrossingBackEnd.Controllers
         /// </summary>
         /// <param name="user"></param>
         [HttpPut("{id}")]
-        [Authorize]
+        //[Authorize]
         //[UserUpdateFilter]
         public async Task<IActionResult> Update([FromRoute] int id,[FromBody]UserUpdateDto user)
         {
