@@ -176,7 +176,7 @@ namespace Application.Services.Implementation
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
-        public IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)
+        private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)
         {
             if (parameters.ShowAvailable == true)
             {
