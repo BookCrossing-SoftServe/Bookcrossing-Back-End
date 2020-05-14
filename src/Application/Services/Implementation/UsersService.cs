@@ -18,18 +18,16 @@ namespace Application.Services.Implementation
     {
 
         private readonly IRepository<User> _userRepository;
-        private readonly IRepository<UserLocation> _userLocationRepository;
         private readonly IMapper _mapper;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
 
-        public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserLocation> userLocationRepository)
+        public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository)
         {
             this._userRepository = userRepository;
             this._mapper = mapper;
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
-            _userLocationRepository = userLocationRepository;
         }
         ///<inheritdoc/>
         public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)

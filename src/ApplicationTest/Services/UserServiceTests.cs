@@ -41,7 +41,14 @@ namespace ApplicationTest.Services
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new Application.Mapper());
+                mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
+                mc.AddProfile(new Application.MapperProfilers.BookChildCommentProfile());
+                mc.AddProfile(new Application.MapperProfilers.BookRootCommentProfile());
+                mc.AddProfile(new Application.MapperProfilers.GenreProfile());
+                mc.AddProfile(new Application.MapperProfilers.LocationProfile());
+                mc.AddProfile(new Application.MapperProfilers.RequestProfile());
+                mc.AddProfile(new Application.MapperProfilers.UserProfile());
+                mc.AddProfile(new Application.MapperProfilers.BookProfile());
             });
             var _mapper = mappingConfig.CreateMapper();
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;

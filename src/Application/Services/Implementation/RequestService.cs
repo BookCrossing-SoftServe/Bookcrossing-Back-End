@@ -244,6 +244,7 @@ namespace Application.Services.Implementation
                 RequestId = request.Id,
                 OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
             };
+            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.Available = true;
