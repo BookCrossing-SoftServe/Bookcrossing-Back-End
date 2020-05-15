@@ -27,6 +27,7 @@ using Microsoft.Extensions.Logging;
 using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
 using Hangfire;
+using BookCrossingBackEnd.ServiceExtension;
 
 namespace BookCrossingBackEnd
 {
@@ -44,94 +45,35 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string localConnection = Configuration.GetConnectionString("DefaultConnection");
-            // Please download appsettings.json for connecting to Azure DB
-            string azureConnection = Configuration.GetConnectionString("AzureConnection");
-            services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
-                options.UseSqlServer(azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
 
-         
-            // requires using Microsoft.Extensions.Options
-            services.Configure<MongoSettings>(
-                Configuration.GetSection(nameof(MongoSettings)));
+            services.AddDbContext(Configuration);
 
-            services.AddSingleton<IMongoSettings>(sp =>
-                sp.GetRequiredService<IOptions<MongoSettings>>().Value);
 
-            services.AddHangfire(config =>
-                config.UseSqlServerStorage(Configuration.GetConnectionString("AzureConnection")));
-            services.AddHangfireServer(options=> options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
+            services.AddMongoSettings(Configuration);
 
-            var emailConfig = Configuration
-                .GetSection("EmailConfiguration")
-                .Get<EmailConfiguration>();
-            services.AddSingleton(emailConfig);
+            services.AddEmailService(Configuration);
 
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new Application.Mapper());
-            });
+            services.AddMapper();
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
             services.AddScoped<ICommentOwnerMapper, CommentOwnerMapper>();
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddScoped(typeof(Domain.NoSQL.IChildRepository<,>), typeof(Infrastructure.NoSQL.BaseChildRepository<,>));
-            services.AddScoped(typeof(Domain.NoSQL.IRootRepository<>), typeof(Infrastructure.NoSQL.BaseRootRepository<>));
-            services.AddScoped(typeof(Domain.RDBMS.IRepository<>), typeof(Infrastructure.RDBMS.BaseRepository<>));
-            services.AddScoped<IBookChildCommentService, BookChildCommentService>();
-            services.AddScoped<IBookRootCommentService, BookRootCommentService>();
-            services.AddScoped<ILocationService, LocationService>();
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserService, UsersService>();
-            services.AddScoped<IEmailSenderService, EmailSenderService>();
-            services.AddScoped<IRequestService, RequestService>();
-            services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IBookService, BookService>();
-            services.AddScoped<IUserResolverService,UserResolverService>();
-            services.AddScoped<IGenreService, GenreService>();
-            services.AddScoped<IHangfireJobScheduleService, HangfireJobSchedulerService>();
+            services.AddRepositories();
+
+            services.AddCustomServices();
+
             services.AddLogging();
+
             services.AddApplicationInsightsTelemetry();
 
-            services.AddSingleton<IImageService, ImageService>();
-            services.AddSingleton<IPaginationService, PaginationService>();
+            services.AddCorsSettings();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().Build());
-            });
+            services.AddMVCWithFluentValidatoin();
 
-
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(new ModelValidationFilter());
-            })
-            .AddFluentValidation(cfg =>
-            {
-                cfg.RegisterValidatorsFromAssemblyContaining<AuthorValidator>();
-            });
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                    };
-
-                });
-
+            services.AddJWTAuthenticatoin(Configuration);
 
             services.AddSwaggerGen(c =>
             {
@@ -189,7 +131,7 @@ namespace BookCrossingBackEnd
 
             if (env.IsDevelopment())
             {
-               _logger.LogInformation("Configuring for Development environment");
+                _logger.LogInformation("Configuring for Development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -198,6 +140,6 @@ namespace BookCrossingBackEnd
             }
 
         }
-    
+
     }
 }

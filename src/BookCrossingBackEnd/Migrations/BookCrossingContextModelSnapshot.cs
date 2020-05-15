@@ -33,6 +33,10 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnName("is_confirmed")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnName("lastname")

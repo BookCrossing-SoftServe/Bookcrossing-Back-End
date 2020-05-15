@@ -176,9 +176,9 @@ namespace Application.Services.Implementation
             }
 
             var location = _userLocationRepository.GetAll();
-            if (parameters.location != null)
+            if (parameters.Location != null)
             {
-                location = location.Where(l => l.Location.Id == parameters.location);
+                location = location.Where(l => l.Location.Id == parameters.Location);
             }
             var bookIds =
                 from b in books
@@ -238,11 +238,13 @@ namespace Application.Services.Implementation
             }
             var emailMessage = new RequestMessage()
             {
+                UserName = request.User.FirstName + " " + request.User.LastName,
                 OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                 BookName = request.Book.Name,
                 RequestId = request.Id,
                 OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
             };
+            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.Available = true;

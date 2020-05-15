@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using System.Linq;
+using Application.Dto.QueryParams;
+using Application.Services.Interfaces;
 
 namespace Application.Services.Implementation
 {
@@ -13,9 +15,11 @@ namespace Application.Services.Implementation
     {
         private readonly IRepository<Location> _locationRepository;
         private readonly IMapper _mapper;
-        public LocationService(IRepository<Location> bookRepository, IMapper mapper)
+        private readonly IPaginationService _paginationService;
+        public LocationService(IRepository<Location> bookRepository, IMapper mapper, IPaginationService paginationService)
         {
             _locationRepository = bookRepository;
+            _paginationService = paginationService;
             _mapper = mapper;
         }
 
@@ -58,6 +62,11 @@ namespace Application.Services.Implementation
             _locationRepository.Add(location);
             await _locationRepository.SaveChangesAsync();
             return location.Id;
+        }
+        public async Task<PaginationDto<LocationDto>> GetAll(FullPaginationQueryParams parameters)
+        {
+            var query = _locationRepository.GetAll();
+            return await _paginationService.GetPageAsync<LocationDto, Location>(query, parameters);
         }
     }
 }

@@ -18,9 +18,9 @@ namespace BookCrossingBackEnd.Validators
                 .Length(2, 20)
                 .Matches(@"^([a-zA-Z '-]+)$");
             RuleFor(x => x.MiddleName)
-                .NotEqual("")
                 .MaximumLength(30)
-                .Matches(@"^([a-zA-Z '-]+)$");
+                .Matches(@"&^|^([a-zA-Z '-]+)$")
+                .When(x => !string.IsNullOrWhiteSpace(x.MiddleName));
         }
     }
 }

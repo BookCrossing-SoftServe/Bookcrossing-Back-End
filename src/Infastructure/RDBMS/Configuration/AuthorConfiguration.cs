@@ -25,6 +25,9 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.MiddleName)
                 .HasColumnName("middlename")
                 .HasMaxLength(30);
+
+            builder.Property(e => e.IsConfirmed)
+                .HasColumnName("is_confirmed");
         }       
     }
 }

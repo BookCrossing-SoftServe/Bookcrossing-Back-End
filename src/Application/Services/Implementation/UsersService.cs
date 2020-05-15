@@ -51,7 +51,7 @@ namespace Application.Services.Implementation
         public async Task UpdateUser(UserUpdateDto userUpdateDto)
         {
             var user = _mapper.Map<User>(userUpdateDto);
-            _userRepository.Update(user);
+            await _userRepository.Update(user, userUpdateDto.FieldMasks);
             var affectedRows = await _userRepository.SaveChangesAsync();
             if (affectedRows==0)
             {

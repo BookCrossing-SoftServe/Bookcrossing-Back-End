@@ -75,7 +75,7 @@ namespace BookCrossingBackEnd.Controllers
         [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpPut]
-        public async Task<ActionResult<RequestDto>> ApproveReceive([FromRoute] int requestId)
+        public async Task<IActionResult> ApproveReceive([FromRoute] int requestId)
         {
             var updated = await _requestService.ApproveReceiveAsync(requestId);
             if (!updated)
@@ -88,7 +88,7 @@ namespace BookCrossingBackEnd.Controllers
         [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpDelete]
-        public async Task<ActionResult<RequestDto>> Remove([FromRoute] int requestId)
+        public async Task<IActionResult> Remove([FromRoute] int requestId)
         {
             var removed = await _requestService.RemoveAsync(requestId);
             if (!removed)

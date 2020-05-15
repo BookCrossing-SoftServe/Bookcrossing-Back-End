@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Infrastructure.RDBMS
 {
@@ -52,10 +54,57 @@ namespace Infrastructure.RDBMS
         {
             Entities.Update(entity);
         }
+        public virtual async Task Update(TEntity entity, IEnumerable<string> fieldMasks)
+        {
+            var entry = Context.Entry(entity);
+            var collectionList = new List<CollectionEntry>();
+            var oldEntity = await Entities.FindAsync(entry.Property("Id").CurrentValue);
+            var oldEntry = Context.Entry(oldEntity);
+
+            var collectionFieldMasks = fieldMasks.Where(name => entry.Collections.Any(a => a.Metadata.Name == name));
+            var propertyFieldMasks = fieldMasks.Where(name => entry.Properties.Any(a => a.Metadata.Name == name));
+
+            foreach (var name in collectionFieldMasks)
+            {
+                var oldCollection = Context.Entry(oldEntity).Collection(name);
+                await oldCollection.LoadAsync();
+                collectionList.Add(oldCollection);
+            }
+
+            if (oldEntry != null)
+            {
+                oldEntry.State = EntityState.Detached;
+            }
+
+            foreach (var collection in collectionList)
+            {
+                foreach (var item in collection.CurrentValue)
+                {
+                    var newEntry = Context.Entry(item);
+                    newEntry.State = EntityState.Deleted;
+                }
+            }
+
+            foreach (var name in collectionFieldMasks)
+            {
+                var newCollection = entry.Collections.Single(a => a.Metadata.Name == name);
+                foreach (var item in newCollection.CurrentValue)
+                {
+                    var newEntry = Context.Entry(item);
+                    newEntry.State = EntityState.Added;
+                }
+            }
+
+            foreach (var name in propertyFieldMasks)
+            {
+                entry.Property(name).IsModified = true;
+            }
+        }
+
         public async Task<int> SaveChangesAsync()
         {
             return await Context.SaveChangesAsync();
-        } 
+        }
 
         #region IDisposable Support
         private bool _disposedValue = false;
