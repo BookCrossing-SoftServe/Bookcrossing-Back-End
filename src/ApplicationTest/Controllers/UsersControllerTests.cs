@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dto;
+using Application.Dto.Password;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
 using Moq;
@@ -26,6 +27,58 @@ namespace ApplicationTest.ContollerTests
             _mockUserService = new Mock<IUserService>();
             _usersController = new UsersController(_mockUserService.Object, _mockUserResolverService.Object);
         }
+
+        #region api/users/password [put]
+
+        [Test]
+        public async Task ResetPassword_ReturnsIActionResult()
+        {
+            var resetPasswordDto = new ResetPasswordDto() {Email = "test@gmail.com"};
+            _mockUserService.Setup(x => x.SendPasswordResetConfirmation(resetPasswordDto.Email))
+                .Returns(Task.CompletedTask);
+            var result = await _usersController.ForgotPassword(resetPasswordDto);
+            result.Should().BeOfType<OkResult>();
+
+        }
+
+        #endregion
+
+        #region api/users/password [post]
+
+        [Test]
+        public async Task ForgotPassword_ReturnsIActionResult()
+        {
+
+            var resetPasswordDto = new ResetPasswordDto() { Email = "test@gmail.com" };
+            _mockUserService.Setup(x => x.SendPasswordResetConfirmation(resetPasswordDto.Email))
+                .Returns(Task.CompletedTask);
+            var result = await _usersController.CreateNewPassword(resetPasswordDto);
+            result.Should().BeOfType<OkResult>();
+
+        }
+
+        #endregion
+
+        #region api/users/id [get] tests
+
+        [Test]
+        [TestCase(201)]
+        public async Task GetUserId_ReturnsActionResultInt(int credentialId)
+        {
+            //arrange
+
+            _mockUserResolverService.Setup(p => p.GetUserId())
+                .Returns(credentialId);
+            //act
+            var result = await _usersController.GetUserId();
+
+            //assert
+           result.Should().BeOfType<ActionResult<int>>();
+           result.Result.Should().BeOfType<OkObjectResult>();
+
+        }
+
+        #endregion
 
         #region api/users [get] tests
 

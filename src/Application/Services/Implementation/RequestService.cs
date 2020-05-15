@@ -238,11 +238,13 @@ namespace Application.Services.Implementation
             }
             var emailMessage = new RequestMessage()
             {
+                UserName = request.User.FirstName + " " + request.User.LastName,
                 OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                 BookName = request.Book.Name,
                 RequestId = request.Id,
                 OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
             };
+            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.Available = true;

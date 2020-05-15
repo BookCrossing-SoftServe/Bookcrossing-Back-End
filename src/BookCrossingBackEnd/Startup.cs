@@ -48,7 +48,7 @@ namespace BookCrossingBackEnd
 
             services.AddDbContext(Configuration);
 
-           
+
             services.AddMongoSettings(Configuration);
 
             services.AddEmailService(Configuration);
@@ -66,7 +66,7 @@ namespace BookCrossingBackEnd
             services.AddCustomServices();
 
             services.AddLogging();
-           
+
             services.AddApplicationInsightsTelemetry();
 
             services.AddCorsSettings();
@@ -131,7 +131,7 @@ namespace BookCrossingBackEnd
 
             if (env.IsDevelopment())
             {
-               _logger.LogInformation("Configuring for Development environment");
+                _logger.LogInformation("Configuring for Development environment");
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -140,6 +140,6 @@ namespace BookCrossingBackEnd
             }
 
         }
-    
+
     }
 }

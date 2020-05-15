@@ -10,6 +10,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Hosting;
 using MimeKit;
+using ISmtpClient = Application.Services.Interfaces.ISmtpClient;
 
 namespace Application.Services.Implementation
 {
@@ -17,16 +18,13 @@ namespace Application.Services.Implementation
     {
         private readonly EmailConfiguration _emailConfig;
         private readonly IHostingEnvironment _env;
+        private readonly ISmtpClient _smtpClient;
 
-        public EmailSenderService(EmailConfiguration emailConfig, IHostingEnvironment env)
+        public EmailSenderService(EmailConfiguration emailConfig, IHostingEnvironment env, ISmtpClient smtpClient)
         {
             _emailConfig = emailConfig;
             _env = env;
-        }
-
-        public void Hello()
-        {
-            Console.WriteLine("Hello world!");
+            _smtpClient = smtpClient;
         }
         /// <inheritdoc />
         public async Task SendReceiveConfirmationAsync(string userName, string bookName, int bookId, int requestId, string userAddress)
@@ -45,7 +43,7 @@ namespace Application.Services.Implementation
             var message = new Message(new List<string>() { userAddress },
                 "Book crossing book receive confirmation!", body);
 
-            await SendAsync(CreateEmailMessage(message));
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
         /// <inheritdoc />
         public async Task SendThatBookWasReceivedAsync(RequestMessage requestMessage)
@@ -64,7 +62,7 @@ namespace Application.Services.Implementation
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Your book {requestMessage.BookName} was received!", body);
 
-            await SendAsync(CreateEmailMessage(message));
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
         /// <inheritdoc />
         public async Task SendForCanceledRequestAsync(RequestMessage requestMessage)
@@ -77,13 +75,14 @@ namespace Application.Services.Implementation
             }
 
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Request for {requestMessage.BookName} was canceled!", body);
 
-            await SendAsync(CreateEmailMessage(message));
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
 
         /// <inheritdoc />
@@ -105,7 +104,7 @@ namespace Application.Services.Implementation
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Request for {requestMessage.BookName}!", body);
 
-            await SendAsync(CreateEmailMessage(message));
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
 
         /// <inheritdoc />
@@ -125,7 +124,7 @@ namespace Application.Services.Implementation
             var message = new Message(new List<string>() { email },
                 "Book crossing password reset!", body);
 
-            await SendAsync(CreateEmailMessage(message));
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
 
         private MimeMessage CreateEmailMessage(Message message)
@@ -139,29 +138,5 @@ namespace Application.Services.Implementation
             return emailMessage;
         }
 
-        private async Task SendAsync(MimeMessage mailMessage)
-        {
-            using (var client = new SmtpClient())
-            {
-                try
-                {
-                    await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port);
-                    client.AuthenticationMechanisms.Remove("XOAUTH2");
-                    await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
-
-                    await client.SendAsync(mailMessage);
-                }
-                catch
-                {
-                    //log an error message or throw an exception or both.
-                    throw;
-                }
-                finally
-                {
-                    await client.DisconnectAsync(true);
-                    client.Dispose();
-                }
-            }
-        }
     }
 }
