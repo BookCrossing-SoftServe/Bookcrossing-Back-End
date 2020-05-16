@@ -21,7 +21,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<BookGenre> _bookGenreRepository;
-        private readonly IRepository<UserRoom> _userLocationRepository;
+        private readonly IRepository<User> _userLocationRepository;
         private readonly IRepository<Request> _requestRepository;
         private readonly IUserResolverService _userResolverService;
         private readonly IPaginationService _paginationService;
@@ -29,7 +29,7 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
-            IRepository<UserRoom> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
+            IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
             IUserResolverService userResolverService, IImageService imageService)
         {
             _bookRepository = bookRepository;
@@ -210,14 +210,14 @@ namespace Application.Services.Implementation
             }
 
 
-            var location = _userLocationRepository.GetAll();
+            var userLocation = _userLocationRepository.GetAll();
             var author = _bookAuthorRepository.GetAll();
             var genre = _bookGenreRepository.GetAll();
             var bookIds =
                 from b in query
                 join g in genre on b.Id equals g.BookId
                 join a in author on b.Id equals a.BookId
-                join l in location on b.UserId equals l.LocationId 
+                join u in userLocation on b.UserId equals u.UserRoom.LocationId
                 select b.Id;
 
             return query.Where(x => bookIds.Contains(x.Id))
