@@ -8,7 +8,7 @@ namespace Infrastructure.RDBMS.Configuration
     {
         public void Configure(EntityTypeBuilder<UserRoom> builder)
         {
-            builder.ToTable("UserRoom");
+            builder.ToTable("UserLocation");
             builder.HasKey(e => e.Id);
 
             builder.Property(e => e.LocationId).HasColumnName("location_id");
