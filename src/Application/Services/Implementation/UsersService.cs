@@ -34,7 +34,7 @@ namespace Application.Services.Implementation
         {
 
             var user = await _userRepository.GetAll()
-                .Include(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Include(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(x=>x.Role)
                 .FirstOrDefaultAsync(predicate);
             if (user == null)
@@ -45,7 +45,7 @@ namespace Application.Services.Implementation
         }
         public async Task<List<UserDto>> GetAllUsers()
         {
-            return _mapper.Map<List<UserDto>>(await _userRepository.GetAll().Include(p => p.UserLocation).ToListAsync());
+            return _mapper.Map<List<UserDto>>(await _userRepository.GetAll().Include(p => p.UserRoom).ToListAsync());
         }
 
         public async Task UpdateUser(UserUpdateDto userUpdateDto)

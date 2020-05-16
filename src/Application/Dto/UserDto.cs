@@ -13,6 +13,6 @@ namespace Application.Dto
 
         public Role Role { get; set; }
 
-        public List<RoomLocationDto> UserLocation { get; set; }
+        public RoomLocationDto UserLocation { get; set; }
     }
 }

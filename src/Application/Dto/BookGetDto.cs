@@ -18,6 +18,6 @@ namespace Application.Dto
         public List<AuthorDto> Authors { get; set; }
         public List<GenreDto> Genres { get; set; }
 
-        public List<RoomLocationDto> Locations { get; set; }
+        public RoomLocationDto Locations { get; set; }
     }
 }

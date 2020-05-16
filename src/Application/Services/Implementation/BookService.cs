@@ -21,7 +21,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<BookGenre> _bookGenreRepository;
-        private readonly IRepository<UserLocation> _userLocationRepository;
+        private readonly IRepository<UserRoom> _userLocationRepository;
         private readonly IRepository<Request> _requestRepository;
         private readonly IUserResolverService _userResolverService;
         private readonly IPaginationService _paginationService;
@@ -29,7 +29,7 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
-            IRepository<UserLocation> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
+            IRepository<UserRoom> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
             IUserResolverService userResolverService, IImageService imageService)
         {
             _bookRepository = bookRepository;
@@ -51,7 +51,7 @@ namespace Application.Services.Implementation
                                                                .Include(p => p.BookGenre)
                                                                .ThenInclude(x => x.Genre)
                                                                .Include(p => p.User)
-                                                               .ThenInclude(x => x.UserLocation)
+                                                               .ThenInclude(x => x.UserRoom)
                                                                .ThenInclude(x => x.Location)
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
         }
@@ -184,7 +184,7 @@ namespace Application.Services.Implementation
             }
             if (parameters.Location != null)
             {
-                query = query.Where(x => x.User.UserLocation.Any(l => l.Location.Id == parameters.Location));
+                query = query.Where(x => x.User.UserRoom.LocationId == parameters.Location);
             }
             if (parameters.SearchTerm != null)
             {
@@ -217,7 +217,7 @@ namespace Application.Services.Implementation
                 from b in query
                 join g in genre on b.Id equals g.BookId
                 join a in author on b.Id equals a.BookId
-                join l in location on b.UserId equals l.UserId
+                join l in location on b.UserId equals l.LocationId 
                 select b.Id;
 
             return query.Where(x => bookIds.Contains(x.Id))
@@ -226,7 +226,7 @@ namespace Application.Services.Implementation
                 .Include(p => p.BookGenre)
                 .ThenInclude(x => x.Genre)
                 .Include(p => p.User)
-                .ThenInclude(x => x.UserLocation)
+                .ThenInclude(x => x.UserRoom)
                 .ThenInclude(x => x.Location);
         }
 
