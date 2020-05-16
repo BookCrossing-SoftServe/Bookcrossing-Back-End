@@ -26,7 +26,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<Book>> _bookRepositoryMock;
         private Mock<IRepository<BookAuthor>> _bookAuthorRepositoryMock;
         private Mock<IRepository<BookGenre>> _bookGenreRepositoryMock;
-        private Mock<IRepository<UserRoom>> _userLocationServiceMock;
+        private Mock<IRepository<User>> _userLocationServiceMock;
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
@@ -39,7 +39,7 @@ namespace ApplicationTest.Services
             _bookAuthorRepositoryMock = new Mock<IRepository<BookAuthor>>();
             _bookGenreRepositoryMock = new Mock<IRepository<BookGenre>>();
             _requestServiceMock = new Mock<IRepository<Request>>();
-            _userLocationServiceMock = new Mock<IRepository<UserRoom>>();
+            _userLocationServiceMock = new Mock<IRepository<User>>();
             _userResolverServiceMock = new Mock<IUserResolverService>();
             _imageServiceMock = new Mock<IImageService>();
             var mappingConfig = new MapperConfiguration(mc =>
@@ -60,10 +60,10 @@ namespace ApplicationTest.Services
 
             var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
-            var locationsMock = GetUserLocations().AsQueryable();
+            var usersMock = GetUsers().AsQueryable();
             _bookAuthorRepositoryMock.Setup(s => s.GetAll()).Returns(authorMock);
             _bookGenreRepositoryMock.Setup(s => s.GetAll()).Returns(genreMock);
-            _userLocationServiceMock.Setup(s => s.GetAll()).Returns(locationsMock);
+            _userLocationServiceMock.Setup(s => s.GetAll()).Returns(usersMock);
         }
 
         [SetUp]
@@ -182,15 +182,13 @@ namespace ApplicationTest.Services
         {
             var genres = GetBookGenre();
             var authors = GetBookAuthor();
-            var location = GetUserLocation();
-            var firstUser = new User() { Id = 1, UserRoom = location};
-            var secondUser = new User() { Id = 2, UserRoom = location };
+            var users = GetUsers();
             var list = new List<Book>
             {
-                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", Available = true, User = firstUser, UserId = 1},
-                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", Available = true, User = secondUser, UserId = 2},
-                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", Available = false, User = firstUser, UserId = 1},
-                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", Available = false, User = firstUser, UserId = 1},
+                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", Available = true, User = users[0], UserId = 1},
+                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", Available = true, User = users[1], UserId = 2},
+                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", Available = false, User = users[0], UserId = 1},
+                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", Available = false, User = users[0], UserId = 1},
             };
             return list;
         }
@@ -218,16 +216,12 @@ namespace ApplicationTest.Services
                 new BookAuthor() {Book = new Book() {Id = 4}, Author = authorJonRowling, AuthorId = 3, BookId = 4}
             };
         }
-        private UserRoom GetUserLocation()
+        private List<User> GetUsers()
         {
-            return new UserRoom() {Id = 1, LocationId = 1, RoomNumber = 1};
-        }
-        private List<UserRoom> GetUserLocations()
-        {
-            return new List<UserRoom>()
+            return new List<User>()
             {
-                new UserRoom() {Location = new Location() {Id = 1}, RoomNumber = 1, LocationId = 1},
-                new UserRoom() {Location = new Location() { Id = 2 }, RoomNumber = 2, LocationId = 2}
+                new User() { Id = 1, UserRoom = new UserRoom() { Location = new Location() { Id = 1 }, RoomNumber = 1, LocationId = 1 }},
+                new User() { Id = 2, UserRoom = new UserRoom() { Location = new Location() { Id = 2 }, RoomNumber = 2, LocationId = 2 }}
             };
         }
         [Test]
