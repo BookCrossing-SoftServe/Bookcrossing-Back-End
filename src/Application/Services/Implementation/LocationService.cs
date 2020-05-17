@@ -26,14 +26,14 @@ namespace Application.Services.Implementation
         public async Task<LocationDto> GetById(int locationId)
         {
             return _mapper.Map<LocationDto>(await _locationRepository.GetAll()
-                                                               .Include(p => p.UserLocation)                                                              
+                                                               .Include(p => p.UserRoom)                                                              
                                                                .FirstOrDefaultAsync(p => p.Id == locationId));
         }
 
         public async Task<List<LocationDto>> GetAll()
         {
             return _mapper.Map<List<LocationDto>>(await _locationRepository.GetAll()
-                                                                   .Include(p => p.UserLocation)
+                                                                   .Include(p => p.UserRoom)
                                                                    .OrderBy(x => x.City)
                                                                    .ThenBy(x => x.OfficeName)
                                                                    .ToListAsync());

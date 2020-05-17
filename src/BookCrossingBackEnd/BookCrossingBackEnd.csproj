@@ -17,6 +17,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.cs" />
+    <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.Designer.cs" />
+    <Compile Remove="Migrations\20200516153320_FixDatabase1.cs" />
+    <Compile Remove="Migrations\20200516153320_FixDatabase1.Designer.cs" />
+    <Compile Remove="Migrations\20200516153612_FixDatabase1.cs" />
+    <Compile Remove="Migrations\20200516153612_FixDatabase1.Designer.cs" />
+    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.11" />

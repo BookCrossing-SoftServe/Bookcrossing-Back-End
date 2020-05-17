@@ -32,13 +32,13 @@ namespace Application.Services.Implementation
         private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
         private readonly IRepository<BookGenre> _bookGenreRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
-        private readonly IRepository<UserLocation> _userLocationRepository;
+        private readonly IRepository<UserRoom> _userLocationRepository;
 
 
         public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
             IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
             IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository, 
-            IRepository<BookGenre> bookGenreRepository, IRepository<UserLocation> userLocationRepository)
+            IRepository<BookGenre> bookGenreRepository, IRepository<UserRoom> userLocationRepository)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -103,8 +103,8 @@ namespace Application.Services.Implementation
                 request = await _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                     .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                    .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
-                    .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                    .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
+                    .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .FirstOrDefaultAsync(predicate);
             }
             else if(query.Last)
@@ -112,8 +112,8 @@ namespace Application.Services.Implementation
                 request = _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                     .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                    .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
-                    .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location).Where(predicate).ToList()
+                    .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
+                    .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location).Where(predicate).ToList()
                     .Last();
             }
             if (request == null)
@@ -129,8 +129,8 @@ namespace Application.Services.Implementation
             var requests = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
-                .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
+                .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate);
             if(requests == null)
             {
@@ -184,13 +184,13 @@ namespace Application.Services.Implementation
                 from b in books
                 join g in genre on b.Id equals g.BookId
                 join a in author on b.Id equals a.BookId
-                join l in location on b.UserId equals l.UserId
+                join l in location on b.UserId equals l.Id
                 select b.Id;
             var query = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                .Include(i => i.Owner).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
-                .Include(i => i.User).ThenInclude(i => i.UserLocation).ThenInclude(i => i.Location)
+                .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
+                .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate).Where(x => bookIds.Contains(x.BookId));
             var requests =  await _paginationService.GetPageAsync<RequestDto, Request>(query, parameters);
             var isEmpty = !requests.Page.Any();
