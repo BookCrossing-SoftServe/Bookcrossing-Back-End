@@ -19,6 +19,18 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.cs" />
     <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.Designer.cs" />
+    <Compile Remove="Migrations\20200516153320_FixDatabase1.cs" />
+    <Compile Remove="Migrations\20200516153320_FixDatabase1.Designer.cs" />
+    <Compile Remove="Migrations\20200516153612_FixDatabase1.cs" />
+    <Compile Remove="Migrations\20200516153612_FixDatabase1.Designer.cs" />
+    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.cs" />
+    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

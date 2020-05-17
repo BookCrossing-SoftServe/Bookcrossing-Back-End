@@ -217,7 +217,7 @@ namespace Application.Services.Implementation
                 from b in query
                 join g in genre on b.Id equals g.BookId
                 join a in author on b.Id equals a.BookId
-                join u in userLocation on b.UserId equals u.UserRoom.LocationId
+                join u in userLocation on b.UserId equals u.Id
                 select b.Id;
 
             return query.Where(x => bookIds.Contains(x.Id))

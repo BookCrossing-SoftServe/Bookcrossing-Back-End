@@ -39,11 +39,12 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.BirthDate)
                 .HasColumnName("birth_date")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime2");
 
             builder.Property(e => e.RegisteredDate)
                 .HasColumnName("registered_date")
-                .HasColumnType("datetime");
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("GETUTCDATE()");
 
             builder.Property(e => e.RoleId).HasColumnName("role_id");
 

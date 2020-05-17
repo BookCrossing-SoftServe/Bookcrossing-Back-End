@@ -184,7 +184,7 @@ namespace Application.Services.Implementation
                 from b in books
                 join g in genre on b.Id equals g.BookId
                 join a in author on b.Id equals a.BookId
-                join l in location on b.UserId equals l.LocationId
+                join l in location on b.UserId equals l.Id
                 select b.Id;
             var query = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
