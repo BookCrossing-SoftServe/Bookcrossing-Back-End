@@ -2,11 +2,13 @@
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using Domain.RDBMS.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : ControllerBase
@@ -43,6 +45,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // GET: api/Authors/"Tom"
+        [AllowAnonymous]
         [HttpGet("{filter}")]
         public async Task<ActionResult> GetAuthor(string filter)
         {

@@ -33,7 +33,6 @@ namespace Infrastructure.RDBMS
                 context.Author.Add(new Author()
                 {
                     FirstName = "List",
-                    MiddleName = "Superman",
                     LastName = "Ferents",
                     IsConfirmed = true
                 });

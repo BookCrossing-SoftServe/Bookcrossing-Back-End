@@ -7,7 +7,6 @@ namespace Domain.RDBMS.Entities
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string MiddleName { get; set; }
         public bool IsConfirmed { get; set; }
 
         public virtual List<BookAuthor> BookAuthor { get; set; } 
