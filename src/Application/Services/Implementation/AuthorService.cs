@@ -59,8 +59,7 @@ namespace Application.Services.Implementation
         {
             return _mapper.Map<List<AuthorDto>>(await _authorRepository.GetAll()
                                                                  .Where(x => x.FirstName.StartsWith(filter) 
-                                                                     || x.LastName.StartsWith(filter) 
-                                                                     || x.MiddleName.StartsWith(filter))
+                                                                     || x.LastName.StartsWith(filter))
                                                                  .ToListAsync());
         }
 
