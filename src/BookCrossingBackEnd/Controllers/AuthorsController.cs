@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorsController : ControllerBase
@@ -45,7 +44,6 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // GET: api/Authors/"Tom"
-        [AllowAnonymous]
         [HttpGet("{filter}")]
         public async Task<ActionResult> GetAuthor(string filter)
         {
@@ -59,6 +57,7 @@ namespace BookCrossingBackEnd.Controllers
 
 
         // PUT: api/Authors
+        [Authorize(Roles = "Admin")]
         [HttpPut("merge")]
         public async Task<IActionResult> PutAuthor([FromBody]AuthorMergeDto authorDto)
         {
@@ -70,6 +69,7 @@ namespace BookCrossingBackEnd.Controllers
             return CreatedAtAction("GetAuthor", new { id = author.Id }, author);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> PutAuthor([FromBody]AuthorDto authorDto)
         {
@@ -90,6 +90,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/Authors/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:min(1)}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
