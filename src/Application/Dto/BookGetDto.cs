@@ -14,10 +14,8 @@ namespace Application.Dto
         public bool Available { get; set; }
         public string Notice { get; set; }
         public string ImagePath { get; set; }
-
         public List<AuthorDto> Authors { get; set; }
         public List<GenreDto> Genres { get; set; }
-
-        public List<RoomLocationDto> Locations { get; set; }
+        public RoomLocationDto Location { get; set; }
     }
 }

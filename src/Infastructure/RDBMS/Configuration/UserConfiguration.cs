@@ -37,11 +37,28 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasColumnName("password")
                 .HasMaxLength(32);
 
+            builder.Property(e => e.BirthDate)
+                .HasColumnName("birth_date")
+                .HasColumnType("datetime2");
+
+            builder.Property(e => e.RegisteredDate)
+                .HasColumnName("registered_date")
+                .HasColumnType("datetime2")
+                .HasDefaultValueSql("GETUTCDATE()");
+
             builder.Property(e => e.RoleId).HasColumnName("role_id");
+
+            builder.Property(e => e.UserRoomId).HasColumnName("user_room_id");
 
             builder.HasOne(d => d.Role)
                 .WithMany(p => p.User)
-                .HasForeignKey(d => d.RoleId);
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.HasOne(d => d.UserRoom)
+                .WithMany(p => p.User)
+                .HasForeignKey(d => d.UserRoomId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
         }       
     }

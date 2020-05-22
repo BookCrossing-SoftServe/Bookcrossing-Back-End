@@ -15,17 +15,13 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.FirstName)
                 .IsRequired()
                 .HasColumnName("firstname")
-                .HasMaxLength(20);
+                .HasMaxLength(100);
 
             builder.Property(e => e.LastName)
                 .IsRequired()
                 .HasColumnName("lastname")
-                .HasMaxLength(20);
-
-            builder.Property(e => e.MiddleName)
-                .HasColumnName("middlename")
-                .HasMaxLength(30);
-
+                .HasMaxLength(100);
+            
             builder.Property(e => e.IsConfirmed)
                 .HasColumnName("is_confirmed");
         }       

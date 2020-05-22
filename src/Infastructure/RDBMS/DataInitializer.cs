@@ -33,7 +33,6 @@ namespace Infrastructure.RDBMS
                 context.Author.Add(new Author()
                 {
                     FirstName = "List",
-                    MiddleName = "Superman",
                     LastName = "Ferents",
                     IsConfirmed = true
                 });
@@ -90,11 +89,10 @@ namespace Infrastructure.RDBMS
                 });
                 context.SaveChanges();
             }
-            if (!context.UserLocation.Any())
+            if (!context.UserRoom.Any())
             {
-                context.UserLocation.Add(new UserLocation()
+                context.UserRoom.Add(new UserRoom()
                 {
-                    UserId = 1,
                     LocationId = 1,
                     RoomNumber = 4014
                 });

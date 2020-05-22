@@ -25,6 +25,11 @@ namespace Infrastructure.RDBMS.Configuration
                 .IsRequired()
                 .HasColumnName("street")
                 .HasMaxLength(50);
+
+            builder.HasMany(d => d.UserRoom)
+                .WithOne(p => p.Location)
+                .HasForeignKey(d => d.LocationId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

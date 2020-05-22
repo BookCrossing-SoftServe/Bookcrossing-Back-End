@@ -8,7 +8,6 @@ namespace Domain.RDBMS.Entities
         public string City { get; set; }
         public string Street { get; set; }
         public string OfficeName { get; set; }
-
-        public virtual List<UserLocation> UserLocation { get; set; } 
+        public virtual List<UserRoom> UserRoom { get; set; } 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Domain.RDBMS.Entities
 {
@@ -11,11 +12,13 @@ namespace Domain.RDBMS.Entities
         public string Email { get; set; }
         public string Password { get; set; }
         public int RoleId { get; set; }
-
+        public int? UserRoomId { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime RegisteredDate { get; set; }
         public virtual Role Role { get; set; }
         public virtual List<Book> Book { get; set; } 
         public virtual List<Request> RequestOwner { get; set; } 
         public virtual List<Request> RequestUser { get; set; }
-        public virtual List<UserLocation> UserLocation { get; set; }
+        public virtual UserRoom UserRoom { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Infrastructure.RDBMS
         public  DbSet<Genre> Genre { get; set; }
         public  DbSet<Location> Location { get; set; }
         public  DbSet<Request> Request { get; set; }
-        public  DbSet<UserLocation> UserLocation { get; set; }
+        public  DbSet<UserRoom> UserRoom { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<ResetPassword> ResetPassword { get; set; }
         public DbSet<ScheduleJob> ScheduleJob { get; set; }
@@ -36,7 +36,7 @@ namespace Infrastructure.RDBMS
             base.OnModelCreating(modelBuilder);
         
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new UserLocationConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoomConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
             modelBuilder.ApplyConfiguration(new RequestConfiguration());
             modelBuilder.ApplyConfiguration(new BookConfiguration());

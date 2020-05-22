@@ -127,38 +127,5 @@ namespace ApplicationTest.Validators
         }
 
         #endregion
-
-        #region MiddleName
-
-        [Test]
-        public void MiddleName_IsNull_ShouldNotThrowsException()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(author => author.MiddleName, null as string);
-        }
-
-        [Test]
-        public void MiddleName_IsNotNull_ShouldNotThrowException()
-        {
-            _validator.ShouldNotHaveValidationErrorFor(author => author.MiddleName, "John");
-        }
-        [Test]
-        public void MiddleName_MoreThanThirtyCharacters_ThrowsException()
-        {
-            _validator.ShouldHaveValidationErrorFor(author => author.MiddleName, "JohnJohnJohnJohnJohnJohnJohnJohn");
-        }
-
-        [Test, TestCaseSource(nameof(_namesWithForbiddenCharacters))]
-        public void MiddleName_ContainsForbiddenCharacters_ThrowsException(string value)
-        {
-            _validator.ShouldHaveValidationErrorFor(author => author.MiddleName, value);
-        }
-
-        [Test, TestCaseSource(nameof(_namesWithPermittedCharacters))]
-        public void MiddleName_ContainsPermittedCharacters_ShouldNotThrowException(string value)
-        {
-            _validator.ShouldNotHaveValidationErrorFor(author => author.MiddleName, value);
-        }
-
-        #endregion
     }
 }
