@@ -14,6 +14,12 @@ namespace Application.Services.Implementation
         {
             _context = context;
         }
+
+        public IEnumerable<Claim> GetClaims()
+        {
+            return _context.HttpContext.User.Claims; 
+        }
+
         public int GetUserId()
         {
             var claimsIdentity = _context.HttpContext.User.Identity as ClaimsIdentity;
@@ -25,5 +31,7 @@ namespace Application.Services.Implementation
         {
             return _context.HttpContext.User.IsInRole("Admin");
         }
+
+
     }
 }
