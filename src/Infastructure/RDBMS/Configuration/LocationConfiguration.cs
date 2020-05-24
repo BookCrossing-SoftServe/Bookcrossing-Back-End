@@ -26,10 +26,20 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasColumnName("street")
                 .HasMaxLength(50);
 
+            builder.Property(e => e.Street)
+                .IsRequired()
+                .HasColumnName("street")
+                .HasMaxLength(50);
+
+            builder.Property(e => e.IsActive)
+                .HasColumnName("is_active");
+
             builder.HasMany(d => d.UserRoom)
                 .WithOne(p => p.Location)
                 .HasForeignKey(d => d.LocationId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.HasQueryFilter(location => location.IsActive == true);
         }
     }
 }
