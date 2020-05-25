@@ -84,11 +84,11 @@ namespace Application.Services.Implementation
 
             var emailMessageForReceiveConfirmation = new RequestMessage()
             {
-                UserName = book.User.FirstName + " " + book.User.LastName,
+                UserName = user.FirstName + " " + user.LastName,
                 BookName = book.Name,
                 BookId = book.Id,
                 RequestId = request.Id,
-                UserAddress = new MailboxAddress($"{book.User.Email}"),
+                UserAddress = new MailboxAddress($"{user.Email}"),
             };
             _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
 
@@ -231,6 +231,7 @@ namespace Application.Services.Implementation
             var request = await _requestRepository.GetAll()
                 .Include(x => x.Book)
                 .Include(x => x.Owner)
+                .Include(x=>x.User)
                 .FirstOrDefaultAsync(x => x.Id == requestId);
             if (request == null)
             {
