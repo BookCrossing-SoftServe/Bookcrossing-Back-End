@@ -185,10 +185,10 @@ namespace ApplicationTest.Services
             var users = GetUsers();
             var list = new List<Book>
             {
-                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", Available = true, User = users[0], UserId = 1},
-                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", Available = true, User = users[1], UserId = 2},
-                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", Available = false, User = users[0], UserId = 1},
-                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", Available = false, User = users[0], UserId = 1},
+                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", State = BookState.Available, User = users[1], UserId = 2},
+                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", State = BookState.Available, User = users[0], UserId = 1},
             };
             return list;
         }

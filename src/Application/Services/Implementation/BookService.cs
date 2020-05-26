@@ -180,7 +180,7 @@ namespace Application.Services.Implementation
         {
             if (parameters.ShowAvailable == true)
             {
-                query = query.Where(b => b.Available);
+                query = query.Where(b => b.State == BookState.Available);
             }
             if (parameters.Location != null)
             {
