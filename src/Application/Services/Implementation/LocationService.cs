@@ -65,7 +65,7 @@ namespace Application.Services.Implementation
         }
         public async Task<PaginationDto<LocationDto>> GetAll(FullPaginationQueryParams parameters)
         {
-            var query = _locationRepository.GetAll();
+            var query = _locationRepository.GetAll().IgnoreQueryFilters();
             return await _paginationService.GetPageAsync<LocationDto, Location>(query, parameters);
         }
     }
