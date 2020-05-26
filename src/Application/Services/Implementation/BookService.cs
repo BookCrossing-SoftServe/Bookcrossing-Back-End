@@ -201,7 +201,7 @@ namespace Application.Services.Implementation
             };
             await _emailSenderService.SendForBookActivatedAsync(emailMessageForBookActivated);
             book.State = BookState.Available;
-            _bookRepository.Update(book);
+            await _bookRepository.Update(book, new List<string>() { "State" });
             await _bookRepository.SaveChangesAsync();
 
             return true;
@@ -245,7 +245,7 @@ namespace Application.Services.Implementation
             };
             await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForOwner);
             book.State = BookState.InActive;
-            _bookRepository.Update(book);
+            await _bookRepository.Update(book, new List<string>() { "State" });
             await _bookRepository.SaveChangesAsync();
 
             return true;
