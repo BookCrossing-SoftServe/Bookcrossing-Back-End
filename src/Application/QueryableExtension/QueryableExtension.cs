@@ -66,6 +66,9 @@ namespace Application.QueryableExtension
                 case FilterMethod.Equal:
                     return Expression.Equal(property,
                         GetConstant(TryCastValueType(filter.Value, property.Type), property.Type));
+                case FilterMethod.NotEqual:
+                    return Expression.NotEqual(property,
+                        GetConstant(TryCastValueType(filter.Value, property.Type), property.Type));
                 default:
                     return property;
             }

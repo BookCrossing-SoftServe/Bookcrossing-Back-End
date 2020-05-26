@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200524190618_AddIsActiveColumnToLocations")]
+    partial class AddIsActiveColumnToLocations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +32,8 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnName("firstname")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.Property<bool>("IsConfirmed")
                         .HasColumnName("is_confirmed")
@@ -40,8 +42,8 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnName("lastname")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.HasKey("Id");
 
@@ -55,6 +57,10 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("id")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Available")
+                        .HasColumnName("available")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ImagePath")
                         .HasColumnName("imagepath")
@@ -76,12 +82,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("publisher")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
-
-                    b.Property<string>("State")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50)
-                        .HasDefaultValue("Available");
 
                     b.Property<int>("UserId")
                         .HasColumnName("user_id")

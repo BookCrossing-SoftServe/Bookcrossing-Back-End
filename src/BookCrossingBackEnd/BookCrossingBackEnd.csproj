@@ -31,6 +31,14 @@
     <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.Designer.cs" />
     <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.cs" />
     <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200524184607_AddIsActiveColumnToLocations.cs" />
+    <Compile Remove="Migrations\20200524184607_AddIsActiveColumnToLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200524185009_AddIsActiveColumnToLocations.cs" />
+    <Compile Remove="Migrations\20200524185009_AddIsActiveColumnToLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.cs" />
+    <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.cs" />
+    <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
