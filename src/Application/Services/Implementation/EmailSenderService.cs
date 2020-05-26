@@ -84,6 +84,44 @@ namespace Application.Services.Implementation
 
             await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
+        /// <inheritdoc />
+        public async Task SendForBookDeactivatedAsync(RequestMessage requestMessage)
+        {
+            string body = string.Empty;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "BookDeactivated.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
+            body = body.Replace("{BOOK.ID}", Convert.ToString(requestMessage.BookId));
+            body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+
+            var message = new Message(new List<string>() { requestMessage.UserAddress.ToString() },
+                $"Book {requestMessage.BookName} was deactivated!", body);
+
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
+        }
+        /// <inheritdoc />
+        public async Task SendForBookActivatedAsync(RequestMessage requestMessage)
+        {
+            string body = string.Empty;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "BookActivated.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
+            body = body.Replace("{BOOK.ID}", Convert.ToString(requestMessage.BookId));
+            body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+
+            var message = new Message(new List<string>() { requestMessage.UserAddress.ToString() },
+                $"Book {requestMessage.BookName} was activated!", body);
+
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
+        }
 
         /// <inheritdoc />
         public async Task SendForRequestAsync(RequestMessage requestMessage)
