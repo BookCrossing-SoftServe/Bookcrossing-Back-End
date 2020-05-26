@@ -300,7 +300,7 @@ namespace ApplicationTest.Services
 
             var booksResult = await _bookService.GetAllAsync(query);
 
-            booksResult.Page.Should().HaveCount(2);
+            booksResult.Page.Should().HaveCount(4);
         }
         [Test]
         public async Task GetAll_WhenHasShowAvailableFalse_Returns_all_books()
