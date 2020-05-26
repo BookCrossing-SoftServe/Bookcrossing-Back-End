@@ -66,7 +66,6 @@ namespace BookCrossingBackEnd.Controllers
             return NoContent();
         }
         
-        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/deactivate")]
         public async Task<IActionResult> DeactivateBookAsync([FromRoute] int id)
         {
@@ -77,7 +76,7 @@ namespace BookCrossingBackEnd.Controllers
             }
             return NoContent();
         }
-        [Authorize(Roles = "Admin")]
+
         [HttpPut("{id}/activate")]
         public async Task<IActionResult> ActivateBookAsync([FromRoute] int id)
         {
