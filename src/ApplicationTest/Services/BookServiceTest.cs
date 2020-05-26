@@ -30,6 +30,8 @@ namespace ApplicationTest.Services
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
+        private Mock<IEmailSenderService> _emailSenderServiceMock;
+        private Mock<IHangfireJobScheduleService> _hangfireJobScheduleService;
         private IMapper _mapper;
 
         [OneTimeSetUp]
@@ -41,6 +43,9 @@ namespace ApplicationTest.Services
             _requestServiceMock = new Mock<IRepository<Request>>();
             _userLocationServiceMock = new Mock<IRepository<User>>();
             _userResolverServiceMock = new Mock<IUserResolverService>();
+            _imageServiceMock = new Mock<IImageService>();
+            _emailSenderServiceMock = new Mock<IEmailSenderService>();
+            _hangfireJobScheduleService = new Mock<IHangfireJobScheduleService>();
             _imageServiceMock = new Mock<IImageService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -56,7 +61,8 @@ namespace ApplicationTest.Services
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object);
+                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
+                _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object);
 
             var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();

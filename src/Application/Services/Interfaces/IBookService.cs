@@ -61,5 +61,19 @@ namespace Application.Services.Interfaces
         ///  <param name="parameters">filter parametrs</param>
         /// <returns></returns>
         Task<PaginationDto<BookGetDto>> GetReadBooksAsync(BookQueryParams parameters);
+
+        /// <summary>
+        /// Change book`s status to available
+        /// </summary>
+        ///  <param name="bookId">Book Id</param>
+        /// <returns></returns>
+        Task<bool> ActivateAsync(int bookId);
+
+        /// <summary>
+        /// Change book`s status to InActive
+        /// </summary>
+        ///  <param name="bookId">Book Id</param>
+        /// <returns></returns>
+        Task<bool> DeactivateAsync(int bookId);
     }
 }

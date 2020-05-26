@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
@@ -59,6 +60,29 @@ namespace BookCrossingBackEnd.Controllers
 
             var isBookUpdated = await _bookService.UpdateAsync(bookDto);
             if (!isBookUpdated)
+            {
+                return BadRequest();
+            }
+            return NoContent();
+        }
+        
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}/deactivate")]
+        public async Task<IActionResult> DeactivateBookAsync([FromRoute] int id)
+        {
+            var isBookDeactivated = await _bookService.DeactivateAsync(id);
+            if (!isBookDeactivated)
+            {
+                return BadRequest();
+            }
+            return NoContent();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}/activate")]
+        public async Task<IActionResult> ActivateBookAsync([FromRoute] int id)
+        {
+            var isBookActivated = await _bookService.ActivateAsync(id);
+            if (!isBookActivated)
             {
                 return BadRequest();
             }

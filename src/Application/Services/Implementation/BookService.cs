@@ -13,6 +13,8 @@ using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using Infrastructure.RDBMS;
 using System;
+using Application.Dto.Email;
+using MimeKit;
 
 namespace Application.Services.Implementation
 {
@@ -27,10 +29,12 @@ namespace Application.Services.Implementation
         private readonly IPaginationService _paginationService;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
+        private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
+        private readonly IEmailSenderService _emailSenderService;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
             IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
-            IUserResolverService userResolverService, IImageService imageService)
+            IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
@@ -41,6 +45,8 @@ namespace Application.Services.Implementation
             _mapper = mapper;
             _imageService = imageService;
             _userResolverService = userResolverService;
+            _hangfireJobScheduleService = hangfireJobScheduleService;
+            _emailSenderService = emailSenderService;
         }
 
         public async Task<BookGetDto> GetByIdAsync(int bookId)
@@ -174,6 +180,75 @@ namespace Application.Services.Implementation
             var readBooks = ownedBooks.Union(currentlyOwnedBooks);
             var query = GetFilteredQuery(readBooks, parameters);
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
+        }
+
+        public async Task<bool> ActivateAsync(int bookId)
+        {
+            var book = _bookRepository.GetAll()
+                .Include(i => i.User).Where(x => x.Id == bookId).ToList()
+                .FirstOrDefault();
+            if (book == null)
+            {
+                return false;
+            }
+
+            var emailMessageForBookActivated = new RequestMessage()
+            {
+                UserName = book.User.FirstName + " " + book.User.LastName,
+                BookName = book.Name,
+                BookId = book.Id,
+                UserAddress = new MailboxAddress($"{book.User.Email}"),
+            };
+            await _emailSenderService.SendForBookActivatedAsync(emailMessageForBookActivated);
+            book.State = BookState.Available;
+            _bookRepository.Update(book);
+            await _bookRepository.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeactivateAsync(int bookId)
+        {
+            var book = _bookRepository.GetAll()
+                .Include(i => i.User).Where(x => x.Id == bookId).ToList()
+                .FirstOrDefault();
+            if (book == null)
+            {
+                return false;
+            }
+
+            if (book.State == BookState.Requested)
+            {
+                var request = _requestRepository.GetAll()
+                    .Include(i => i.Book)
+                    .Include(i => i.Book)
+                    .Include(i => i.User).Where(x=>x.BookId == bookId).ToList()
+                    .Last();
+                var emailMessageForBookDeactivatedForRequester = new RequestMessage()
+                {
+                    UserName = request.User.FirstName + " " + request.User.LastName,
+                    BookName = book.Name,
+                    BookId = book.Id,
+                    UserAddress = new MailboxAddress($"{request.User.Email}"),
+                };
+                await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForRequester);
+                _hangfireJobScheduleService.DeleteRequestScheduleJob(request.Id);
+                _requestRepository.Remove(request);
+                await _requestRepository.SaveChangesAsync();
+            }
+            var emailMessageForBookDeactivatedForOwner = new RequestMessage()
+            {
+                UserName = book.User.FirstName + " " + book.User.LastName,
+                BookName = book.Name,
+                BookId = book.Id,
+                UserAddress = new MailboxAddress($"{book.User.Email}"),
+            };
+            await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForOwner);
+            book.State = BookState.InActive;
+            _bookRepository.Update(book);
+            await _bookRepository.SaveChangesAsync();
+
+            return true;
         }
 
         private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)
