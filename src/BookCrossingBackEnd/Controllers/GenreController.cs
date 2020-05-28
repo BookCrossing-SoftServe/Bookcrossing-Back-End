@@ -48,11 +48,11 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut]
         public async Task<IActionResult> PutGenre(GenreDto genreDto)
         {
-            _logger.LogInformation("Update genre {Id}", genreDto.Id);
+            _logger.LogInformation("Update genre {GenreDto}", genreDto);
             var updated = await _genreService.Update(genreDto);
             if (!updated)
             {
-                _logger.LogWarning("Update genre ({Id}) NOT FOUND", genreDto.Id);
+                _logger.LogWarning("Update genre ({GenreDto}) NOT FOUND", genreDto);
                 return NotFound();
             }
             return NoContent();
@@ -62,7 +62,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost]
         public async Task<ActionResult<GenreDto>> PostGenre([FromBody]GenreDto genreDto)
         {
-            _logger.LogInformation("Post genre {Id}", genreDto.Id);
+            _logger.LogInformation("Post genre {GenreDto}", genreDto);
             var insertedGenre = await _genreService.Add(genreDto);
             return CreatedAtAction("GetGenre", new { id = insertedGenre.Id }, insertedGenre);
         }
