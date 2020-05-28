@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200522121100_refresh-migr")]
+    partial class refreshmigr
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,6 +58,10 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Available")
+                        .HasColumnName("available")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ImagePath")
                         .HasColumnName("imagepath")
                         .HasColumnType("nvarchar(260)")
@@ -76,12 +82,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("publisher")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
-
-                    b.Property<string>("State")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50)
-                        .HasDefaultValue("Available");
 
                     b.Property<int>("UserId")
                         .HasColumnName("user_id")
@@ -160,10 +160,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("city")
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnName("is_active")
-                        .HasColumnType("bit");
 
                     b.Property<string>("OfficeName")
                         .HasColumnName("office_name")

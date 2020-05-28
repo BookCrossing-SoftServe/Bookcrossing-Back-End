@@ -68,7 +68,7 @@ namespace ApplicationTest.Services
                 _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
                 _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object, _rootCommentRepository.Object);
 
-            var authorMock = GetBookAuthor().AsQueryable();
+                var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
             var usersMock = GetUsers().AsQueryable();
             _bookAuthorRepositoryMock.Setup(s => s.GetAll()).Returns(authorMock);

@@ -8,6 +8,6 @@ namespace Application.Dto.QueryParams
         public string SearchTerm { get; set; }
         public int[] Genres { get; set; }
         public int? Location { get; set; }
-        public bool? ShowAvailable { get; set; }
+        public bool? ShowAvailable { get; set; }  
     }
 }

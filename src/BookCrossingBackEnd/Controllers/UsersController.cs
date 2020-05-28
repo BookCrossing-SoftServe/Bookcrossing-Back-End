@@ -37,6 +37,7 @@ namespace BookCrossingBackEnd.Controllers
         /// <returns></returns>
         // GET: api/<controller>
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get()
         {
             var users = await UserService.GetAllUsers();
