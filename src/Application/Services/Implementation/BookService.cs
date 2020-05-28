@@ -14,6 +14,8 @@ using Application.Services.Interfaces;
 using Infrastructure.RDBMS;
 using System;
 using Application.Dto.Email;
+using Domain.NoSQL;
+using Domain.NoSQL.Entities;
 using MimeKit;
 
 namespace Application.Services.Implementation
@@ -27,6 +29,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<Request> _requestRepository;
         private readonly IUserResolverService _userResolverService;
         private readonly IPaginationService _paginationService;
+        private readonly IRootRepository<BookRootComment> _rootCommentRepository;
         private readonly IImageService _imageService;
         private readonly IMapper _mapper;
         private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
@@ -34,7 +37,8 @@ namespace Application.Services.Implementation
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
             IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
-            IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService)
+            IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService,
+            IRootRepository<BookRootComment> rootCommentRepository)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
@@ -47,6 +51,7 @@ namespace Application.Services.Implementation
             _userResolverService = userResolverService;
             _hangfireJobScheduleService = hangfireJobScheduleService;
             _emailSenderService = emailSenderService;
+            _rootCommentRepository = rootCommentRepository;
         }
 
         public async Task<BookGetDto> GetByIdAsync(int bookId)
@@ -249,6 +254,14 @@ namespace Application.Services.Implementation
             await _bookRepository.SaveChangesAsync();
 
             return true;
+        }
+
+        /// <inheritdoc/>
+
+        public async Task<BookRatingDto> GetRatingAsync(int bookId)
+        {
+            var rating = _rootCommentRepository.GetAvgRatingAsync().Result;
+            return new BookRatingDto() {BookId = bookId, AvgRating = rating};
         }
 
         private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)

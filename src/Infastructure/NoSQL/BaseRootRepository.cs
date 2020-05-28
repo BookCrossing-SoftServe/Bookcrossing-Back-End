@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -97,6 +98,13 @@ namespace Infrastructure.NoSQL
         public async Task<IEnumerable<TRootEntity>> GetAllAsync()
         {
             return await _collection.Find(Builders<TRootEntity>.Filter.Empty).ToListAsync();
+        }
+
+        public async Task<double> GetAvgRatingAsync()
+        {
+            var result = await _collection.Aggregate()
+                .Group(new BsonDocument { { "_id", "$BookId" }, { "avg", new BsonDocument("$avg", "$Rating") } }).FirstOrDefaultAsync();
+            return Convert.ToDouble(result.GetValue("avg"));
         }
 
         public async Task<UpdateResult> UpdateByIdAsync(string id, TRootEntity entity)

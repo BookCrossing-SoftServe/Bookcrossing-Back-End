@@ -75,5 +75,12 @@ namespace Application.Services.Interfaces
         ///  <param name="bookId">Book Id</param>
         /// <returns></returns>
         Task<bool> DeactivateAsync(int bookId);
+
+        /// <summary>
+        /// Get avg book rating by id
+        /// </summary>
+        ///  <param name="bookId">Book Id</param>
+        /// <returns></returns>
+        Task<BookRatingDto> GetRatingAsync(int bookId);
     }
 }

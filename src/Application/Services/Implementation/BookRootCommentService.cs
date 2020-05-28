@@ -27,7 +27,8 @@ namespace Application.Services.Implementation
                         Text = insertDto.Text,
                         BookId = insertDto.BookId,
                         OwnerId = insertDto.OwnerId,
-                        Date = DateTime.Now.ToUniversalTime().ToString()
+                        Date = DateTime.Now.ToUniversalTime().ToString(),
+                        Rating = insertDto.Rating
                     });
         }
 
@@ -54,7 +55,7 @@ namespace Application.Services.Implementation
 
         public async Task<int> Update(RootUpdateDto updateDto)
         {
-            var updateResult = await _rootCommentRepository.UpdateByIdAsync(updateDto.Id, new BookRootComment() { Text = updateDto.Text });
+            var updateResult = await _rootCommentRepository.UpdateByIdAsync(updateDto.Id, new BookRootComment() { Text = updateDto.Text, Rating = updateDto.Rating});
             return Convert.ToInt32(updateResult.ModifiedCount);
         }
     }
