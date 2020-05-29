@@ -37,7 +37,7 @@ namespace Domain.NoSQL
         /// Get average book rating
         /// </summary>
         /// <returns>double from 1 to 5</returns>
-        Task<double> GetAvgRatingAsync();
+        Task<double> GetAvgRatingAsync(int id);
 
         /// <summary>
         /// Get entity from collection

@@ -56,7 +56,7 @@ namespace Application.Services.Implementation
 
         public async Task<BookGetDto> GetByIdAsync(int bookId)
         {
-            return _mapper.Map<BookGetDto>(await _bookRepository.GetAll()
+            var bookDto = _mapper.Map<BookGetDto>(await _bookRepository.GetAll()
                                                                .Include(p => p.BookAuthor)
                                                                .ThenInclude(x => x.Author)
                                                                .Include(p => p.BookGenre)
@@ -65,6 +65,8 @@ namespace Application.Services.Implementation
                                                                .ThenInclude(x => x.UserRoom)
                                                                .ThenInclude(x => x.Location)
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
+            bookDto.AvgRating = _rootCommentRepository.GetAvgRatingAsync(bookId).Result;
+            return bookDto;
         }
 
         public async Task<BookGetDto> AddAsync(BookPostDto bookDto)
@@ -165,6 +167,14 @@ namespace Application.Services.Implementation
             var query = _bookRepository.GetAll().Where(x => allBooks.Contains(x.Id));
             query = GetFilteredQuery(query, parameters);
 
+            var bookDtos = await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
+
+            foreach (var book in bookDtos.Page)
+            {
+                book.AvgRating = _rootCommentRepository.GetAvgRatingAsync(book.Id).Result;
+            }
+
+
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
@@ -254,14 +264,6 @@ namespace Application.Services.Implementation
             await _bookRepository.SaveChangesAsync();
 
             return true;
-        }
-
-        /// <inheritdoc/>
-
-        public async Task<BookRatingDto> GetRatingAsync(int bookId)
-        {
-            var rating = _rootCommentRepository.GetAvgRatingAsync().Result;
-            return new BookRatingDto() {BookId = bookId, AvgRating = rating};
         }
 
         private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)

@@ -14,6 +14,7 @@ namespace Application.Dto
         public BookState State { get; set; }
         public string Notice { get; set; }
         public string ImagePath { get; set; }
+        public double AvgRating { get; set; }
         public List<AuthorDto> Authors { get; set; }
         public List<GenreDto> Genres { get; set; }
         public RoomLocationDto Location { get; set; }

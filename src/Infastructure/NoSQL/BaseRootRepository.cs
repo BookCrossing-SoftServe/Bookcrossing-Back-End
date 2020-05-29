@@ -100,9 +100,9 @@ namespace Infrastructure.NoSQL
             return await _collection.Find(Builders<TRootEntity>.Filter.Empty).ToListAsync();
         }
 
-        public async Task<double> GetAvgRatingAsync()
+        public async Task<double> GetAvgRatingAsync(int bookId)
         {
-            var result = await _collection.Aggregate()
+            var result = await _collection.Aggregate().Match(new BsonDocument { { "BookId", bookId } })
                 .Group(new BsonDocument { { "_id", "$BookId" }, { "avg", new BsonDocument("$avg", "$Rating") } }).FirstOrDefaultAsync();
             return Convert.ToDouble(result.GetValue("avg"));
         }
