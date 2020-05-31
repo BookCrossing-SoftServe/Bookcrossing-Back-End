@@ -1,16 +1,50 @@
 {
   "common": {
     "language": "Change language",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "add": "Add",
+    "edit": "Edit",
+    "editing": "Edit",
+    "update": "Update",
+    "save": "Save", 
     "id": "Id",
     "home": "Home",
     "routes": "All routes",
-    "books":  "Books",
+    "books": "Books",
+    "login": "Login",
+    "registration": "Registration",
+    "myProfile": "My Profile",
+    "donate": "Donate",
+    "registered": "Registered",
+    "requested": "Requested",
+    "currentlyOwned": "Currently Owned",
+    "read": "Read",
+    "logOut": "Log Out",
     "languages": {
       "gb": "English",
       "ua": "Ukrainian"
     }
   },
+
+  "common-errors": {
+    "error-message": "Oops something went wrong!",
+    "validation-required": "This Field is required",
+    "validation-min-length": "This Field Has to be more than {{value}} characters",
+    "validation-max-length": "This Field less than {{value}} characters",
+    "validation-letter-symbol-pattern": "Only letters and symbols",
+    "validation-are-acceptable": "are acceptable"
+  },
   "components": {
+    "searchBar": {
+      "searchPlaceholder": "Enter Book Title or Author"
+    },
+    "books": {
+      "locations": "Locations",
+      "categories": "Categories",
+      "availableOnly": "Available Only"
+    },
     "requests": {
       "requests": "All requests",
       "book-name": "Book name",
@@ -19,7 +53,9 @@
       "delete": "Delete",
       "user-who-requested": "Who requested?",
       "previous": "Previous",
-      "next": "Next"
+      "first": "First",
+      "next": "Next",
+      "last": "Last"
     },
     "home": {
       "rules": "Rules",
@@ -53,7 +89,101 @@
       "password-required-error": "You must enter yout password",
       "input-password-length": "Password length must be greater than 6",
       "confirm-password": "Confirm new password"
+    },
+    "admin": {
+      "table-management": "Table Management",
+      "add": "Add New",
+      "search": "Search",
+      "authors": {
+        "authors": "Authors",
+        "merge": "Merge",
+        "unselect": "Unselect All",
+        "first-name": "First Name",
+        "last-name": "Last Name",
+        "approved": "Approved",
+        "approve": "Approve",
+        "approve-confirm": "Are you sure you want to approve this author?",
+        "approve-success": "Author was approved!",
+        "merge-success": "Authors were merged successfully!",
+        "add-success": "New author was created successfully!",
+        "update-success": "Author was Edited successfully!",
+        "error-msg-merge": "Please select two or more authors"
+      },
+      "authors-form": {
+        "edit-title": "Edit Author",
+        "edit-button": "Update",
+        "add-title": "Add Author",
+        "add-button": "Add",
+        "merge-title": "Merge Author",
+        "merge-button": "Merge",
+        "merge-selected": "Selected authors",
+        "merge-msg": "Authors above will be merged into a single author"
+      },
+      "locations": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "status": "Status",
+        "locations": "Locations",
+        "display-inactive": "Display Inactive",
+        "city": "City",
+        "street": "Street",
+        "office-name": "Office Name"
+      },
+      "location-form": {
+        "add-title": "Add Location",
+        "edit-title": "Edit Location",
+        "update-success-msg": "Location was updated successfully",
+        "add-success-msg": "New location was created successfully"
+      },
+      "genres": {
+        "genre": "Category",
+        "genres": "Categories"
+      },
+      "dashboard": {
+        "data-range": "Data range",
+        "choose-data-range": "Choose Time Period",
+        "week": "Week",
+        "month": "Month",
+        "six-months": "6 Month³",
+        "year": "Year",
+        "dashboard": "Dashboard",
+        "all": "All",
+        "books-registered": "Books registered",
+        "users": "Users",
+        "books": "New books",
+        "inactive-books": "Deactivated books",
+        "registered-per-city": "Registered Books per City",
+        "availability": "Availability",
+        "reset": "Reset",
+        "line-chart": {
+          "labels": {
+            "new-book-registered": "New Books Registered",
+            "new-users": "New users"
+          },
+          "months": {
+            "january": "January",
+            "february": "February",
+            "march": "March",
+            "april": "April",
+            "may": "May",
+            "june": "June",
+            "july": "July",
+            "august": "August",
+            "september": "September",
+            "october": "October",
+            "november": "November",
+            "december": "December"
+          }
+        },
+        "pie-chart": {
+          "labels": {
+            "requested": "Requested",
+            "available": "Available",
+            "reading": "Reading"
+          },
+          "title": "Total"
+        }
+      }
     }
-
   }
 }
