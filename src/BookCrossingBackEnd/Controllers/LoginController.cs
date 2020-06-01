@@ -46,6 +46,7 @@ namespace BookCrossingBackEnd.Controllers
 
             UserTokenDto userTokenDto = new UserTokenDto
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Token = tokenDto
@@ -59,26 +60,20 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<UserTokenDto>> Refresh([FromBody] TokenDto refreshToken)
         {
             var user = await _tokenService.VerifyRefreshToken(refreshToken.RefreshToken);
-            if (user.Id != _userResolverService.GetUserId()) return Forbid();
             
             var claims = _tokenService.GetPrincipalFromExpiredToken(refreshToken.JWT);
             var tokens = await _tokenService.GenerateTokens(user, claims.Claims);
 
             UserTokenDto userToken = new UserTokenDto
             {
+                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Token = tokens
             };
             return Ok(userToken);
         }
-        [HttpGet]
-        [Authorize(Roles ="Admin")]
-        public IActionResult Get()
-        {
-            IActionResult actionResult = new ObjectResult(_userResolverService.GetClaims());
-            return actionResult;
-        }
+     
 
     }
 }
