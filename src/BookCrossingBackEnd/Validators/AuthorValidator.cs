@@ -12,11 +12,11 @@ namespace BookCrossingBackEnd.Validators
             RuleFor(x => x.FirstName)
                 .NotNull()
                 .Length(2, 20)
-                .Matches(@"^([a-zA-Z '-]+)$");
+                .Matches(@"^([(a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ)'-]+)$");
             RuleFor(x => x.LastName)
                 .NotNull()
                 .Length(2, 20)
-                .Matches(@"^([a-zA-Z '-]+)$");
+                .Matches(@"^([(a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ)'-]+)$");
         }
     }
 }
