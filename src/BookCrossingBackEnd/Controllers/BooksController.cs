@@ -10,7 +10,6 @@ namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class BooksController : ControllerBase
     {
         private readonly IBookService _bookService;
