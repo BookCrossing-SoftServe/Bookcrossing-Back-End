@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Domain.RDBMS;
 
 namespace ApplicationTest.Services.Comment.Book
 {
@@ -24,6 +25,7 @@ namespace ApplicationTest.Services.Comment.Book
     {
         private IBookRootCommentService _bookRootCommentService;
         private Mock<IRootRepository<BookRootComment>> _mockRootRepository;
+        private Mock<IRepository<Domain.RDBMS.Entities.Book>> _bookRepository;
         private Mock<ICommentOwnerMapper> _mockMapper;
 
         [SetUp]
@@ -31,7 +33,8 @@ namespace ApplicationTest.Services.Comment.Book
         {
             _mockRootRepository = new Mock<IRootRepository<BookRootComment>>();
             _mockMapper = new Mock<ICommentOwnerMapper>();
-            _bookRootCommentService = new BookRootCommentService(_mockRootRepository.Object, _mockMapper.Object);
+            _bookRepository = new Mock<IRepository<Domain.RDBMS.Entities.Book>>();
+            _bookRootCommentService = new BookRootCommentService(_mockRootRepository.Object, _mockMapper.Object, _bookRepository.Object);
         }
 
         private IEnumerable<BookRootComment> GetTestCommentsEntities()

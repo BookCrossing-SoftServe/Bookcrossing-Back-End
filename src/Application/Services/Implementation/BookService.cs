@@ -56,7 +56,7 @@ namespace Application.Services.Implementation
 
         public async Task<BookGetDto> GetByIdAsync(int bookId)
         {
-            var bookDto = _mapper.Map<BookGetDto>(await _bookRepository.GetAll()
+            return _mapper.Map<BookGetDto>(await _bookRepository.GetAll()
                                                                .Include(p => p.BookAuthor)
                                                                .ThenInclude(x => x.Author)
                                                                .Include(p => p.BookGenre)
@@ -65,8 +65,6 @@ namespace Application.Services.Implementation
                                                                .ThenInclude(x => x.UserRoom)
                                                                .ThenInclude(x => x.Location)
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
-            bookDto.AvgRating = _rootCommentRepository.GetAvgRatingAsync(bookId).Result;
-            return bookDto;
         }
 
         public async Task<BookGetDto> AddAsync(BookPostDto bookDto)
@@ -132,7 +130,7 @@ namespace Application.Services.Implementation
         public async Task<PaginationDto<BookGetDto>> GetAllAsync(BookQueryParams parameters)
         {
             var query = GetFilteredQuery(_bookRepository.GetAll(), parameters);
-            return await GetBooksWithRatingAsync(query, parameters);
+            return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
         public async Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters)
         {
@@ -167,7 +165,7 @@ namespace Application.Services.Implementation
             var query = _bookRepository.GetAll().Where(x => allBooks.Contains(x.Id));
             query = GetFilteredQuery(query, parameters);
 
-            return await GetBooksWithRatingAsync(query,parameters);
+            return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
         public async Task<PaginationDto<BookGetDto>> GetCurrentOwned(BookQueryParams parameters)
@@ -176,7 +174,7 @@ namespace Application.Services.Implementation
             var query = _bookRepository.GetAll().Where(p => p.UserId == userId);
             query = GetFilteredQuery(query, parameters);
 
-            return await GetBooksWithRatingAsync(query, parameters);
+            return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
         public async Task<PaginationDto<BookGetDto>> GetReadBooksAsync(BookQueryParams parameters)
@@ -186,7 +184,7 @@ namespace Application.Services.Implementation
             var currentlyOwnedBooks = _bookRepository.GetAll().Where(a => a.UserId == userId);
             var readBooks = ownedBooks.Union(currentlyOwnedBooks);
             var query = GetFilteredQuery(readBooks, parameters);
-            return await GetBooksWithRatingAsync(query, parameters);
+            return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
         public async Task<bool> ActivateAsync(int bookId)
@@ -258,17 +256,6 @@ namespace Application.Services.Implementation
             return true;
         }
 
-        private async Task<PaginationDto<BookGetDto>> GetBooksWithRatingAsync(IQueryable<Book> query, BookQueryParams parameters)
-        {
-            var bookDtos = await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
-
-            foreach (var book in bookDtos.Page)
-            {
-                book.AvgRating = _rootCommentRepository.GetAvgRatingAsync(book.Id).Result;
-            }
-
-            return bookDtos;
-        }
 
         private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)
         {
