@@ -10,6 +10,8 @@ using Application.Dto.QueryParams;
 using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using AutoMapper;
+using Domain.NoSQL;
+using Domain.NoSQL.Entities;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using Hangfire;
@@ -33,12 +35,13 @@ namespace Application.Services.Implementation
         private readonly IRepository<BookGenre> _bookGenreRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<UserRoom> _userLocationRepository;
+        private readonly IRootRepository<BookRootComment> _rootCommentRepository;
 
 
         public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
             IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
             IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository, 
-            IRepository<BookGenre> bookGenreRepository, IRepository<UserRoom> userLocationRepository)
+            IRepository<BookGenre> bookGenreRepository, IRepository<UserRoom> userLocationRepository, IRootRepository<BookRootComment> rootCommentRepository)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -50,6 +53,7 @@ namespace Application.Services.Implementation
             _bookGenreRepository = bookGenreRepository;
             _bookAuthorRepository = bookAuthorRepository;
             _userLocationRepository = userLocationRepository;
+            _rootCommentRepository = rootCommentRepository;
         }
         /// <inheritdoc />
         public async Task<RequestDto> MakeAsync(int userId, int bookId)
@@ -192,10 +196,12 @@ namespace Application.Services.Implementation
                 .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate).Where(x => bookIds.Contains(x.BookId));
+
             var requests =  await _paginationService.GetPageAsync<RequestDto, Request>(query, parameters);
             var isEmpty = !requests.Page.Any();
             return isEmpty ? null : requests;
         }
+
         /// <inheritdoc />
         public async Task<bool> ApproveReceiveAsync(int requestId)
         {

@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto.QueryParams;
+using Domain.NoSQL;
+using Domain.NoSQL.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace ApplicationTest.Services
@@ -31,6 +33,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
         private Mock<IEmailSenderService> _emailSenderServiceMock;
+        private Mock<IRootRepository<BookRootComment>> _rootCommentRepository;
         private Mock<IHangfireJobScheduleService> _hangfireJobScheduleService;
         private IMapper _mapper;
 
@@ -47,6 +50,7 @@ namespace ApplicationTest.Services
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
             _hangfireJobScheduleService = new Mock<IHangfireJobScheduleService>();
             _imageServiceMock = new Mock<IImageService>();
+            _rootCommentRepository = new Mock<IRootRepository<BookRootComment>>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -62,9 +66,9 @@ namespace ApplicationTest.Services
             var pagination = new PaginationService(_mapper);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
                 _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
-                _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object);
+                _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object, _rootCommentRepository.Object);
 
-            var authorMock = GetBookAuthor().AsQueryable();
+                var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
             var usersMock = GetUsers().AsQueryable();
             _bookAuthorRepositoryMock.Setup(s => s.GetAll()).Returns(authorMock);

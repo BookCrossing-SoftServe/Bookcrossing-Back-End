@@ -85,7 +85,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             // Please download appsettings.json for connecting to Azure DB
             string azureConnection = configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
-                options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                options.UseSqlServer(azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
         }
 
         public static void AddMongoSettings(this IServiceCollection services, IConfiguration configuration)

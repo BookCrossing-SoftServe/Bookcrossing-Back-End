@@ -24,6 +24,10 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasColumnName("name")
                 .HasMaxLength(50);
 
+            builder.Property(e => e.Rating)
+                .HasColumnName("rating")
+                .HasDefaultValue(0);
+
             builder.Property(e => e.Publisher)
                 .HasColumnName("publisher")
                 .HasMaxLength(50);

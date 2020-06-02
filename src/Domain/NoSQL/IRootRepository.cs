@@ -34,6 +34,12 @@ namespace Domain.NoSQL
         Task<IEnumerable<TRootEntity>> GetAllAsync();
 
         /// <summary>
+        /// Get average book rating
+        /// </summary>
+        /// <returns>double from 1 to 5</returns>
+        Task<double> GetAvgRatingAsync(int id);
+
+        /// <summary>
         /// Get entity from collection
         /// </summary>
         /// <param name="id">Document id</param>

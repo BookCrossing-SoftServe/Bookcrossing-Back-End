@@ -10,6 +10,7 @@ namespace Domain.RDBMS.Entities
         public int UserId { get; set; }
         public string Publisher { get; set; }
         public BookState? State { get; set; }
+        public double Rating { get; set; }
         public string Notice { get; set; }
         public string ImagePath { get; set; }
 
