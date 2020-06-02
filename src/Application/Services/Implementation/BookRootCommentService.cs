@@ -37,7 +37,7 @@ namespace Application.Services.Implementation
                     });
             var book = _bookRepository.FindByIdAsync(insertDto.BookId).Result;
             book.Rating = await _rootCommentRepository.GetAvgRatingAsync(book.Id);
-            await _bookRepository.Update(book, new List<string>() { "rating" });
+            await _bookRepository.Update(book, new List<string>() { "Rating" });
             await _bookRepository.SaveChangesAsync();
             return comment;
         }
@@ -69,7 +69,7 @@ namespace Application.Services.Implementation
             var comment = await _rootCommentRepository.FindByIdAsync(updateDto.Id);
             var book = _bookRepository.FindByIdAsync(comment.BookId).Result;
             book.Rating = await _rootCommentRepository.GetAvgRatingAsync(book.Id);
-            await _bookRepository.Update(book, new List<string>() { "rating" });
+            await _bookRepository.Update(book, new List<string>() { "Rating" });
             await _bookRepository.SaveChangesAsync();
             return Convert.ToInt32(updateResult.ModifiedCount);
         }
