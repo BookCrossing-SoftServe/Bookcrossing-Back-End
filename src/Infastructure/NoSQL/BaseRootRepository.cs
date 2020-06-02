@@ -104,7 +104,7 @@ namespace Infrastructure.NoSQL
         {
             var result = await _collection.Aggregate().Match(new BsonDocument { { "BookId", bookId } })
                 .Group(new BsonDocument { { "_id", "$BookId" }, { "avg", new BsonDocument("$avg", "$Rating") } }).FirstOrDefaultAsync();
-            return Convert.ToDouble(result.GetValue("avg"));
+            return result == null ? 0 : Convert.ToDouble(result.GetValue("avg"));
         }
 
         public async Task<UpdateResult> UpdateByIdAsync(string id, TRootEntity entity)

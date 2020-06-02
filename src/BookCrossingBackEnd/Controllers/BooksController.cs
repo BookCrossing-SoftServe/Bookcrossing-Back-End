@@ -10,7 +10,6 @@ namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class BooksController : ControllerBase
     {
         private readonly IBookService _bookService;
@@ -36,15 +35,6 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             return Ok(book);
         }
-        //// GET: api/Books/5/rating
-        //[HttpGet("{id}/rating")]
-        //public async Task<ActionResult<BookGetDto>> GetRating([FromRoute] int id)
-        //{
-        //    //var rating = await _bookService.GetRatingAsync(id);
-        //    if (rating == null)
-        //        return NotFound();
-        //    return Ok(rating);
-        //}
 
         // POST: api/Books
         [HttpPost]
