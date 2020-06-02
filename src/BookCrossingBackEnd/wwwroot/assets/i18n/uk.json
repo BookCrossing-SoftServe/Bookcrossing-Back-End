@@ -1,17 +1,50 @@
 {
   "common": {
     "language": "Змінити мову",
+    "yes": "Так",
+    "no": "Ні",
+    "cancel": "Скасувати",
+    "add": "Добавити",
+    "edit": "Редагувати",
+    "editing": "Редагування",
+    "update": "Редагувати",
+    "save": "Зберегти", 
     "id": "Номер",
     "home": "Головна",
     "routes": "Всі маршрути",
     "books": "Книги",
+    "login": "Увійти",
+    "registration": "Зареєструватися",
+    "myProfile": "Мій Профіль",
+    "donate": "Пожертвування",
+    "registered": "Зареєстровані",
+    "requested": "Запити",
+    "currentlyOwned": "Отримані",
+    "read": "Прочитані",
+    "logOut": "Вийти",
     "languages": {
       "gb": "Англійська",
       "ua": "Українська"
     }
   },
 
+  "common-errors": {
+    "error-message": "Щось пішло не так!",
+    "validation-required": "Це поле є обов'язковим",
+    "validation-min-length": "Це поле повино мати більше {{value}} символів",
+    "validation-max-length": "Це поле не може мати більше ніж {{value}} символів",
+    "validation-letter-symbol-pattern": "Тільки букви та сивмоли як:",
+    "validation-are-acceptable": "є дозволеними"
+  },
   "components": {
+    "searchBar": {
+      "searchPlaceholder": "Введіть назву книги або автора"
+    },
+    "books": {
+      "locations": "Локації",
+      "categories": "Катерогії",
+      "availableOnly": "В Наявності"
+    },
     "requests": {
       "requests": "Всі реквести",
       "book-name": "Назва книги",
@@ -20,7 +53,9 @@
       "delete": "Видалити",
       "user-who-requested": "Хто кинув реквест?",
       "previous": "Попередня",
-      "next": "Наступна"
+      "first": "Перша",
+      "next": "Наступна",
+      "last": "Остання"
     },
     "home": {
       "rules": "Правила",
@@ -54,7 +89,101 @@
       "password-required-error": "Ви маєте ввести новий пароль",
       "input-password-length": "Довжина паролю має бути більша на 6 символів",
       "confirm-password": "Підтвердіть ваш пароль"
+    },
+    "admin": {
+      "table-management": "Управління Таблицями",
+      "add": "Добавити",
+      "search": "Пошук",
+      "authors": {
+        "authors": "Автори",
+        "merge": "Об'єднати",
+        "unselect": "Скасувати вибір",
+        "first-name": "Ім'я",
+        "last-name": "Прізвище",
+        "approved": "Схвалений",
+        "approve": "Схвалити",
+        "approve-confirm": "Ви впевнені, що хочете схвалити цього автора?",
+        "approve-success": "Автор схвалений!",
+        "merge-success": "Автори були об’єднані успішно!",
+        "add-success": "Новий автор успішно створений!",
+        "update-success": "Автор успішно відредагований!",
+        "error-msg-merge": "Будь ласка, виберіть двох або більше авторів"
+      },
+      "authors-form": {
+        "edit-title": "Редагування автора",
+        "edit-button": "Відредагувати",
+        "add-title": "Добавити автора",
+        "add-button": "Добавити",
+        "merge-title": "Об'єднати авторів",
+        "merge-button": "Об'єднати",
+        "merge-selected": "Вибрані автори",
+        "merge-msg": "Вибрані автори будуть об'єднані в одного автора"
+      },
+      "locations": {
+        "active": "Активна",
+        "inactive": "Неактивна",
+        "status": "Стан",
+        "locations": "Локації",
+        "display-inactive": "Показати нактивні",
+        "city": "Місто",
+        "street": "Вулиця",
+        "office-name": "Назва офісу"
+      },
+      "location-form": {
+        "add-title": "Нова локація",
+        "edit-title": "Редагування локації",
+        "update-success-msg": "Локацію оновлено успішно",
+        "add-success-msg": "Локацію додано успішно"
+      },
+      "genres": {
+        "genre": "Категорія",
+        "genres": "Категорії"
+      },
+      "dashboard": {
+        "data-range": "Діапазон даних",
+        "choose-data-range": "Виберіть діапазон даних",
+        "week": "Тиждень",
+        "month": "Місяць",
+        "six-months": "6 Місяців",
+        "year": "Рік",
+        "dashboard": "Панель",
+        "all": "Усі",
+        "books-registered": "Усього книг",
+        "users": "Користувачі",
+        "books": "Нові книги",
+        "inactive-books": "Неактивних книг",
+        "registered-per-city": "Зареєстрованих книги на місто",
+        "availability": "Доступність",
+        "reset": "Скинути",
+        "line-chart": {
+          "labels": {
+            "new-book-registered": "Нових книг зареєстровано",
+            "new-users": "Нових користувачів"
+          },
+          "months": {
+            "january": "Січень",
+            "february": "Лютий",
+            "march": "Березень",
+            "april": "Квітень",
+            "may": "Травень",
+            "june": "Червень",
+            "july": "Липень",
+            "august": "Серпень",
+            "september": "Вересень",
+            "october": "Жовтень",
+            "november": "Листопад",
+            "december": "Грудень"
+          }
+        },
+        "pie-chart": {
+          "labels": {
+            "requested": "Запитів",
+            "available": "Доступних",
+            "reading": "Читають"
+          },
+          "title": "Усі"
+        }
+      }
     }
-
   }
-  }
+}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,11 @@ namespace BookCrossingBackEnd.Filters
             if(exceptionType is SecurityTokenException)
             {
                 message = exceptionType.Message;
+                context.HttpContext.Response.StatusCode = 401;
+            }
+            if(exceptionType is InvalidCredentialException)
+            {
+                message = "Invalid login or password";
                 context.HttpContext.Response.StatusCode = 401;
             }
             context.Result = new ObjectResult(new { message=message});

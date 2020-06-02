@@ -3,6 +3,7 @@ using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -16,12 +17,14 @@ namespace ApplicationTest.Controllers
     {
         private Mock<IGenreService> _genreService;
         private GenreController _genreController;
+        private Mock<ILogger<GenreController>> _logger;
 
         [OneTimeSetUp]
         public void Setup()
         {
             _genreService = new Mock<IGenreService>();
-            _genreController = new GenreController(_genreService.Object);
+            _logger = new Mock<ILogger<GenreController>>();
+            _genreController = new GenreController(_genreService.Object, _logger.Object);
         }
 
         [Test]
@@ -64,7 +67,7 @@ namespace ApplicationTest.Controllers
 
         private GenreDto GetTestGenre()
         {
-            return new GenreDto() { Id = 1,Name = "Genre" };
+            return new GenreDto() { Id = 1, Name = "Genre" };
         }
 
         [Test]
