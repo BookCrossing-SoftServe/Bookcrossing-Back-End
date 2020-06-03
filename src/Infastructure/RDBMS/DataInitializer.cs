@@ -53,7 +53,7 @@ namespace Infrastructure.RDBMS
                 {
                     UserId = 1,
                     Name = "CLR via C#",
-                    Available = true,
+                    State = BookState.Available,
                     Publisher = "Kolosok"
 
                 });

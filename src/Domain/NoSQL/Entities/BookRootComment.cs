@@ -15,6 +15,8 @@ namespace Domain.NoSQL.Entities
         public string Text { get; set; }
         [BsonIgnoreIfNull]
         public string Date { get; set; }
+        [BsonIgnoreIfNull]
+        public int Rating { get; set; }
         [BsonIgnoreIfDefault]
         public int BookId { get; set; }
         [BsonIgnoreIfDefault]

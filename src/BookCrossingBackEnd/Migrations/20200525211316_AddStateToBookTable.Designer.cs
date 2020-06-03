@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200525211316_AddStateToBookTable")]
+    partial class AddStateToBookTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,12 +78,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("publisher")
                         .HasColumnType("nvarchar(50)")
                         .HasMaxLength(50);
-
-                    b.Property<double>("Rating")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("rating")
-                        .HasColumnType("float")
-                        .HasDefaultValue(0.0);
 
                     b.Property<string>("State")
                         .ValueGeneratedOnAdd()
@@ -166,10 +162,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("city")
                         .HasColumnType("nvarchar(30)")
                         .HasMaxLength(30);
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnName("is_active")
-                        .HasColumnType("bit");
 
                     b.Property<string>("OfficeName")
                         .HasColumnName("office_name")
@@ -330,9 +322,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("password")
                         .HasColumnType("nvarchar(32)")
                         .HasMaxLength(32);
-
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RegisteredDate")
                         .ValueGeneratedOnAdd()

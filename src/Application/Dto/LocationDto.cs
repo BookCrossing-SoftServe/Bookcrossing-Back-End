@@ -8,6 +8,7 @@ namespace Application.Dto
         public string City { get; set; }
         public string Street { get; set; }
         public string OfficeName { get; set; }
+        public bool? IsActive { get; set; }
         public List<int> Rooms { get; set; }
     }
 }

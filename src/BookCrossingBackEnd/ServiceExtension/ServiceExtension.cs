@@ -65,7 +65,17 @@ namespace BookCrossingBackEnd.ServiceExtension
                         ValidAudience = configuration["Jwt:Issuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
                     };
-
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                            {
+                                context.Response.Headers.Add("Token-Expired", "true");
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
 
@@ -75,7 +85,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             // Please download appsettings.json for connecting to Azure DB
             string azureConnection = configuration.GetConnectionString("AzureConnection");
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
-                options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                options.UseSqlServer(azureConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
         }
 
         public static void AddMongoSettings(this IServiceCollection services, IConfiguration configuration)

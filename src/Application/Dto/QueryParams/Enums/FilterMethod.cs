@@ -3,6 +3,7 @@
     public enum FilterMethod
     {
         Equal,
+        NotEqual,
         Contains
     }
 }

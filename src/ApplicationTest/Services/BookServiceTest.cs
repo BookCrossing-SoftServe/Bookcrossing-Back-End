@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto.QueryParams;
+using Domain.NoSQL;
+using Domain.NoSQL.Entities;
 using Microsoft.AspNetCore.Http;
 
 namespace ApplicationTest.Services
@@ -30,6 +32,9 @@ namespace ApplicationTest.Services
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
         private Mock<IImageService> _imageServiceMock;
+        private Mock<IEmailSenderService> _emailSenderServiceMock;
+        private Mock<IRootRepository<BookRootComment>> _rootCommentRepository;
+        private Mock<IHangfireJobScheduleService> _hangfireJobScheduleService;
         private IMapper _mapper;
 
         [OneTimeSetUp]
@@ -42,6 +47,10 @@ namespace ApplicationTest.Services
             _userLocationServiceMock = new Mock<IRepository<User>>();
             _userResolverServiceMock = new Mock<IUserResolverService>();
             _imageServiceMock = new Mock<IImageService>();
+            _emailSenderServiceMock = new Mock<IEmailSenderService>();
+            _hangfireJobScheduleService = new Mock<IHangfireJobScheduleService>();
+            _imageServiceMock = new Mock<IImageService>();
+            _rootCommentRepository = new Mock<IRootRepository<BookRootComment>>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -56,9 +65,10 @@ namespace ApplicationTest.Services
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object);
+                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
+                _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object, _rootCommentRepository.Object);
 
-            var authorMock = GetBookAuthor().AsQueryable();
+                var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
             var usersMock = GetUsers().AsQueryable();
             _bookAuthorRepositoryMock.Setup(s => s.GetAll()).Returns(authorMock);
@@ -185,10 +195,10 @@ namespace ApplicationTest.Services
             var users = GetUsers();
             var list = new List<Book>
             {
-                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", Available = true, User = users[0], UserId = 1},
-                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", Available = true, User = users[1], UserId = 2},
-                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", Available = false, User = users[0], UserId = 1},
-                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", Available = false, User = users[0], UserId = 1},
+                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", State = BookState.Available, User = users[1], UserId = 2},
+                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", State = BookState.Available, User = users[0], UserId = 1},
             };
             return list;
         }
@@ -300,7 +310,7 @@ namespace ApplicationTest.Services
 
             var booksResult = await _bookService.GetAllAsync(query);
 
-            booksResult.Page.Should().HaveCount(2);
+            booksResult.Page.Should().HaveCount(4);
         }
         [Test]
         public async Task GetAll_WhenHasShowAvailableFalse_Returns_all_books()

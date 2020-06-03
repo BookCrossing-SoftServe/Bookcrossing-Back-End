@@ -28,6 +28,20 @@ namespace Application.Services.Interfaces
         Task SendThatBookWasReceivedAsync(RequestMessage message);
 
         /// <summary>
+        /// Sending email to notify that book was activated
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <returns></returns>
+        Task SendForBookActivatedAsync(RequestMessage message);
+
+        /// <summary>
+        /// Sending email to notify that book was deactivated
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <returns></returns>
+        Task SendForBookDeactivatedAsync(RequestMessage message);
+
+        /// <summary>
         /// Sending email to notify that request was canceled
         /// </summary>
         /// <param name="message">message</param>
