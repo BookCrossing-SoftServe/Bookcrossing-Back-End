@@ -130,6 +130,10 @@ namespace Application.Services.Implementation
         public async Task<PaginationDto<BookGetDto>> GetAllAsync(BookQueryParams parameters)
         {
             var query = GetFilteredQuery(_bookRepository.GetAll(), parameters);
+            if (parameters.SortableParams != null)
+            {
+                query = query.OrderBy(parameters.SortableParams);
+            }
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
         public async Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters)

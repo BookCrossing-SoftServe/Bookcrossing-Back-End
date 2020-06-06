@@ -9,5 +9,7 @@ namespace Application.Dto.QueryParams
         public int[] Genres { get; set; }
         public int? Location { get; set; }
         public bool? ShowAvailable { get; set; }  
+
+        public SortableParams SortableParams { get; set; }
     }
 }
