@@ -241,6 +241,11 @@ namespace ApplicationTest.Services.Comment.Book
             _mockRootRepository
                 .Setup(s => s.DeleteByIdAsync(deleteDto.Id))
                 .ReturnsAsync(new DeleteResult.Acknowledged(1));
+            _mockRootRepository.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new BookRootComment());
+            _bookRepositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Domain.RDBMS.Entities.Book() { Id = 1232 });
+            _mockRootRepository.Setup(x => x.GetAvgRatingAsync(It.IsAny<int>())).ReturnsAsync(1);
+            _bookRepositoryMock.Setup(x => x.Update(It.IsAny<Domain.RDBMS.Entities.Book>(), new List<string>())).Returns(Task.CompletedTask);
+            _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
 
             var result = await _bookRootCommentService.Remove(deleteDto.Id);
 
@@ -257,6 +262,11 @@ namespace ApplicationTest.Services.Comment.Book
             _mockRootRepository
                 .Setup(s => s.DeleteByIdAsync(deleteDto.Id))
                 .ReturnsAsync(new DeleteResult.Acknowledged(0));
+            _mockRootRepository.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new BookRootComment());
+            _bookRepositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Domain.RDBMS.Entities.Book() { Id = 1232 });
+            _mockRootRepository.Setup(x => x.GetAvgRatingAsync(It.IsAny<int>())).ReturnsAsync(1);
+            _bookRepositoryMock.Setup(x => x.Update(It.IsAny<Domain.RDBMS.Entities.Book>(), new List<string>())).Returns(Task.CompletedTask);
+            _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
 
             var result = await _bookRootCommentService.Remove(deleteDto.Id);
 

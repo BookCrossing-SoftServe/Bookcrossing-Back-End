@@ -59,6 +59,11 @@ namespace Application.Services.Implementation
 
         public async Task<int> Remove(string id)
         {
+            var comment = await _rootCommentRepository.FindByIdAsync(id);
+            var book = _bookRepository.FindByIdAsync(comment.BookId).Result;
+            book.Rating = await _rootCommentRepository.GetAvgRatingAsync(book.Id);
+            await _bookRepository.Update(book, new List<string>() { "Rating" });
+            await _bookRepository.SaveChangesAsync();
             var deleteResult = await _rootCommentRepository.DeleteByIdAsync(id);
             return Convert.ToInt32(deleteResult.DeletedCount);
         }
