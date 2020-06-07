@@ -45,6 +45,8 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(a => a.ImagePath)
                 .HasColumnName("imagepath")
                 .HasMaxLength(260);
+
+            builder.Property(a => a.DateAdded).HasDefaultValueSql("GETDATE()");
         }
     }
 }

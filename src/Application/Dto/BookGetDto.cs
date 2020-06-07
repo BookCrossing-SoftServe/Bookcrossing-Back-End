@@ -12,6 +12,7 @@ namespace Application.Dto
         public int UserId { get; set; }
         public string Publisher { get; set; }
         public BookState State { get; set; }
+        public DateTime DateAdded { get; set; }
         public string Notice { get; set; }
         public string ImagePath { get; set; }
         public double Rating { get; set; }
