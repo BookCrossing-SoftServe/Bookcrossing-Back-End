@@ -12,6 +12,9 @@ namespace Application.Dto
         public string MiddleName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime RegisteredDate { get; set; }
+        public RoomLocationDto UserLocation { get; set; }
         public int RoleId { get; set; }
         
         public List<string> FieldMasks { get; set; }
