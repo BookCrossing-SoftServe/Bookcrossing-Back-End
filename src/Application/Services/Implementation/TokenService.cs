@@ -102,7 +102,7 @@ namespace Application.Services.Implementation
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(1.0),
+                expires: DateTime.UtcNow.AddMinutes(1),
                 signingCredentials: credentials);
             var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
             return encodedToken;
