@@ -8,9 +8,14 @@ namespace Application.Services.Interfaces
 {
     public interface ITokenService
     {
-        Task<TokenDto> GenerateTokens(User user,IEnumerable<Claim> claims);
         Task<User> VerifyUserCredentials(LoginDto loginModel);
-        Task<User> VerifyRefreshToken(string token);
+        Task<RefreshToken> VerifyRefreshToken(string token);
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+
+        Task<string> GenerateRefreshToken(User user);
+
+        Task<string> UpdateRefreshRecord(RefreshToken refreshToken);
+
+        string GenerateJWT(IEnumerable<Claim> claims);
     }
 }

@@ -24,6 +24,7 @@ namespace Infrastructure.RDBMS
         public DbSet<Role> Role { get; set; }
         public DbSet<ResetPassword> ResetPassword { get; set; }
         public DbSet<ScheduleJob> ScheduleJob { get; set; }
+        public DbSet<RefreshToken> RefreshToken { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

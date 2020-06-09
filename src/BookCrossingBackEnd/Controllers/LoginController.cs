@@ -18,7 +18,7 @@ namespace BookCrossingBackEnd.Controllers
 
         private readonly ITokenService _tokenService;
         private readonly IUserResolverService _userResolverService;
-        public LoginController(ITokenService tokenService,IUserResolverService userResolverService)
+        public LoginController(ITokenService tokenService, IUserResolverService userResolverService)
         {
             _tokenService = tokenService;
             _userResolverService = userResolverService;
@@ -42,38 +42,41 @@ namespace BookCrossingBackEnd.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Role,user.Role.Name)
             };
-            var tokenDto = await _tokenService.GenerateTokens(user, claims); ;
+            var jwt = _tokenService.GenerateJWT(claims);
+            var refreshToken = await _tokenService.GenerateRefreshToken(user);
+
 
             UserTokenDto userTokenDto = new UserTokenDto
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Token = tokenDto
+                Token = new TokenDto() { JWT = jwt, RefreshToken = refreshToken }
             };
-           
+
             return Ok(userTokenDto);
         }
 
         [HttpPost("refresh")]
         [LoginFilter]
-        public async Task<ActionResult<UserTokenDto>> Refresh([FromBody] TokenDto refreshToken)
+        public async Task<ActionResult<UserTokenDto>> Refresh([FromBody] TokenDto refreshTokenModel)
         {
-            var user = await _tokenService.VerifyRefreshToken(refreshToken.RefreshToken);
-            
-            var claims = _tokenService.GetPrincipalFromExpiredToken(refreshToken.JWT);
-            var tokens = await _tokenService.GenerateTokens(user, claims.Claims);
+            var refresh = await _tokenService.VerifyRefreshToken(refreshTokenModel.RefreshToken);
+
+            var claims = _tokenService.GetPrincipalFromExpiredToken(refreshTokenModel.JWT);
+            var jwt = _tokenService.GenerateJWT(claims.Claims);
+            var refreshToken = await _tokenService.UpdateRefreshRecord(refresh);
 
             UserTokenDto userToken = new UserTokenDto
             {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = tokens
+                Id = refresh.User.Id,
+                FirstName = refresh.User.FirstName,
+                LastName = refresh.User.LastName,
+                Token = new TokenDto { JWT = jwt, RefreshToken = refreshToken }
             };
             return Ok(userToken);
         }
-     
+
 
     }
 }
