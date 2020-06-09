@@ -131,7 +131,11 @@ namespace BookCrossingBackEnd.ServiceExtension
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().Build());
+                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("Token-Expired", "InvalidRefreshToken", "InvalidCredentials")
+                .Build());
             });
         }
         public static void AddMVCWithFluentValidatoin(this IServiceCollection services)
