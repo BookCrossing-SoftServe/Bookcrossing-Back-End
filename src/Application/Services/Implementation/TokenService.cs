@@ -23,35 +23,20 @@ namespace Application.Services.Implementation
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IRepository<User> _userRepository;
-
-        public TokenService(IConfiguration configuration,IMapper mapper, IRepository<User> userRepository)
+        private readonly IRepository<RefreshToken> _refreshTokenRepository;
+        public TokenService(IConfiguration configuration, IMapper mapper, IRepository<User> userRepository, IRepository<RefreshToken> refreshTokenRepository)
         {
             this._configuration = configuration;
             this._mapper = mapper;
             this._userRepository = userRepository;
-        }
-        
-
-        public async Task<TokenDto> GenerateTokens(User user,IEnumerable<Claim> claims)
-        {
-            var jwtToken = GenerateJWT(claims);
-
-            var refreshToken = await GenerateRefreshToken(user);
-
-            var tokenDto = new TokenDto
-            {
-                JWT = jwtToken,
-                RefreshToken = refreshToken
-            };
-
-            return tokenDto;
+            this._refreshTokenRepository = refreshTokenRepository;
         }
 
-        public async Task<User> VerifyRefreshToken(string token)
+        public async Task<RefreshToken> VerifyRefreshToken(string token)
         {
-            var user = await _userRepository.FindByCondition(u => u.RefreshToken.Equals(token));
-            if(user==null) throw new SecurityTokenException("Invalid refresh token");
-            return user;
+            var refreshToken = await _refreshTokenRepository.GetAll().Include(p => p.User).FirstOrDefaultAsync(p => p.Token.Equals(token));
+            if (refreshToken == null) throw new SecurityTokenException("Invalid refresh token");
+            return refreshToken;
         }
 
 
@@ -90,7 +75,7 @@ namespace Application.Services.Implementation
             return principal;
         }
 
-        private async Task<string> GenerateRefreshToken(User user)
+        public async Task<string> GenerateRefreshToken(User user)
         {
             var randomNumber = new byte[32];
             string refreshToken;
@@ -98,15 +83,17 @@ namespace Application.Services.Implementation
             {
                 rng.GetBytes(randomNumber);
                 refreshToken = Convert.ToBase64String(randomNumber);
-                user.RefreshToken = refreshToken;
-                _userRepository.Update(user);
+                RefreshToken refreshTokenModel = new RefreshToken();
+                refreshTokenModel.UserId = user.Id;
+                refreshTokenModel.Token = refreshToken;
+                _refreshTokenRepository.Add(refreshTokenModel);
             }
 
-            await _userRepository.SaveChangesAsync();
+            await _refreshTokenRepository.SaveChangesAsync();
             return refreshToken;
         }
 
-        private string GenerateJWT(IEnumerable<Claim> claims)
+        public string GenerateJWT(IEnumerable<Claim> claims)
         {
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             SigningCredentials credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
@@ -115,19 +102,25 @@ namespace Application.Services.Implementation
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Issuer"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(1.0), 
+                expires: DateTime.UtcNow.AddMinutes(1.0),
                 signingCredentials: credentials);
             var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
             return encodedToken;
         }
 
-  
-
-       
-      
-
-
-
-
+        public async Task<string> UpdateRefreshRecord(RefreshToken refreshToken)
+        {
+            var randomNumber = new byte[32];
+            string refresh;
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                refresh = Convert.ToBase64String(randomNumber);
+                refreshToken.Token = refresh;
+                _refreshTokenRepository.Update(refreshToken);
+            }
+            await _refreshTokenRepository.SaveChangesAsync();
+            return refresh;
+        }
     }
 }

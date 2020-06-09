@@ -20,6 +20,8 @@ namespace Domain.RDBMS.Entities
         public virtual List<Book> Book { get; set; } 
         public virtual List<Request> RequestOwner { get; set; } 
         public virtual List<Request> RequestUser { get; set; }
+
+        public virtual List<RefreshToken> RefreshTokens { get; set; }
         public virtual UserRoom UserRoom { get; set; }
     }
 }

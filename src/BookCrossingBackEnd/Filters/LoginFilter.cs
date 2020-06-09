@@ -10,19 +10,22 @@ namespace BookCrossingBackEnd.Filters
     {
         public void OnException(ExceptionContext context)
         {
-            var message = "Server error occured";
+
             var exceptionType = context.Exception;
-            if(exceptionType is SecurityTokenException)
+            var message = exceptionType.Message;
+            if (exceptionType is SecurityTokenException)
             {
                 message = exceptionType.Message;
-                context.HttpContext.Response.StatusCode = 401;
+                context.HttpContext.Response.StatusCode = 400;
+                context.HttpContext.Response.Headers.Add("InvalidRefreshToken", "true");
             }
-            if(exceptionType is InvalidCredentialException)
+            if (exceptionType is InvalidCredentialException)
             {
                 message = "Invalid login or password";
+                context.HttpContext.Response.Headers.Add("InvalidCredentials", "true");
                 context.HttpContext.Response.StatusCode = 401;
             }
-            context.Result = new ObjectResult(new { message=message});
+            context.Result = new ObjectResult(new { message = exceptionType.ToString() });
         }
     }
 }
