@@ -102,7 +102,7 @@ namespace Infrastructure.NoSQL
 
         public async Task<double> GetAvgRatingAsync(int bookId)
         {
-            var result = await _collection.Aggregate().Match(new BsonDocument { { "BookId", bookId } })
+            var result = await _collection.Aggregate().Match(new BsonDocument { { "BookId", bookId } }).Match(new BsonDocument("Rating", new BsonDocument("$ne", 0)))
                 .Group(new BsonDocument { { "_id", "$BookId" }, { "avg", new BsonDocument("$avg", "$Rating") } }).FirstOrDefaultAsync();
             return result == null ? 0 : Convert.ToDouble(result.GetValue("avg"));
         }
