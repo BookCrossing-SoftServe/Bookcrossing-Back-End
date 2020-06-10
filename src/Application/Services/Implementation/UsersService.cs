@@ -21,6 +21,7 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
+        private readonly IRepository<UserRoom> _userRoomReposetory;
 
         public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository)
         {
@@ -50,8 +51,30 @@ namespace Application.Services.Implementation
 
         public async Task UpdateUser(UserUpdateDto userUpdateDto)
         {
-            var user = _mapper.Map<User>(userUpdateDto);
-            await _userRepository.Update(user, userUpdateDto.FieldMasks);
+            var locationExist = _userRoomReposetory.GetAll()
+                                        .Where(x => x.LocationId == userUpdateDto.UserLocation.Location.Id)
+                                        .Where(x => x.RoomNumber == userUpdateDto.UserLocation.RoomNumber)
+                                        .FirstOrDefault();
+            if (locationExist == null)
+            {
+                var newRoom = new UserRoom() { LocationId = userUpdateDto.UserLocation.Location.Id, RoomNumber = userUpdateDto.UserLocation.RoomNumber };
+                _userRoomReposetory.Add(newRoom);
+                locationExist = _userRoomReposetory.GetAll()
+                                        .Where(x => x.LocationId == userUpdateDto.UserLocation.Location.Id)
+                                        .Where(x => x.RoomNumber == userUpdateDto.UserLocation.RoomNumber)
+                                        .FirstOrDefault();
+            }
+
+            var newUser = new UpdatedUserDto() {
+                FirstName = userUpdateDto.FirstName,
+                LastName = userUpdateDto.LastName,
+                BirthDate = userUpdateDto.BirthDate,
+                UserRoomId = locationExist.Id,
+                FieldMasks = userUpdateDto.FieldMasks
+            };
+
+            var user = _mapper.Map<User>(newUser);
+            await _userRepository.Update(user, newUser.FieldMasks);
             var affectedRows = await _userRepository.SaveChangesAsync();
             if (affectedRows==0)
             {
