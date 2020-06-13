@@ -65,6 +65,7 @@ namespace Application.Services.Implementation
             
             var newUser = new UpdatedUserDto()
             {
+                Id = userUpdateDto.Id,
                 FirstName = userUpdateDto.FirstName,
                 LastName = userUpdateDto.LastName,
                 BirthDate = userUpdateDto.BirthDate,
