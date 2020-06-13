@@ -37,7 +37,7 @@ namespace Application.Services.Implementation
 
             var user = await _userRepository.GetAll()
                 .Include(i => i.UserRoom).ThenInclude(i => i.Location)
-                .Include(x=>x.Role)
+                .Include(x => x.Role)
                 .FirstOrDefaultAsync(predicate);
             if (user == null)
             {
@@ -72,8 +72,8 @@ namespace Application.Services.Implementation
                 FieldMasks = userUpdateDto.FieldMasks
             };
 
-            var user = _mapper.Map<User>(userUpdateDto);
-            await _userRepository.Update(user, userUpdateDto.FieldMasks);
+            var user = _mapper.Map<User>(newUser);
+            await _userRepository.Update(user, newUser.FieldMasks);
             var affectedRows = await _userRepository.SaveChangesAsync();
             if (affectedRows==0)
             {

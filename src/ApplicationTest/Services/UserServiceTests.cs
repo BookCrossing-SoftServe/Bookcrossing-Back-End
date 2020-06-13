@@ -40,6 +40,7 @@ namespace ApplicationTest.Services
             _resetPasswordRepositoryMock = new Mock<IRepository<ResetPassword>>();
             _mapperMock = new Mock<IMapper>();
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
+            _userRoomRepositoryMock = new Mock<IRepository<UserRoom>>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -61,6 +62,7 @@ namespace ApplicationTest.Services
         {
             _userRepositoryMock.Reset();
         }
+
         [Test]
         public async Task GetById_UserExists_Returns_UserDto()
         {

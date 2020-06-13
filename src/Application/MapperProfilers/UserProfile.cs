@@ -12,7 +12,10 @@ namespace Application.MapperProfilers
         {
             CreateMap<RdbmsEntities.User, Dto.Comment.OwnerDto>()
              .ForMember(dto => dto.Role, opt => opt.MapFrom(entity => entity.Role.Name));
+
             CreateMap<UserUpdateDto, RdbmsEntities.User>().ReverseMap();
+
+            CreateMap<UpdatedUserDto, RdbmsEntities.User>().ReverseMap();
 
             CreateMap<LoginDto, RdbmsEntities.User>().ReverseMap();
 
