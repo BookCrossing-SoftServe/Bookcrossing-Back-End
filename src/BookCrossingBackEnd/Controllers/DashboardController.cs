@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     [Area("Admin")]
     [Route("api/[area]/[controller]")]
     [ApiController]
@@ -46,9 +46,9 @@ namespace BookCrossingBackEnd.Controllers
 
         // GET: api/Dashboard/BookUserComparison
         [HttpGet("BookUserComparison")]
-        public async Task<ActionResult> GetBookUserData([FromQuery] string city)
+        public async Task<ActionResult> GetBookUserData([FromQuery] string city, [FromQuery] bool byMonth = true)
         {
-            var bookUserComparisonData = await _dashboardService.GetBookUserData(city);
+            var bookUserComparisonData = await _dashboardService.GetBookUserData(city,byMonth);
             return Ok(bookUserComparisonData);
         }
     }

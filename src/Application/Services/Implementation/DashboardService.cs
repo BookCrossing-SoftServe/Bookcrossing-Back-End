@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Application.Dto.Dashboard;
 using MongoDB.Driver;
+using System;
 
 namespace Application.Services.Implementation
 {
@@ -72,7 +73,7 @@ namespace Application.Services.Implementation
             };
             return result;
         }
-        public async Task<BookUserDataDto> GetBookUserData(string city = null)
+        public async Task<BookUserDataDto> GetBookUserData(string city = null, bool byMonth = true)
         {
             var data = _bookRepository.GetAll().IgnoreQueryFilters();
             var userData = _userRepository.GetAll().IgnoreQueryFilters();
@@ -81,11 +82,31 @@ namespace Application.Services.Implementation
                 data = data.Where(x => x.User.UserRoom.Location.City == city);
                 userData = userData.Where(x => x.UserRoom.Location.City == city);
             };
-            var result = new BookUserDataDto()
+            data.Where(x => x.DateAdded > DateTime.Now.AddDays(byMonth ? -365 : -30));
+            userData.Where(x => x.RegisteredDate > DateTime.Now.AddDays(byMonth ? -365 : -30));
+            BookUserDataDto result = new BookUserDataDto();
+            if (byMonth)
             {
-                BooksRegistered = await data.GroupBy(x => x.DateAdded.Date).Select(x => new { x.Key, total = x.Count() }).ToDictionaryAsync(data => data.Key, data => data.total),
-                UsersRegistered = await userData.GroupBy(x => x.RegisteredDate.Date).Select(x => new { x.Key, total = x.Count() }).ToDictionaryAsync(data => data.Key, data => data.total)
-            };
+                result = new BookUserDataDto()
+                {
+                    BooksRegistered = await data
+                                            .GroupBy(x => new { x.DateAdded.Date.Year, x.DateAdded.Date.Month})
+                                            .Select(x => new { x.Key, total = x.Count() })
+                                            .ToDictionaryAsync(data => "01." + data.Key.Month + "." + data.Key.Year, data => data.total),
+                    UsersRegistered = await userData
+                                            .GroupBy(x => new { x.RegisteredDate.Date.Year, x.RegisteredDate.Date.Month })
+                                            .Select(x => new { x.Key, total = x.Count() })
+                                            .ToDictionaryAsync(data => "01." + data.Key.Month + "." + data.Key.Year, data => data.total)
+                };
+            }
+            else
+            {
+                result = new BookUserDataDto()
+                {
+                    BooksRegistered = await data.GroupBy(x => x.DateAdded.Date).Select(x => new { x.Key, total = x.Count() }).ToDictionaryAsync(data => data.Key.ToString("d"), data => data.total),
+                    UsersRegistered = await userData.GroupBy(x => x.RegisteredDate.Date).Select(x => new { x.Key, total = x.Count() }).ToDictionaryAsync(data => data.Key.ToString("d"), data => data.total)
+                };
+            }
             return result;
         }
         public async Task<LocationDataDto> GetLocationData(string city = null)

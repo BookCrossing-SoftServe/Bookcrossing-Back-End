@@ -21,6 +21,7 @@
     "requested": "Requested",
     "currentlyOwned": "Currently Owned",
     "read": "Read",
+    "manage": "Management",
     "logOut": "Log Out",
     "languages": {
       "gb": "English",
@@ -144,7 +145,7 @@
         "choose-data-range": "Choose Time Period",
         "week": "Week",
         "month": "Month",
-        "six-months": "6 Month³",
+        "six-months": "6 Months",
         "year": "Year",
         "dashboard": "Dashboard",
         "all": "All",
@@ -177,9 +178,10 @@
         },
         "pie-chart": {
           "labels": {
-            "requested": "Requested",
             "available": "Available",
-            "reading": "Reading"
+            "requested": "Requested",
+            "reading": "Reading",
+            "deactivated": "Deactivated"
           },
           "title": "Total"
         }

@@ -6,7 +6,7 @@ namespace Application.Dto.Dashboard
 {
     public class BookUserDataDto
     {
-        public Dictionary<DateTime, int> BooksRegistered { get; set; }
-        public Dictionary<DateTime, int> UsersRegistered { get; set; }
+        public Dictionary<string, int> BooksRegistered { get; set; }
+        public Dictionary<string, int> UsersRegistered { get; set; }
     }
 }
