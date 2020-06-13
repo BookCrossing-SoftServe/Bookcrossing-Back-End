@@ -8,7 +8,7 @@
     "edit": "Редагувати",
     "editing": "Редагування",
     "update": "Редагувати",
-    "save": "Зберегти", 
+    "save": "Зберегти",
     "id": "Номер",
     "home": "Головна",
     "routes": "Всі маршрути",
@@ -21,6 +21,7 @@
     "requested": "Запити",
     "currentlyOwned": "Отримані",
     "read": "Прочитані",
+    "manage": "Управління",
     "logOut": "Вийти",
     "languages": {
       "gb": "Англійська",
@@ -177,9 +178,10 @@
         },
         "pie-chart": {
           "labels": {
-            "requested": "Запитів",
             "available": "Доступних",
-            "reading": "Читають"
+            "requested": "Запитів",
+            "reading": "Читають",
+            "deactivated": "Не активні"
           },
           "title": "Усі"
         }

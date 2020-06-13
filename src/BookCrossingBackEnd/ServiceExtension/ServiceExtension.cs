@@ -28,6 +28,7 @@ namespace BookCrossingBackEnd.ServiceExtension
         {
             services.AddScoped<IBookChildCommentService, BookChildCommentService>();
             services.AddScoped<IBookRootCommentService, BookRootCommentService>();
+            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UsersService>();
