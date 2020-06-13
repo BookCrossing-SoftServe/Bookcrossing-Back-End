@@ -21,14 +21,15 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
-        private readonly IRepository<UserRoom> _userRoomReposetory;
+        private readonly IRepository<UserRoom> _userRoomRepository;
 
-        public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository)
+        public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
         {
             this._userRepository = userRepository;
             this._mapper = mapper;
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
+            _userRoomRepository = userRoomRepository;
         }
         ///<inheritdoc/>
         public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)
@@ -36,7 +37,7 @@ namespace Application.Services.Implementation
 
             var user = await _userRepository.GetAll()
                 .Include(i => i.UserRoom).ThenInclude(i => i.Location)
-                .Include(x=>x.Role)
+                .Include(x => x.Role)
                 .FirstOrDefaultAsync(predicate);
             if (user == null)
             {
@@ -51,25 +52,23 @@ namespace Application.Services.Implementation
 
         public async Task UpdateUser(UserUpdateDto userUpdateDto)
         {
-            var locationExist = _userRoomReposetory.GetAll()
-                                        .Where(x => x.LocationId == userUpdateDto.UserLocation.Location.Id)
-                                        .Where(x => x.RoomNumber == userUpdateDto.UserLocation.RoomNumber)
-                                        .FirstOrDefault();
-            if (locationExist == null)
-            {
-                var newRoom = new UserRoom() { LocationId = userUpdateDto.UserLocation.Location.Id, RoomNumber = userUpdateDto.UserLocation.RoomNumber };
-                _userRoomReposetory.Add(newRoom);
-                locationExist = _userRoomReposetory.GetAll()
-                                        .Where(x => x.LocationId == userUpdateDto.UserLocation.Location.Id)
-                                        .Where(x => x.RoomNumber == userUpdateDto.UserLocation.RoomNumber)
-                                        .FirstOrDefault();
-            }
+            UserRoom newRoomId = _userRoomRepository.GetAll().FirstOrDefault(x => x.Location.Id == userUpdateDto.UserLocation.Location.Id
+                                                && x.RoomNumber == userUpdateDto.UserLocation.RoomNumber);
 
-            var newUser = new UpdatedUserDto() {
+            if (newRoomId==null)
+            {
+                newRoomId = new UserRoom() { LocationId = userUpdateDto.UserLocation.Location.Id, RoomNumber = userUpdateDto.UserLocation.RoomNumber };
+                _userRoomRepository.Add(newRoomId);
+                await _userRoomRepository.SaveChangesAsync();
+            }
+            
+            var newUser = new UpdatedUserDto()
+            {
+                Id = userUpdateDto.Id,
                 FirstName = userUpdateDto.FirstName,
                 LastName = userUpdateDto.LastName,
                 BirthDate = userUpdateDto.BirthDate,
-                UserRoomId = locationExist.Id,
+                UserRoomId = newRoomId.Id,
                 FieldMasks = userUpdateDto.FieldMasks
             };
 

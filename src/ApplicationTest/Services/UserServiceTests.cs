@@ -30,6 +30,7 @@ namespace ApplicationTest.Services
         private Mock<IEmailSenderService> _emailSenderServiceMock;
         private Mock<IMapper> _mapperMock;
         private Mock<IRepository<User>> _userRepositoryMock;
+        private Mock<IRepository<UserRoom>> _userRoomRepositoryMock;
         private Mock<IRepository<ResetPassword>> _resetPasswordRepositoryMock;
 
         [OneTimeSetUp]
@@ -39,6 +40,7 @@ namespace ApplicationTest.Services
             _resetPasswordRepositoryMock = new Mock<IRepository<ResetPassword>>();
             _mapperMock = new Mock<IMapper>();
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
+            _userRoomRepositoryMock = new Mock<IRepository<UserRoom>>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -53,13 +55,14 @@ namespace ApplicationTest.Services
             var _mapper = mappingConfig.CreateMapper();
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
-            _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object, _resetPasswordRepositoryMock.Object);
+            _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object, _resetPasswordRepositoryMock.Object, _userRoomRepositoryMock.Object);
         }
         [SetUp]
         public void SetUp()
         {
             _userRepositoryMock.Reset();
         }
+
         [Test]
         public async Task GetById_UserExists_Returns_UserDto()
         {
