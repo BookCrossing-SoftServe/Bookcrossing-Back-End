@@ -128,15 +128,7 @@ namespace Application.Services.Implementation
         }
 
         public async Task<PaginationDto<BookGetDto>> GetAllAsync(BookQueryParams parameters)
-        {
-            var users = _userLocationRepository.GetAll();
-
-            foreach(var user in users)
-            {
-                user.UserRoomId = 1;
-            }
-            await _userLocationRepository.SaveChangesAsync();
-
+        {  
             var query = GetFilteredQuery(_bookRepository.GetAll(), parameters);
             if (parameters.SortableParams != null)
             {

@@ -52,7 +52,6 @@ namespace Application.Services.Implementation
 
         public async Task UpdateUser(UserUpdateDto userUpdateDto)
         {
-            var test = _userRoomRepository.GetAll();
             UserRoom newRoomId = _userRoomRepository.GetAll().FirstOrDefault(x => x.Location.Id == userUpdateDto.UserLocation.Location.Id
                                                 && x.RoomNumber == userUpdateDto.UserLocation.RoomNumber);
 
@@ -65,6 +64,7 @@ namespace Application.Services.Implementation
             
             var newUser = new UpdatedUserDto()
             {
+                Id = userUpdateDto.Id,
                 FirstName = userUpdateDto.FirstName,
                 LastName = userUpdateDto.LastName,
                 BirthDate = userUpdateDto.BirthDate,
