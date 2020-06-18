@@ -1,0 +1,16 @@
+﻿language: csharp
+
+dotnet: 3.1.301
+sudo: false
+
+env:
+    global:
+        - DOTNET_CLI_TELEMETRY_OPTOUT: 1
+        - CODECOV_TOKEN="030b932b-3989-4b6f-91ce-b70a152bb005"
+        
+script:
+    - dotnet build src/BookCrossingBackEnd.sln -c Release
+    - dotnet test -c Release --no-build src/ApplicationTest/ApplicationTest.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    
+after_script:
+    - bash <(curl -s https://codecov.io/bash)
