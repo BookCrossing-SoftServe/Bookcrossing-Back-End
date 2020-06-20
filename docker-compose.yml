@@ -1,0 +1,60 @@
+version: '3.7'
+
+services:
+    web:
+        build:
+            context: ./Bookcrossing-Front-End
+            dockerfile: Dockerfile
+        init: true
+        volumes:
+            - ./Bookcrossing-Front-End:/usr/src/app
+            - /usr/src/app/node_modules
+            - /usr/src/app/dist
+        environment:
+            - NODE_ENV=development
+        command: npm run start
+        ports:
+            - 4200:4200
+        networks:
+            - frontend
+    api:
+        build:
+            context: ./Bookcrossing-Back-End
+            dockerfile: Dockerfile
+        init: true
+        ports:
+            - 5000:5000
+        depends_on:
+            - mssql_db
+            - mongo_db
+        networks:
+            - frontend
+            - backend
+    mongo_db:
+        image: mongo:4
+        init: true
+        volumes:
+            - mongo-data:/data/db:cached
+        working_dir: /usr/src/app
+        environment:
+            - MONGO_INITDB_DATABASE=BookCrossingDB
+        networks:
+            - backend
+    mssql_db:
+        image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
+        init: true
+        volumes:
+            - mongo-data:/data/db:cached
+        working_dir: /usr/src/app
+        environment:
+            ACCEPT_EULA: "Y"
+            SA_PASSWORD: "your_Strong_Password"
+            MSSQL_PID: "Developer"
+        networks:
+            - backend
+networks:
+    frontend:
+    backend:
+
+volumes:
+    mongo-data:
