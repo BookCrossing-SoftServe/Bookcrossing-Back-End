@@ -61,6 +61,11 @@ These instructions will get you a copy of the project up and running on your loc
 ```
 
 3. Run BookCrossingBackEnd project
+
+
+To start application using docker containers, execute steps 1 and 2 above,
+place docker-compose.yml outside Bookcrossing-Back-End directory,
+Compose Up docker containers.
   
 **Note! Contribution rules:**  
 1. All Pull Requests should start from prefix *#xxx-yyy* where *xxx* - task number and and *yyy* - short description 
