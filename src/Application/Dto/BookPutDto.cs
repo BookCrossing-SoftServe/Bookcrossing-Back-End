@@ -13,9 +13,8 @@ namespace Application.Dto
         public BookState State { get; set; }
         public string Notice { get; set; }
         public IFormFile Image { get; set; }
-
         public List<string> FieldMasks { get; set; }
-
+        public int LanguageId { get; set; }
         public List<AuthorDto> BookAuthor { get; set; }
         public List<GenreDto> bookGenre { get; set; }
     }

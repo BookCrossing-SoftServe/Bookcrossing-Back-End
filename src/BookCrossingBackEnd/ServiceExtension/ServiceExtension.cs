@@ -111,6 +111,7 @@ namespace BookCrossingBackEnd.ServiceExtension
                 mc.AddProfile(new Application.MapperProfilers.RequestProfile());
                 mc.AddProfile(new Application.MapperProfilers.UserProfile());
                 mc.AddProfile(new Application.MapperProfilers.BookProfile());
+                mc.AddProfile(new Application.MapperProfilers.LanguageProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
