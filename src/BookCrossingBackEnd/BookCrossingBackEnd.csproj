@@ -39,6 +39,14 @@
     <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.Designer.cs" />
     <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.cs" />
     <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.Designer.cs" />
+    <Compile Remove="Migrations\20200622115640_AddLanguageField.cs" />
+    <Compile Remove="Migrations\20200622115640_AddLanguageField.Designer.cs" />
+    <Compile Remove="Migrations\20200622124219_AddLanguageField.cs" />
+    <Compile Remove="Migrations\20200622124219_AddLanguageField.Designer.cs" />
+    <Compile Remove="Migrations\20200622125715_AddLanguageField.cs" />
+    <Compile Remove="Migrations\20200622125715_AddLanguageField.Designer.cs" />
+    <Compile Remove="Migrations\20200622130549_AddLanguageField.cs" />
+    <Compile Remove="Migrations\20200622130549_AddLanguageField.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

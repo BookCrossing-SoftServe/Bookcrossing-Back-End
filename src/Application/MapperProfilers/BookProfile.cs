@@ -31,7 +31,7 @@ namespace Application.MapperProfilers
             CreateMap<RdbmsEntities.Book, BookPutDto>()
                 .ForMember(dto => dto.BookAuthor, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
                 .ForMember(dto => dto.bookGenre, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()));
-
+                
             CreateMap<RdbmsEntities.Book, BookGetDto>()
                .ForMember(dto => dto.Authors, opt => opt.MapFrom(x => x.BookAuthor.Select(y => y.Author).ToList()))
                .ForMember(dto => dto.Genres, opt => opt.MapFrom(x => x.BookGenre.Select(y => y.Genre).ToList()))

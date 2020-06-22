@@ -46,6 +46,13 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasColumnName("imagepath")
                 .HasMaxLength(260);
 
+        
+            builder.HasOne(a => a.Language)
+              .WithMany(p => p.Books)
+              .HasForeignKey(d => d.LanguageId);
+
+
+
             builder.Property(a => a.DateAdded).HasDefaultValueSql("GETDATE()");
         }
     }
