@@ -18,7 +18,7 @@ namespace Infrastructure.RDBMS
         public DbSet<BookAuthor> BookAuthor { get; set; }
         public DbSet<BookGenre> BookGenre { get; set; }
         public DbSet<Genre> Genre { get; set; }
-        public DbSet<Language> Languages { get; set; }
+        public DbSet<Language> Language { get; set; }
         public DbSet<Location> Location { get; set; }
         public DbSet<Request> Request { get; set; }
         public DbSet<UserRoom> UserRoom { get; set; }
