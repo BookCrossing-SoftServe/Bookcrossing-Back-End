@@ -15,7 +15,6 @@ namespace Application.Dto
         public IFormFile Image { get; set; }
         public List<string> FieldMasks { get; set; }
         public int LanguageId { get; set; }
-        public LanguageDto Language { get; set; }
         public List<AuthorDto> BookAuthor { get; set; }
         public List<GenreDto> bookGenre { get; set; }
     }

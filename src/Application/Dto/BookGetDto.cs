@@ -16,6 +16,7 @@ namespace Application.Dto
         public string ImagePath { get; set; }
         public double Rating { get; set; }
         public int LanguageId { get; set; }
+        public LanguageDto Language { get; set; }
         public List<AuthorDto> Authors { get; set; }
         public List<GenreDto> Genres { get; set; }
         public RoomLocationDto Location { get; set; }
