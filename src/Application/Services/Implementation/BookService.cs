@@ -64,6 +64,7 @@ namespace Application.Services.Implementation
                                                                .Include(p => p.User)
                                                                .ThenInclude(x => x.UserRoom)
                                                                .ThenInclude(x => x.Location)
+                                                               .Include(p => p.Language)
                                                                .FirstOrDefaultAsync(p => p.Id == bookId));
         }
 
