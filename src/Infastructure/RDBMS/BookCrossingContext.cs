@@ -1,5 +1,6 @@
 ﻿using Domain.RDBMS.Entities;
 using Infrastructure.RDBMS.Configuration;
+using Infrastructure.RDBMS.Seeder;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.RDBMS
@@ -49,6 +50,8 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new ResetPasswordConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleJobConfiguration());
+            
+            DataSeeder.Seed(modelBuilder);
         }
     }
 }
