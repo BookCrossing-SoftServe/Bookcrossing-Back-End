@@ -313,7 +313,8 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.Genre)
                 .Include(p => p.User)
                 .ThenInclude(x => x.UserRoom)
-                .ThenInclude(x => x.Location);
+                .ThenInclude(x => x.Location)
+                .Include(x => x.Language);
         }
 
     }
