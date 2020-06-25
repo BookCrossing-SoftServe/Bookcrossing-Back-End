@@ -86,7 +86,6 @@ namespace Application.Services.Implementation
                 RefreshToken refreshTokenModel = new RefreshToken();
                 refreshTokenModel.UserId = user.Id;
                 refreshTokenModel.Token = refreshToken;
-                refreshTokenModel.Id = 1;
                 _refreshTokenRepository.Add(refreshTokenModel);
             }
 
