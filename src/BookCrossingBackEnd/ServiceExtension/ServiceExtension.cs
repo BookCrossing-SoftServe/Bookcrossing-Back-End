@@ -42,6 +42,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddSingleton<IImageService, ImageService>();
             services.AddSingleton<IPaginationService, PaginationService>();
             services.AddSingleton<ISmtpClient, SmtpClientService>();
+            services.AddScoped<ILanguageService, LanguageService>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
