@@ -49,6 +49,9 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new ResetPasswordConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleJobConfiguration());
+            modelBuilder.ApplyConfiguration(new LanguageConfiguration());
+
+            
         }
     }
 }
