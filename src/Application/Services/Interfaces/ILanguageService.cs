@@ -10,14 +10,14 @@ namespace Application.Services.Interfaces
         /// <summary>
         /// Retrieve language by ID
         /// </summary>
-        /// <param name="languageId">Languages ID</param>
+        /// <param name="languageId">Language ID</param>
         /// <returns>returns Language DTO</returns>
         Task<LanguageDto> GetById(int languageId);
 
         /// <summary>
         /// Retrieve all languages
         /// </summary>
-        /// <returns>returns list of Genres DTOs</returns>
+        /// <returns>returns list of Language DTOs</returns>
         Task<List<LanguageDto>> GetAll();
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Application.Services.Interfaces
         /// <summary>
         /// Update specified language
         /// </summary>
-        /// <param name="language">Languages DTO instance</param>
+        /// <param name="language">Language DTO instance</param>
         /// <returns></returns>
         Task<bool> Update(LanguageDto language);
 
@@ -38,14 +38,14 @@ namespace Application.Services.Interfaces
         /// Remove language from database
         /// </summary>
         /// <param name="languageId">Language ID</param>
-        /// <returns>Returns removed languages DTO</returns>
+        /// <returns>Returns removed language DTO</returns>
         Task<bool> Remove(int languageId);
 
         /// <summary>
         /// Create new language and add it into Database
         /// </summary>
-        /// <param name="language">NewGenre DTO instance</param>
-        /// <returns>Returns created Languages DTO </returns>
+        /// <param name="language">NewLanguage DTO instance</param>
+        /// <returns>Returns created Language DTO </returns>
         Task<LanguageDto> Add(LanguageDto language);
     }
 }

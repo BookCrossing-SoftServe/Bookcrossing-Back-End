@@ -43,7 +43,6 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(await _languageService.GetAll());
         }
 
-
         // PUT: api/Language
         [HttpPut]
         public async Task<IActionResult> PutLanguage(LanguageDto languageDto)
@@ -64,7 +63,7 @@ namespace BookCrossingBackEnd.Controllers
         {
             _logger.LogInformation("Post language {LanguageDto}", languageDto);
             var insertedLanguage = await _languageService.Add(languageDto);
-            return Created("GetLanguage",insertedLanguage ) ;
+            return Created("GetLanguage", insertedLanguage);
         }
 
         // DELETE: api/Language/id

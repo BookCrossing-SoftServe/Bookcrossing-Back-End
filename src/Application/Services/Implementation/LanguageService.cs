@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
@@ -16,6 +15,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<Language> _languageRepository;
         private readonly IMapper _mapper;
         private readonly IPaginationService _paginationService;
+
         public LanguageService(IRepository<Language> languageRepository, IMapper mapper, IPaginationService paginationService)
         {
             _languageRepository = languageRepository;
@@ -41,7 +41,6 @@ namespace Application.Services.Implementation
             return _mapper.Map<LanguageDto>(language);
         }
 
-      
         public async Task<bool> Remove(int languageId)
         {
             var language = await _languageRepository.FindByIdAsync(languageId);
@@ -53,7 +52,6 @@ namespace Application.Services.Implementation
             await _languageRepository.SaveChangesAsync();
             return true;
         }
-       
 
         public async Task<bool> Update(LanguageDto languageDto)
         {
