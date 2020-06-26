@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace BookCrossingBackEnd.ServiceExtension
 {
@@ -82,19 +84,30 @@ namespace BookCrossingBackEnd.ServiceExtension
                 });
         }
 
-        public static void AddDbContext(this IServiceCollection services,IConfiguration configuration)
+        public static void AddDbContext(this IServiceCollection services,IConfiguration configuration, IWebHostEnvironment env)
         {
-            string localConnection = configuration.GetConnectionString("DefaultConnection");
-            // Please download appsettings.json for connecting to Azure DB
-            string azureConnection = configuration.GetConnectionString("AzureConnection");
+            string connectionString;
+
+            if (!env.IsProduction())
+                connectionString = configuration.GetConnectionString("DefaultConnection");
+            else
+                connectionString = configuration.GetConnectionString("AzureConnection");
+
             services.AddDbContext<Infrastructure.RDBMS.BookCrossingContext>(options =>
-                options.UseSqlServer(localConnection, x => x.MigrationsAssembly("BookCrossingBackEnd")));
+                options.UseSqlServer(connectionString, x => x.MigrationsAssembly("BookCrossingBackEnd")));
         }
 
-        public static void AddMongoSettings(this IServiceCollection services, IConfiguration configuration)
+        public static void AddMongoSettings(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
+            string settingsName;
+
+            if (!env.IsProduction())
+                settingsName = "MongoSettings";
+            else
+                settingsName = "CosmoDBSettings";
+
             services.Configure<MongoSettings>(
-                configuration.GetSection(nameof(MongoSettings)));
+                configuration.GetSection(settingsName));
 
             services.AddSingleton<IMongoSettings>(sp =>
                 sp.GetRequiredService<IOptions<MongoSettings>>().Value);
@@ -119,10 +132,17 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddSingleton(mapper);
         }
 
-        public static void AddEmailService(this IServiceCollection services, IConfiguration configuration)
+        public static void AddEmailService(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
+            string connectionString;
+
+            if (!env.IsProduction())
+                connectionString = configuration.GetConnectionString("DefaultConnection");
+            else
+                connectionString = configuration.GetConnectionString("AzureConnection");
+
             services.AddHangfire(config =>
-               config.UseSqlServerStorage(configuration.GetConnectionString("AzureConnection")));
+               config.UseSqlServerStorage(connectionString));
             services.AddHangfireServer(options => options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
 
             var emailConfig = configuration
