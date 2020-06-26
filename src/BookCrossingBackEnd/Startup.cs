@@ -33,25 +33,29 @@ namespace BookCrossingBackEnd
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IWebHostEnvironment environment)
         {
+            Environment = environment;
             Configuration = configuration;
             _logger = logger;
         }
 
         private IConfiguration Configuration { get; }
+
+        private IWebHostEnvironment Environment { get; }
+
         private readonly ILogger _logger;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext(Configuration);
+            services.AddDbContext(Configuration, Environment);
 
 
-            services.AddMongoSettings(Configuration);
+            services.AddMongoSettings(Configuration, Environment);
 
-            services.AddEmailService(Configuration);
+            services.AddEmailService(Configuration, Environment);
 
             services.AddMapper();
 
@@ -83,9 +87,9 @@ namespace BookCrossingBackEnd
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -129,7 +133,7 @@ namespace BookCrossingBackEnd
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
 
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 _logger.LogInformation("Configuring for Development environment");
                 app.UseDeveloperExceptionPage();
