@@ -36,7 +36,7 @@
     "validation-max-length": "This Field less than {{value}} characters",
     "validation-letter-symbol-pattern": "Only letters and symbols",
     "validation-are-acceptable": "are acceptable",
-    "database-links":  "Other tables have links on this record"
+    "database-links":  "Other tables have links to this record"
   },
   "components": {
     "searchBar": {
