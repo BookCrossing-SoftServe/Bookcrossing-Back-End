@@ -35,7 +35,8 @@
     "validation-min-length": "Це поле повино мати більше {{value}} символів",
     "validation-max-length": "Це поле не може мати більше ніж {{value}} символів",
     "validation-letter-symbol-pattern": "Тільки букви та сивмоли як:",
-    "validation-are-acceptable": "є дозволеними"
+    "validation-are-acceptable": "є дозволеними",
+    "database-links": "На цей запис є посилання з інших таблиць"
   },
   "components": {
     "searchBar": {
@@ -185,6 +186,20 @@
           },
           "title": "Усі"
         }
+      },
+      "languages": {
+        "language": "Мова",
+        "languages": "Мови",
+        "name": "Назва",
+        "add-success": "Нова мова успішно створена!",
+        "update-success": "Мова успішно відредагована!",
+        "delete-success": "Мова успішно видалена!",
+      },
+      "languages-form": {
+        "edit-title": "Редагування мови",
+        "edit-button": "Відредагувати",
+        "add-title": "Добавити мову",
+        "add-button": "Добавити"
       }
     }
   }
