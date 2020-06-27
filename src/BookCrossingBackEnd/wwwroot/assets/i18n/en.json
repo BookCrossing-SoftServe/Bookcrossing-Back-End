@@ -35,7 +35,8 @@
     "validation-min-length": "This Field Has to be more than {{value}} characters",
     "validation-max-length": "This Field less than {{value}} characters",
     "validation-letter-symbol-pattern": "Only letters and symbols",
-    "validation-are-acceptable": "are acceptable"
+    "validation-are-acceptable": "are acceptable",
+    "database-links":  "Other tables have links to this record"
   },
   "components": {
     "searchBar": {
@@ -185,6 +186,20 @@
           },
           "title": "Total"
         }
+      },
+      "languages": {
+        "language": "Language",
+        "languages": "Languages",
+        "name": "Name",
+        "add-success": "New language was created successfully!",
+        "update-success": "Language was edited successfully!",
+        "delete-success": "Language was deleted successfully!"
+      },
+      "languages-form": {
+        "edit-title": "Edit Language",
+        "edit-button": "Update",
+        "add-title": "Add Language",
+        "add-button": "Add"
       }
     }
   }
