@@ -43,6 +43,7 @@
       "searchPlaceholder": "Enter Book Title or Author"
     },
     "books": {
+      "languages": "Languages",
       "locations": "Locations",
       "categories": "Categories",
       "availableOnly": "Available Only"

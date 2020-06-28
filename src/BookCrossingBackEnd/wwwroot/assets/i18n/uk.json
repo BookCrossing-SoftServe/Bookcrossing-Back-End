@@ -43,6 +43,7 @@
       "searchPlaceholder": "Введіть назву книги або автора"
     },
     "books": {
+      "languages": "Мови",
       "locations": "Локації",
       "categories": "Катерогії",
       "availableOnly": "В Наявності"
@@ -193,13 +194,13 @@
         "name": "Назва",
         "add-success": "Нова мова успішно створена!",
         "update-success": "Мова успішно відредагована!",
-        "delete-success": "Мова успішно видалена!",
+        "delete-success": "Мова успішно видалена!"
       },
       "languages-form": {
         "edit-title": "Редагування мови",
         "edit-button": "Відредагувати",
-        "add-title": "Добавити мову",
-        "add-button": "Добавити"
+        "add-title": "Додати мову",
+        "add-button": "Додати"
       }
     }
   }
