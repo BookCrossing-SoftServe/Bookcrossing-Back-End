@@ -28,6 +28,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<Book>> _bookRepositoryMock;
         private Mock<IRepository<BookAuthor>> _bookAuthorRepositoryMock;
         private Mock<IRepository<BookGenre>> _bookGenreRepositoryMock;
+        private Mock<IRepository<Language>> _bookLanguageRepositoryMock;
         private Mock<IRepository<User>> _userLocationServiceMock;
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IRepository<Request>> _requestServiceMock;
@@ -43,6 +44,7 @@ namespace ApplicationTest.Services
             _bookRepositoryMock = new Mock<IRepository<Book>>();
             _bookAuthorRepositoryMock = new Mock<IRepository<BookAuthor>>();
             _bookGenreRepositoryMock = new Mock<IRepository<BookGenre>>();
+            _bookLanguageRepositoryMock = new Mock<IRepository<Language>>();
             _requestServiceMock = new Mock<IRepository<Request>>();
             _userLocationServiceMock = new Mock<IRepository<User>>();
             _userResolverServiceMock = new Mock<IUserResolverService>();
@@ -57,6 +59,7 @@ namespace ApplicationTest.Services
                 mc.AddProfile(new Application.MapperProfilers.BookChildCommentProfile());
                 mc.AddProfile(new Application.MapperProfilers.BookRootCommentProfile());
                 mc.AddProfile(new Application.MapperProfilers.GenreProfile());
+                mc.AddProfile(new Application.MapperProfilers.LanguageProfile());
                 mc.AddProfile(new Application.MapperProfilers.LocationProfile());
                 mc.AddProfile(new Application.MapperProfilers.RequestProfile());
                 mc.AddProfile(new Application.MapperProfilers.UserProfile());
@@ -65,14 +68,16 @@ namespace ApplicationTest.Services
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                _userLocationServiceMock.Object, pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
+                 _bookLanguageRepositoryMock.Object, _userLocationServiceMock.Object,  pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
                 _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object, _rootCommentRepository.Object);
 
                 var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
+            var languageMock = GetBookLanguage().AsQueryable();
             var usersMock = GetUsers().AsQueryable();
             _bookAuthorRepositoryMock.Setup(s => s.GetAll()).Returns(authorMock);
             _bookGenreRepositoryMock.Setup(s => s.GetAll()).Returns(genreMock);
+            _bookLanguageRepositoryMock.Setup(s => s.GetAll()).Returns(languageMock);
             _userLocationServiceMock.Setup(s => s.GetAll()).Returns(usersMock);
         }
 
@@ -191,21 +196,30 @@ namespace ApplicationTest.Services
         private List<Book> GetPopulatedBooks()
         {
             var genres = GetBookGenre();
+            var languages = GetBookLanguage();
             var authors = GetBookAuthor();
             var users = GetUsers();
             var list = new List<Book>
             {
-                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Name = "CLR", State = BookState.Available, User = users[0], UserId = 1},
-                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", State = BookState.Available, User = users[1], UserId = 2},
-                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", State = BookState.Available, User = users[0], UserId = 1},
-                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 1, BookGenre = new List<BookGenre>() {genres[0],genres[1]}, BookAuthor = new List<BookAuthor>() {authors[0]}, Language = languages[0], LanguageId = 1, Name = "CLR", State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 2, BookGenre = new List<BookGenre>() {genres[2]}, BookAuthor = new List<BookAuthor>() {authors[1]},Name = "Test", Language = languages[1], LanguageId = 2, State = BookState.Available, User = users[1], UserId = 2},
+                new Book(){ Id = 3, BookGenre = new List<BookGenre>() {genres[3]},  BookAuthor = new List<BookAuthor>() {authors[2]},Name = "ICE CLR", Language = languages[2], LanguageId = 3, State = BookState.Available, User = users[0], UserId = 1},
+                new Book(){ Id = 4, BookGenre = new List<BookGenre>() {genres[4]}, BookAuthor = new List<BookAuthor>() {authors[3],authors[4]},Name = "FIRE", Language = languages[0], LanguageId = 1, State = BookState.Available, User = users[0], UserId = 1},
             };
             return list;
         }
 
+        private List<Language> GetBookLanguage()
+        {
+            return new List<Language>() {
+                new Language() { Id = 1, Name = "English"},
+                new Language() { Id = 2, Name = "Ukrainian"},
+                new Language() { Id = 3, Name = "Russian"}
+            };
+        }
         private List<BookGenre> GetBookGenre()
         {
-            return new List<BookGenre>() { 
+            return new List<BookGenre>() {
                 new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 1 }, BookId = 1, GenreId = 1},
                 new BookGenre() { Book = new Book() { Id = 1 }, Genre = new Genre() { Id = 2 }, BookId = 1, GenreId = 2 },
                 new BookGenre() { Book = new Book() { Id = 2 }, Genre = new Genre() { Id = 1 }, BookId = 2, GenreId = 1 },
@@ -253,7 +267,7 @@ namespace ApplicationTest.Services
 
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
 
-            var query = new BookQueryParams() { Page = 1, PageSize = 10, SearchTerm = "CLR" };
+            var query = new BookQueryParams() { Page = 1, PageSize = 10, Languages = new int[] { 1, 2, 3 }, SearchTerm = "CLR" };
 
             var booksResult = await _bookService.GetAllAsync(query);
 
