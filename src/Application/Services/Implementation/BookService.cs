@@ -325,7 +325,6 @@ namespace Application.Services.Implementation
                 .Include(p => p.BookGenre)
                 .ThenInclude(x => x.Genre)
                 .Include(x => x.Language)
-                .ThenInclude(x => x.Name)
                 .Include(p => p.User)
                 .ThenInclude(x => x.UserRoom)
                 .ThenInclude(x => x.Location)
