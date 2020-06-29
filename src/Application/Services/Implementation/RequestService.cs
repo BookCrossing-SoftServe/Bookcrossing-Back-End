@@ -204,7 +204,7 @@ namespace Application.Services.Implementation
             var bookIds =
                 from b in books
                 join g in genre on b.Id equals g.BookId
-                join la in lang on b.LanguageId equals la.Id
+                join la in lang on b.Language.Id equals la.Id
                 join a in author on b.Id equals a.BookId
                 join l in location on b.UserId equals l.Id
                 select b.Id;

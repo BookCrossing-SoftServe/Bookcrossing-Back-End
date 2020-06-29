@@ -314,7 +314,7 @@ namespace Application.Services.Implementation
             var bookIds =
                 from b in query
                 join g in genre on b.Id equals g.BookId
-                join l in language on b.LanguageId equals l.Id
+                join l in language on b.Language.Id equals l.Id
                 join a in author on b.Id equals a.BookId
                 join u in userLocation on b.UserId equals u.Id
                 select b.Id;
@@ -325,6 +325,7 @@ namespace Application.Services.Implementation
                 .Include(p => p.BookGenre)
                 .ThenInclude(x => x.Genre)
                 .Include(x => x.Language)
+                .ThenInclude(x => x.Name)
                 .Include(p => p.User)
                 .ThenInclude(x => x.UserRoom)
                 .ThenInclude(x => x.Location)
