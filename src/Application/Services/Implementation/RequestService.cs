@@ -33,6 +33,7 @@ namespace Application.Services.Implementation
         private readonly IPaginationService _paginationService;
         private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
         private readonly IRepository<BookGenre> _bookGenreRepository;
+        private readonly IRepository<Language> _bookLanguageRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<UserRoom> _userLocationRepository;
         private readonly IRootRepository<BookRootComment> _rootCommentRepository;
@@ -40,7 +41,7 @@ namespace Application.Services.Implementation
 
         public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
             IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
-            IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository, 
+            IRepository<Language> bookLanguageRepository, IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository, 
             IRepository<BookGenre> bookGenreRepository, IRepository<UserRoom> userLocationRepository, IRootRepository<BookRootComment> rootCommentRepository)
         {
             _requestRepository = requestRepository;
@@ -51,6 +52,7 @@ namespace Application.Services.Implementation
             _paginationService = paginationService;
             _hangfireJobScheduleService = hangfireJobScheduleService;
             _bookGenreRepository = bookGenreRepository;
+            _bookLanguageRepository = bookLanguageRepository;
             _bookAuthorRepository = bookAuthorRepository;
             _userLocationRepository = userLocationRepository;
             _rootCommentRepository = rootCommentRepository;
@@ -107,6 +109,7 @@ namespace Application.Services.Implementation
                 request = await _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                     .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                    .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
                     .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .FirstOrDefaultAsync(predicate);
@@ -116,6 +119,7 @@ namespace Application.Services.Implementation
                 request = _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                     .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                    .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
                     .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location).Where(predicate).ToList()
                     .Last();
@@ -133,6 +137,7 @@ namespace Application.Services.Implementation
             var requests = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
                 .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate);
@@ -174,6 +179,18 @@ namespace Application.Services.Implementation
                 genre = genre.Where(wherePredicate);
             }
 
+            var lang = _bookLanguageRepository.GetAll();
+            if (parameters.Languages != null)
+            {
+                var wherePredicate = PredicateBuilder.New<Language>();
+                foreach (var id in parameters.Languages)
+                {
+                    var tempId = id;
+                    wherePredicate = wherePredicate.Or(g => g.Id == tempId);
+                }
+                lang = lang.Where(wherePredicate);
+            }
+
             if (parameters.ShowAvailable == true)
             {
                 books = books.Where(b => b.State == BookState.Available);
@@ -187,12 +204,14 @@ namespace Application.Services.Implementation
             var bookIds =
                 from b in books
                 join g in genre on b.Id equals g.BookId
+                join la in lang on b.LanguageId equals la.Id
                 join a in author on b.Id equals a.BookId
                 join l in location on b.UserId equals l.Id
                 select b.Id;
             var query = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
+                .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
                 .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate).Where(x => bookIds.Contains(x.BookId));

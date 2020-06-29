@@ -25,6 +25,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<BookGenre> _bookGenreRepository;
+        private readonly IRepository<Language> _bookLanguageRepository;
         private readonly IRepository<User> _userLocationRepository;
         private readonly IRepository<Request> _requestRepository;
         private readonly IUserResolverService _userResolverService;
@@ -36,13 +37,14 @@ namespace Application.Services.Implementation
         private readonly IEmailSenderService _emailSenderService;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
-            IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
+            IRepository<Language> bookLanguageRepository, IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
             IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService,
             IRootRepository<BookRootComment> rootCommentRepository)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
             _bookGenreRepository = bookGenreRepository;
+            _bookLanguageRepository = bookLanguageRepository;
             _userLocationRepository = userLocationRepository;
             _requestRepository = requestRepository;
             _paginationService = paginationService;
@@ -61,6 +63,7 @@ namespace Application.Services.Implementation
                                                                .ThenInclude(x => x.Author)
                                                                .Include(p => p.BookGenre)
                                                                .ThenInclude(x => x.Genre)
+                                                               .Include(x => x.Language)
                                                                .Include(p => p.User)
                                                                .ThenInclude(x => x.UserRoom)
                                                                .ThenInclude(x => x.Location)
@@ -294,14 +297,24 @@ namespace Application.Services.Implementation
                 }
                 query = query.Where(predicate);
             }
-
+            if (parameters.Languages != null)
+            {
+                var predicate = PredicateBuilder.New<Book>();
+                foreach (var id in parameters.Languages)
+                {
+                    predicate = predicate.Or(g => g.Language.Id == id);
+                }
+                query = query.Where(predicate);
+            }
 
             var userLocation = _userLocationRepository.GetAll();
             var author = _bookAuthorRepository.GetAll();
             var genre = _bookGenreRepository.GetAll();
+            var language = _bookLanguageRepository.GetAll();
             var bookIds =
                 from b in query
                 join g in genre on b.Id equals g.BookId
+                join l in language on b.LanguageId equals l.Id
                 join a in author on b.Id equals a.BookId
                 join u in userLocation on b.UserId equals u.Id
                 select b.Id;
@@ -311,6 +324,7 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.Author)
                 .Include(p => p.BookGenre)
                 .ThenInclude(x => x.Genre)
+                .Include(x => x.Language)
                 .Include(p => p.User)
                 .ThenInclude(x => x.UserRoom)
                 .ThenInclude(x => x.Location)
