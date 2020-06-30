@@ -1,6 +1,7 @@
-﻿language: csharp
+language: csharp
 
 dotnet: 3.1.301
+mono: none
 sudo: false
 
 env:
@@ -20,6 +21,6 @@ deploy:
     username: $username
     password: $password
     site: bookcrossingbackend20200620184932
-    edge: true # opt in to dpl v2
+    verbose: true
     on:
         develop
