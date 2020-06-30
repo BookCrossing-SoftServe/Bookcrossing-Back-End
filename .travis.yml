@@ -13,4 +13,13 @@ script:
     - dotnet test -c Release --no-build src/ApplicationTest/ApplicationTest.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
     
 after_script:
-    - bash <(curl -s https://codecov.io/bash)
+    - bash <(curl -s https://codecov.io/bash) 
+
+deploy:
+    provider: azure_web_apps
+    username: $username
+    password: $password
+    site: bookcrossingbackend20200620184932
+    edge: true # opt in to dpl v2
+    on:
+        develop
