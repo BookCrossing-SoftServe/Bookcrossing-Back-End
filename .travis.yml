@@ -23,7 +23,5 @@ deploy:
     site: $site_name
     verbose: true
     skip_cleanup: true
-    git:
-        depth: 9999999
     on:
         develop
