@@ -20,7 +20,7 @@ deploy:
     provider: azure_web_apps
     username: $username
     password: $password
-    site: bookcrossingbackend20200620184932
+    site: $site_name
     verbose: true
     on:
         develop
