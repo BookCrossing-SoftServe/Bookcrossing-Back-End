@@ -22,5 +22,6 @@ deploy:
     password: $password
     site: $site_name
     verbose: true
+    skip_cleanup: true
     on:
         develop
