@@ -12,7 +12,7 @@ namespace BookCrossingBackEnd.Validators
             RuleForEach(b => b.Authors).ChildRules(genre => genre.RuleFor(a => a.Id).GreaterThan(0).NotEmpty());
             RuleFor(b => b.Name)
                 .Matches(@"^[A-Za-zА-Яа-яі0-9\s\-_,\.;:()?!#]+$")
-                .Length(2, 50)
+                .Length(1, 50)
                 .NotNull();
             RuleFor(b => b.UserId).NotNull();
             RuleFor(b => b.Publisher)
