@@ -22,7 +22,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasColumnName("name")
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
             builder.Property(e => e.Rating)
                 .HasColumnName("rating")
@@ -30,7 +30,7 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.Publisher)
                 .HasColumnName("publisher")
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
             builder.Property(e => e.UserId).HasColumnName("user_id");
 
