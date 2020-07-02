@@ -109,7 +109,7 @@ namespace Application.Services.Implementation
                 request = await _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                     .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                    .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
+                    .Include(i => i.Book).ThenInclude(i => i.Language)
                     .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .FirstOrDefaultAsync(predicate);
@@ -119,7 +119,7 @@ namespace Application.Services.Implementation
                 request = _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                     .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                    .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
+                    .Include(i => i.Book).ThenInclude(i => i.Language)
                     .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location).Where(predicate).ToList()
                     .Last();
@@ -137,7 +137,7 @@ namespace Application.Services.Implementation
             var requests = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
+                .Include(i => i.Book).ThenInclude(i => i.Language)
                 .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate);
@@ -211,7 +211,7 @@ namespace Application.Services.Implementation
             var query = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
-                .Include(i => i.Book).ThenInclude(i => i.Language).ThenInclude(i => i.Name)
+                .Include(i => i.Book).ThenInclude(i => i.Language)
                 .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate).Where(x => bookIds.Contains(x.BookId));

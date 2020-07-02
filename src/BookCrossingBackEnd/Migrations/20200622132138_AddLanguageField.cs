@@ -12,7 +12,7 @@ namespace BookCrossingBackEnd.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "Languages",
+                name: "Language",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -21,7 +21,7 @@ namespace BookCrossingBackEnd.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Languages", x => x.Id);
+                    table.PrimaryKey("PK_Language", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
@@ -30,10 +30,10 @@ namespace BookCrossingBackEnd.Migrations
                 column: "LanguageId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Book_Languages_LanguageId",
+                name: "FK_Book_Language_LanguageId",
                 table: "Book",
                 column: "LanguageId",
-                principalTable: "Languages",
+                principalTable: "Language",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
@@ -41,11 +41,11 @@ namespace BookCrossingBackEnd.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Book_Languages_LanguageId",
+                name: "FK_Book_Language_LanguageId",
                 table: "Book");
 
             migrationBuilder.DropTable(
-                name: "Languages");
+                name: "Language");
 
             migrationBuilder.DropIndex(
                 name: "IX_Book_LanguageId",
