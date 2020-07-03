@@ -40,7 +40,7 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.Notice)
                 .HasColumnName("notice")
-                .HasMaxLength(500);
+                .HasMaxLength(255);
 
             builder.Property(a => a.ImagePath)
                 .HasColumnName("imagepath")
