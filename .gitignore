@@ -11,7 +11,7 @@ src/BookCrossingBackEnd/appsettings.json
 *.userosscache
 *.sln.docstates
 
-appsetting.json
+appsettings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
