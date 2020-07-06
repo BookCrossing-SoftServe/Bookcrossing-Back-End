@@ -19,7 +19,10 @@ namespace Application.Services.Interfaces
         /// <param name="predicate">Predicate</param>
         /// <returns></returns>
         Task<UserDto> GetById(Expression<Func<User, bool>> predicate);
+
         Task UpdateUser(UserUpdateDto userDto);
+
+        Task<RegisterDto> AddUser(RegisterDto userRegisterDto);
 
         Task RemoveUser(int userId);
 

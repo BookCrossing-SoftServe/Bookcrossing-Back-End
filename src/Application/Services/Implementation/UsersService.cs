@@ -81,6 +81,19 @@ namespace Application.Services.Implementation
             }
         }
 
+        public async Task<RegisterDto> AddUser(RegisterDto userRegisterDto)
+        {
+            if (await _userRepository.FindByCondition(u => u.Email == userRegisterDto.Email) == null)
+            {
+                var user = _mapper.Map<User>(userRegisterDto);
+                _userRepository.Add(user);
+                await _userRepository.SaveChangesAsync();
+                return _mapper.Map<RegisterDto>(user);
+            }
+            else
+                return null;
+        }
+
         public async Task RemoveUser(int userId)
         {
             var user = await _userRepository.FindByIdAsync(userId);

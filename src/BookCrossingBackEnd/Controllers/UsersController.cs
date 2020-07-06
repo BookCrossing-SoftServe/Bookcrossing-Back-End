@@ -1,15 +1,11 @@
-﻿using Application.Services.Interfaces;
+using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Application.Dto.Password;
-using AutoMapper;
 using BookCrossingBackEnd.Filters;
+using System.Web;
 using Application.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,6 +13,7 @@ using Application.Dto;
 namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : Controller
     {
         private IUserService UserService { get; set; }
@@ -111,6 +108,16 @@ namespace BookCrossingBackEnd.Controllers
         {
             await UserService.ResetPassword(newPassword);
             return Ok();
+        }
+
+        // POST: api/Users
+        [HttpPost]
+        public async Task<ActionResult<RegisterDto>> Register([FromBody] RegisterDto user)
+        {
+            var createdUser = await UserService.AddUser(user);
+            if (createdUser != null)
+                return Ok();
+            return BadRequest();
         }
     }
 }

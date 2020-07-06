@@ -46,7 +46,7 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasColumnType("datetime2")
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            builder.Property(e => e.RoleId).HasColumnName("role_id");
+            builder.Property(e => e.RoleId).HasColumnName("role_id").HasDefaultValue(1);
 
             builder.Property(e => e.UserRoomId).HasColumnName("user_room_id");
 
