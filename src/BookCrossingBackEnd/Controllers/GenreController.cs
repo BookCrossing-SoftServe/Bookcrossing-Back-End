@@ -68,7 +68,6 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/Genre/id
-        [ModelValidationFilter]
         [HttpDelete("{id:min(1)}")]
         public async Task<IActionResult> DeleteGenre(int id)
         {

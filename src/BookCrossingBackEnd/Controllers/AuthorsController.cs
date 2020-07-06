@@ -2,6 +2,7 @@
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using BookCrossingBackEnd.Filters;
 using Domain.RDBMS.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ namespace BookCrossingBackEnd.Controllers
             }
             return Ok(author);
         }
+
         // GET: api/Authors/Paginated?page=
         [HttpGet("paginated")]
         public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams paginationQuery)

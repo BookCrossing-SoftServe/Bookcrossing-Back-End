@@ -17,9 +17,6 @@ using Application.Dto;
 namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
-
-
-
     public class UsersController : Controller
     {
         private IUserService UserService { get; set; }
@@ -45,9 +42,6 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(users);
         }
 
-
-
-
         /// <summary>
         /// Get user by id 
         /// </summary>
@@ -72,18 +66,13 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(userId);
         }
 
-
-
-
         // PUT api/<controller>/5
         /// <summary>
         /// Function for updating info about user
         /// </summary>
         /// <param name="user"></param>
         [HttpPut("{id}")]
-        //[Authorize]
-        //[UserUpdateFilter]
-        public async Task<IActionResult> Update([FromRoute] int id,[FromBody]UserUpdateDto user)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody]UserUpdateDto user)
         {
             if (id == UserResolverService.GetUserId() || UserResolverService.IsUserAdmin())
             {
@@ -109,9 +98,8 @@ namespace BookCrossingBackEnd.Controllers
             await UserService.RemoveUser(int.Parse(userId));
             return Ok();
         }
+
         [HttpPost("password")]
-        [AllowAnonymous]
-        [ModelValidationFilter]
         public async Task<IActionResult> ForgotPassword([FromBody]ResetPasswordDto email)
         {
             await UserService.SendPasswordResetConfirmation(email.Email);
@@ -119,8 +107,6 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpPut("password")]
-        [AllowAnonymous]
-        [ModelValidationFilter]
         public async Task<IActionResult> CreateNewPassword([FromBody]ResetPasswordDto newPassword)
         {
             await UserService.ResetPassword(newPassword);

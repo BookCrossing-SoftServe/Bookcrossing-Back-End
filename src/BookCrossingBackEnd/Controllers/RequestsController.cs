@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RequestsController : ControllerBase
@@ -72,7 +71,6 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
 
-        [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpPut]
         public async Task<IActionResult> ApproveReceive([FromRoute] int requestId)
@@ -85,7 +83,6 @@ namespace BookCrossingBackEnd.Controllers
             return Ok();
         }
 
-        [ModelValidationFilter]
         [Route("{requestId:min(1)}")]
         [HttpDelete]
         public async Task<IActionResult> Remove([FromRoute] int requestId)

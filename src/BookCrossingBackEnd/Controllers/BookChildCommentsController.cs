@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Comment.Book;
 using Application.Services.Interfaces;
+using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BookChildCommentsController : ControllerBase
     {
         private readonly IBookChildCommentService _childBookCommentService;
@@ -20,7 +22,6 @@ namespace BookCrossingBackEnd.Controllers
        
         // PUT: api/BookChildCommants
         [HttpPut]
-        [Authorize]
         public async Task<ActionResult<int>> Put([FromBody] ChildUpdateDto updateDto)
         {
             if (updateDto.OwnerId != _userResolverService.GetUserId())
@@ -37,7 +38,6 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/BookChildCommants
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<int>> Post([FromBody] ChildInsertDto insertDto)
         {
             if (insertDto.OwnerId != _userResolverService.GetUserId())
@@ -54,7 +54,6 @@ namespace BookCrossingBackEnd.Controllers
 
         // DELETE: api/BookChildCommants
         [HttpDelete]
-        [Authorize]
         public async Task<ActionResult<int>> Delete([FromBody] ChildDeleteDto deleteDto)
         {
             if (deleteDto.OwnerId != _userResolverService.GetUserId() && !_userResolverService.IsUserAdmin())

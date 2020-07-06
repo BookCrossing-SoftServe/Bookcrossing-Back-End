@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Dto.QueryParams;
+using BookCrossingBackEnd.Filters;
 
 namespace BookCrossingBackEnd.Controllers
 {

@@ -67,7 +67,6 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/Language/id
-        [ModelValidationFilter]
         [HttpDelete("{id:min(1)}")]
         public async Task<IActionResult> DeleteLanguage(int id)
         {
