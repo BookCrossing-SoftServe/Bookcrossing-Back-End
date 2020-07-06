@@ -1,9 +1,8 @@
-﻿using Application.Dto.Comment.Book;
+﻿using System.Threading.Tasks;
+using Application.Dto.Comment.Book;
 using Application.Services.Interfaces;
-using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace BookCrossingBackEnd.Controllers
 {

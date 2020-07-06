@@ -1,10 +1,9 @@
-﻿using Application.Dto;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Application.Dto.QueryParams;
-using BookCrossingBackEnd.Filters;
 
 namespace BookCrossingBackEnd.Controllers
 {

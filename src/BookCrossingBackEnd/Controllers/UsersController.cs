@@ -1,12 +1,10 @@
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Application.Dto;
+using Application.Dto.Password;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Application.Dto.Password;
-using BookCrossingBackEnd.Filters;
-using System.Web;
-using Application.Dto;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
