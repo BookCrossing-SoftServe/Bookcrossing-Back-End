@@ -14,7 +14,8 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.LocationId).HasColumnName("location_id");
 
-            builder.Property(e => e.RoomNumber).HasColumnName("room_number");
+            builder.Property(e => e.RoomNumber).HasColumnName("room_number")
+                .HasMaxLength(7);
 
             builder.HasOne(d => d.Location)
                 .WithMany(p => p.UserRoom)

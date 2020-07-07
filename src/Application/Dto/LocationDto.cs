@@ -9,6 +9,6 @@ namespace Application.Dto
         public string Street { get; set; }
         public string OfficeName { get; set; }
         public bool? IsActive { get; set; }
-        public List<int> Rooms { get; set; }
+        public List<string> Rooms { get; set; }
     }
 }
