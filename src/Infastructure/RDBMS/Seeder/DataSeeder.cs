@@ -77,7 +77,7 @@ namespace Infrastructure.RDBMS.Seeder
                 {
                     Id = 1,
                     LocationId = 1,
-                    RoomNumber = 4040,
+                    RoomNumber = "4040",
                 }
             );
         }

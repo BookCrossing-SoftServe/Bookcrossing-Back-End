@@ -19,5 +19,10 @@ namespace BookCrossingBackEnd.Migrations
                 constraints: table => { table.PrimaryKey("PK_ResetPassword", x => x.id); });
 
         }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(name: "ResetPassword");
+        }
     }
 }

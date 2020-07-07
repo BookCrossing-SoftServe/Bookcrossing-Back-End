@@ -244,8 +244,8 @@ namespace ApplicationTest.Services
         {
             return new List<User>()
             {
-                new User() { Id = 1, UserRoom = new UserRoom() { Location = new Location() { Id = 1 }, RoomNumber = 1, LocationId = 1 }},
-                new User() { Id = 2, UserRoom = new UserRoom() { Location = new Location() { Id = 2 }, RoomNumber = 2, LocationId = 2 }}
+                new User() { Id = 1, UserRoom = new UserRoom() { Location = new Location() { Id = 1 }, RoomNumber = "1", LocationId = 1 }},
+                new User() { Id = 2, UserRoom = new UserRoom() { Location = new Location() { Id = 2 }, RoomNumber = "2", LocationId = 2 }}
             };
         }
         [Test]

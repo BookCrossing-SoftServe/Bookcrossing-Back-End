@@ -6,7 +6,7 @@ namespace Domain.RDBMS.Entities
     {
         public int Id { get; set; }
         public int LocationId { get; set; }
-        public int RoomNumber { get; set; }
+        public string RoomNumber { get; set; }
 
         public virtual Location Location { get; set; }
         public virtual List<User> User { get; set; }
