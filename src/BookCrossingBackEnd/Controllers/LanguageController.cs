@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
-using BookCrossingBackEnd.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -67,7 +66,6 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         // DELETE: api/Language/id
-        [ModelValidationFilter]
         [HttpDelete("{id:min(1)}")]
         public async Task<IActionResult> DeleteLanguage(int id)
         {

@@ -1,14 +1,11 @@
-﻿using Application.Dto;
-using Application.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using BookCrossingBackEnd.Filters;
-using System.Security.Claims;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System;
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Net.Http.Headers;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Application.Dto;
+using Application.Services.Interfaces;
+using BookCrossingBackEnd.Filters;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {

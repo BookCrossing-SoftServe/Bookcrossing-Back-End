@@ -1,9 +1,9 @@
-﻿using Application.Dto.Comment.Book;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto.Comment.Book;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BookCrossingBackEnd.Controllers
 {
@@ -17,7 +17,7 @@ namespace BookCrossingBackEnd.Controllers
         {
             _rootBookCommentService = rootBookCommentService;
             _userResolverService = userResolverService;
-    }
+        }
 
         // GET: api/RootBookCommants/5
         [HttpGet("{bookId}")]
