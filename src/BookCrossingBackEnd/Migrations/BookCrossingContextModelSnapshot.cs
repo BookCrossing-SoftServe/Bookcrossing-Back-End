@@ -122,7 +122,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 7, 7, 20, 45, 44, 576, DateTimeKind.Local).AddTicks(2744),
+                            DateAdded = new DateTime(2020, 7, 8, 20, 20, 51, 401, DateTimeKind.Local).AddTicks(6285),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,
@@ -448,8 +448,8 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnName("password")
-                        .HasColumnType("nvarchar(32)")
-                        .HasMaxLength(32);
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");

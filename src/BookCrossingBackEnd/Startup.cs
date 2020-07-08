@@ -28,6 +28,7 @@ using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
 using Hangfire;
 using BookCrossingBackEnd.ServiceExtension;
+using Infrastructure.RDBMS;
 
 namespace BookCrossingBackEnd
 {
@@ -89,9 +90,20 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<BookCrossingContext>();
+                context.Database.Migrate();
+            }
+
             if (Environment.IsDevelopment())
             {
+                _logger.LogInformation("Configuring for Development environment");
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                _logger.LogInformation("Configuring for Production environment");
             }
 
             app.UseStaticFiles(new StaticFileOptions()
@@ -133,15 +145,6 @@ namespace BookCrossingBackEnd
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
 
-            if (Environment.IsDevelopment())
-            {
-                _logger.LogInformation("Configuring for Development environment");
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                _logger.LogInformation("Configuring for Production environment");
-            }
 
         }
 

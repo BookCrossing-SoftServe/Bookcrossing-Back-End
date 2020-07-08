@@ -9,7 +9,6 @@ namespace Infrastructure.RDBMS
     {
         public BookCrossingContext(DbContextOptions<BookCrossingContext> options) : base(options)
         {
-            Database.EnsureCreated();
         }
 
 
