@@ -29,6 +29,7 @@ using Application;
 using Hangfire;
 using BookCrossingBackEnd.ServiceExtension;
 using Infrastructure.RDBMS;
+using Microsoft.Data.SqlClient;
 
 namespace BookCrossingBackEnd
 {
@@ -90,12 +91,6 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetRequiredService<BookCrossingContext>();
-                context.Database.Migrate();
-            }
-
             if (Environment.IsDevelopment())
             {
                 _logger.LogInformation("Configuring for Development environment");
@@ -104,6 +99,19 @@ namespace BookCrossingBackEnd
             else
             {
                 _logger.LogInformation("Configuring for Production environment");
+            }
+
+            try
+            {
+                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+                {
+                    var context = serviceScope.ServiceProvider.GetRequiredService<BookCrossingContext>();
+                    context.Database.Migrate();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex.ToString());
             }
 
             app.UseStaticFiles(new StaticFileOptions()
