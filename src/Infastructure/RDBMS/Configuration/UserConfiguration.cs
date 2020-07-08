@@ -35,7 +35,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.Password)
                 .IsRequired()
                 .HasColumnName("password")
-                .HasMaxLength(32);
+                .HasMaxLength(100);
 
             builder.Property(e => e.BirthDate)
                 .HasColumnName("birth_date")

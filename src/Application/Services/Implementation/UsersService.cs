@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using Application.Dto;
-using System.Threading.Tasks;
-using System.Security.Authentication;
+﻿using Application.Dto;
 using Application.Dto.Password;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Application.Services.Implementation
 {
@@ -22,6 +22,7 @@ namespace Application.Services.Implementation
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
         private readonly IRepository<UserRoom> _userRoomRepository;
+        private readonly PasswordHasher<User> _passwordHasher;
 
         public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
         {
@@ -30,6 +31,7 @@ namespace Application.Services.Implementation
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
             _userRoomRepository = userRoomRepository;
+            _passwordHasher = new PasswordHasher<User>();
         }
         ///<inheritdoc/>
         public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)
@@ -86,6 +88,7 @@ namespace Application.Services.Implementation
             if (await _userRepository.FindByCondition(u => u.Email == userRegisterDto.Email) == null)
             {
                 var user = _mapper.Map<User>(userRegisterDto);
+                user.Password = _passwordHasher.HashPassword(user, user.Password);
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
                 return _mapper.Map<RegisterDto>(user);
@@ -127,7 +130,7 @@ namespace Application.Services.Implementation
                 _resetPasswordRepository.FindByCondition(c => c.ConfirmationNumber == newPassword.ConfirmationNumber).Result;
             if (resetPassword != null && resetPassword.ConfirmationNumber == newPassword.ConfirmationNumber && resetPassword.ResetDate <= DateTime.Now.AddMinutes(EXPIRATION_TIME))
             {
-                user.Password = newPassword.Password;
+                user.Password =  _passwordHasher.HashPassword(user, newPassword.Password);
                 await _userRepository.SaveChangesAsync();
             }
             await _userRepository.SaveChangesAsync();
