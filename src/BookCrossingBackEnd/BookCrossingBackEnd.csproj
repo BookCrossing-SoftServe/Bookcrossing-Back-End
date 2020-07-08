@@ -17,39 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.cs" />
-    <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.Designer.cs" />
-    <Compile Remove="Migrations\20200516153320_FixDatabase1.cs" />
-    <Compile Remove="Migrations\20200516153320_FixDatabase1.Designer.cs" />
-    <Compile Remove="Migrations\20200516153612_FixDatabase1.cs" />
-    <Compile Remove="Migrations\20200516153612_FixDatabase1.Designer.cs" />
-    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524184607_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524184607_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524185009_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524185009_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200622115640_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622115640_AddLanguageField.Designer.cs" />
-    <Compile Remove="Migrations\20200622124219_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622124219_AddLanguageField.Designer.cs" />
-    <Compile Remove="Migrations\20200622125715_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622125715_AddLanguageField.Designer.cs" />
-    <Compile Remove="Migrations\20200622130549_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622130549_AddLanguageField.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.11" />

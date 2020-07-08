@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    [Migration("20200622132138_AddLanguageField")]
-    partial class AddLanguageField
+    [Migration("20200708170855_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -48,6 +48,15 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Author");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FirstName = "Bernard",
+                            IsConfirmed = true,
+                            LastName = "Fernandez"
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.Book", b =>
@@ -68,24 +77,24 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnType("nvarchar(260)")
                         .HasMaxLength(260);
 
-                    b.Property<int?>("LanguageId")
+                    b.Property<int>("LanguageId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("Notice")
                         .HasColumnName("notice")
-                        .HasColumnType("nvarchar(500)")
-                        .HasMaxLength(500);
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.Property<string>("Publisher")
                         .HasColumnName("publisher")
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<double>("Rating")
                         .ValueGeneratedOnAdd()
@@ -110,6 +119,18 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Book");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateAdded = new DateTime(2020, 7, 8, 20, 8, 55, 242, DateTimeKind.Local).AddTicks(5168),
+                            LanguageId = 1,
+                            Name = "Adventures of Junior",
+                            Rating = 0.0,
+                            State = "Available",
+                            UserId = 2
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.BookAuthor", b =>
@@ -127,6 +148,13 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("BookAuthor");
+
+                    b.HasData(
+                        new
+                        {
+                            BookId = 1,
+                            AuthorId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.BookGenre", b =>
@@ -144,6 +172,13 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("BookGenre");
+
+                    b.HasData(
+                        new
+                        {
+                            BookId = 1,
+                            GenreId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.Genre", b =>
@@ -163,21 +198,39 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genre");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Fantasy"
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.Language", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnName("name")
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages");
+                    b.ToTable("Language");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Ukrainian"
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.Location", b =>
@@ -212,6 +265,16 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Location");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            City = "Lviv",
+                            IsActive = true,
+                            OfficeName = "SoftServe",
+                            Street = "Gorodoc'kogo"
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.RefreshToken", b =>
@@ -312,6 +375,18 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Role");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.ScheduleJob", b =>
@@ -388,8 +463,10 @@ namespace BookCrossingBackEnd.Migrations
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnName("role_id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<int?>("UserRoomId")
                         .HasColumnName("user_room_id")
@@ -402,6 +479,33 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasIndex("UserRoomId");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@gmail.com",
+                            FirstName = "Admin",
+                            LastName = "Adminovich",
+                            MiddleName = "Adminovski",
+                            Password = "admin",
+                            RegisteredDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "test@gmail.com",
+                            FirstName = "Toster",
+                            LastName = "Tosterovich",
+                            MiddleName = "Test",
+                            Password = "test",
+                            RegisteredDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RoleId = 1,
+                            UserRoomId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.UserRoom", b =>
@@ -416,22 +520,33 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("location_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoomNumber")
+                    b.Property<string>("RoomNumber")
                         .HasColumnName("room_number")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(7)")
+                        .HasMaxLength(7);
 
                     b.HasKey("Id");
 
                     b.HasIndex("LocationId");
 
                     b.ToTable("UserRoom");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LocationId = 1,
+                            RoomNumber = "4040"
+                        });
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.Book", b =>
                 {
                     b.HasOne("Domain.RDBMS.Entities.Language", "Language")
                         .WithMany("Books")
-                        .HasForeignKey("LanguageId");
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.RDBMS.Entities.User", "User")
                         .WithMany("Book")
