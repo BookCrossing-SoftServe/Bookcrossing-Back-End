@@ -26,8 +26,8 @@ namespace Application.Services.Implementation
 
         public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
         {
-            this._userRepository = userRepository;
-            this._mapper = mapper;
+            _userRepository = userRepository;
+            _mapper = mapper;
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
             _userRoomRepository = userRoomRepository;
@@ -89,6 +89,8 @@ namespace Application.Services.Implementation
             {
                 var user = _mapper.Map<User>(userRegisterDto);
                 user.Password = _passwordHasher.HashPassword(user, user.Password);
+                user.FirstName = Regex.Replace(user.FirstName, "[ ]+", " ");
+                user.LastName = Regex.Replace(user.LastName, "[ ]+", " ");
                 _userRepository.Add(user);
                 await _userRepository.SaveChangesAsync();
                 return _mapper.Map<RegisterDto>(user);
