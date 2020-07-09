@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200708204308_SetDefaultRoleId")]
+    partial class SetDefaultRoleId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,7 +124,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 7, 9, 0, 12, 6, 535, DateTimeKind.Local).AddTicks(574),
+                            DateAdded = new DateTime(2020, 7, 8, 23, 43, 6, 237, DateTimeKind.Local).AddTicks(7960),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,
@@ -516,10 +518,9 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("location_id")
                         .HasColumnType("int");
 
-                    b.Property<string>("RoomNumber")
+                    b.Property<int>("RoomNumber")
                         .HasColumnName("room_number")
-                        .HasColumnType("nvarchar(7)")
-                        .HasMaxLength(7);
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -532,7 +533,7 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 1,
                             LocationId = 1,
-                            RoomNumber = "4040"
+                            RoomNumber = 4040
                         });
                 });
 
