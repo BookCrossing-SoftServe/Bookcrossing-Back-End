@@ -25,7 +25,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<UserRoom> _userRoomRepository;
         private readonly PasswordHasher<User> _passwordHasher;
 
-        public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
+        public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -58,13 +58,13 @@ namespace Application.Services.Implementation
             UserRoom newRoomId = _userRoomRepository.GetAll().FirstOrDefault(x => x.Location.Id == userUpdateDto.UserLocation.Location.Id
                                                 && x.RoomNumber == userUpdateDto.UserLocation.RoomNumber);
 
-            if (newRoomId==null)
+            if (newRoomId == null)
             {
                 newRoomId = new UserRoom() { LocationId = userUpdateDto.UserLocation.Location.Id, RoomNumber = userUpdateDto.UserLocation.RoomNumber };
                 _userRoomRepository.Add(newRoomId);
                 await _userRoomRepository.SaveChangesAsync();
             }
-            
+
             var newUser = new UpdatedUserDto()
             {
                 Id = userUpdateDto.Id,
@@ -78,7 +78,7 @@ namespace Application.Services.Implementation
             var user = _mapper.Map<User>(newUser);
             await _userRepository.Update(user, newUser.FieldMasks);
             var affectedRows = await _userRepository.SaveChangesAsync();
-            if (affectedRows==0)
+            if (affectedRows == 0)
             {
                 throw new DbUpdateException();
             }
@@ -105,7 +105,7 @@ namespace Application.Services.Implementation
             var user = await _userRepository.FindByIdAsync(userId);
             _userRepository.Remove(user);
             var afftectedRows = await _userRepository.SaveChangesAsync();
-            if (afftectedRows==0)
+            if (afftectedRows == 0)
             {
                 throw new DbUpdateException();
             }
@@ -121,7 +121,7 @@ namespace Application.Services.Implementation
             };
             _resetPasswordRepository.Add(resetPassword);
             await _resetPasswordRepository.SaveChangesAsync();
-             await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
+            await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
 
         }
         /// <inheritdoc />
@@ -133,7 +133,7 @@ namespace Application.Services.Implementation
                 _resetPasswordRepository.FindByCondition(c => c.ConfirmationNumber == newPassword.ConfirmationNumber).Result;
             if (resetPassword != null && resetPassword.ConfirmationNumber == newPassword.ConfirmationNumber && resetPassword.ResetDate <= DateTime.Now.AddMinutes(EXPIRATION_TIME))
             {
-                user.Password =  _passwordHasher.HashPassword(user, newPassword.Password);
+                user.Password = _passwordHasher.HashPassword(user, newPassword.Password);
                 await _userRepository.SaveChangesAsync();
             }
             await _userRepository.SaveChangesAsync();
