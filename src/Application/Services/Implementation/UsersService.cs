@@ -1,4 +1,10 @@
-﻿using Application.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Application.Dto;
 using Application.Dto.Password;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -6,12 +12,6 @@ using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Application.Services.Implementation
 {
