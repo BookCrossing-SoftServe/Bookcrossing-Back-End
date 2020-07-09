@@ -11,6 +11,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
