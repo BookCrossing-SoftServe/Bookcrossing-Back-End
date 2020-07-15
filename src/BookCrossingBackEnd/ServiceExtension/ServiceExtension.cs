@@ -1,26 +1,24 @@
-﻿using Application.Dto.Email;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
+using Application.Dto.Email;
+using Application.Dto.OuterSource;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
-using BookCrossingBackEnd.Filters;
 using BookCrossingBackEnd.Validators;
 using Domain.NoSQL;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Infrastructure.NoSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
 namespace BookCrossingBackEnd.ServiceExtension
 {
@@ -45,6 +43,16 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddSingleton<IPaginationService, PaginationService>();
             services.AddSingleton<ISmtpClient, SmtpClientService>();
             services.AddScoped<ILanguageService, LanguageService>();
+        }
+
+        public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<GoodreadsSettings>(configuration.GetSection("GoodreadsSettings"));
+            services.AddTransient<IOuterBookSourceService, GoodreadsService>();
+            services.AddHttpClient<IOuterBookSourceService, GoodreadsService>(options =>
+            {
+                options.BaseAddress = new Uri("https://www.goodreads.com");
+            });
         }
 
         public static void AddRepositories(this IServiceCollection services)

@@ -52,15 +52,9 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<GoodreadsSettings>(Configuration.GetSection("GoodreadsSettings"));
-            services.AddTransient<IOuterBookSourceService, GoodreadsService>();
-            services.AddHttpClient<IOuterBookSourceService, GoodreadsService>(options =>
-            {
-                options.BaseAddress = new Uri("https://www.goodreads.com");
-            });
-
             services.AddDbContext(Configuration, Environment);
 
+            services.AddGoodreadsSource(Configuration);
 
             services.AddMongoSettings(Configuration, Environment);
 
