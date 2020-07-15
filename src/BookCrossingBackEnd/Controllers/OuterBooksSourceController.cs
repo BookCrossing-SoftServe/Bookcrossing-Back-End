@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Application.Dto;
+using Application.Dto.OuterSource;
 using Application.Dto.QueryParams;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {
-    [Route("api/outerservice")]
+    [Route("api/[controller]")]
     [ApiController]
     public class OuterBooksSourceController : ControllerBase
     {
@@ -20,17 +18,22 @@ namespace BookCrossingBackEnd.Controllers
             _outerBookSourceService = outerBookSourceService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]OuterSourceQueryParameters query)
+        [HttpGet("books")]
+        public async Task<ActionResult<PaginationDto<OuterBookDto>>> Get([FromQuery]OuterSourceQueryParameters query)
         {
             var books = await _outerBookSourceService.SearchBooks(query);
             return Ok(books);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook(int id)
+        [HttpGet("book/{id}")]
+        public async Task<ActionResult<OuterBookDto>> GetBook(int id)
         {
             var book = await _outerBookSourceService.GetBook(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
             return Ok(book);
         }
     }
