@@ -26,6 +26,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
+using Application.Dto.OuterSource;
 using Hangfire;
 using BookCrossingBackEnd.ServiceExtension;
 using Infrastructure.RDBMS;
@@ -51,6 +52,12 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<GoodreadsSettings>(Configuration.GetSection("GoodreadsSettings"));
+            services.AddTransient<IOuterBookSourceService, GoodreadsService>();
+            services.AddHttpClient<IOuterBookSourceService, GoodreadsService>(options =>
+            {
+                options.BaseAddress = new Uri("https://www.goodreads.com");
+            });
 
             services.AddDbContext(Configuration, Environment);
 
