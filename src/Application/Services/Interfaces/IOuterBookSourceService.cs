@@ -9,6 +9,6 @@ namespace Application.Services.Interfaces
     {
         Task<PaginationDto<OuterBookDto>> SearchBooks(OuterSourceQueryParameters query);
 
-        Task<OuterBookDto> GetBook(int? bookId);
+        Task<OuterBookDto> GetBook(int bookId);
     }
 }

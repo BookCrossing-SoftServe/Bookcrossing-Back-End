@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,7 +9,9 @@ using Application.Dto;
 using Application.Dto.OuterSource;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Security;
 
 namespace Application.Services.Implementation
 {
@@ -20,15 +23,26 @@ namespace Application.Services.Implementation
         public GoodreadsService(HttpClient httpClient, IOptions<GoodreadsSettings> settings)
         {
             _httpClient = httpClient;
-            _apiKey = settings.Value?.ApiKey ?? throw new ArgumentException("GoodreadsSettings are not valid", nameof(settings));
+            _apiKey = settings.Value?.ApiKey;
+            if (string.IsNullOrWhiteSpace(_apiKey))
+            {
+                throw new ArgumentException("GoodreadsSettings ApiKey cannot be null or white space", nameof(settings));
+            }
         }
 
         public async Task<PaginationDto<OuterBookDto>> SearchBooks(OuterSourceQueryParameters query)
         {
-            var response = await _httpClient.GetStringAsync(
+            var response = await _httpClient.GetAsync(
                 string.Format("search/index.xml?key={0}&page={1}&q={2}&per_page={3}", _apiKey, query.Page, query.SearchTerm, query.PageSize));
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidKeyException("Api key for 'Goodreads' is invalid");
+            }
+
+            response.EnsureSuccessStatusCode();
+
             var xmlDocument = new XmlDocument();
-            xmlDocument.LoadXml(response);
+            xmlDocument.LoadXml(await response.Content.ReadAsStringAsync());
 
             var totalCountNode = xmlDocument.SelectSingleNode("//search/total-results");
             var totalCountOfBooks = int.Parse(totalCountNode?.InnerText ?? "0");
@@ -47,13 +61,18 @@ namespace Application.Services.Implementation
             };
         }
 
-        public async Task<OuterBookDto> GetBook(int? bookId)
+        public async Task<OuterBookDto> GetBook(int bookId)
         {
             var response = await _httpClient.GetAsync(
-                    string.Format("book/show?key={0}&id={1}", _apiKey, bookId));
+                string.Format("book/show?key={0}&id={1}", _apiKey, bookId));
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return null;
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidKeyException("Api key for 'Goodreads' is invalid");
             }
 
             response.EnsureSuccessStatusCode();

@@ -33,7 +33,7 @@ namespace BookCrossingBackEnd.Controllers
             {
                 return NotFound();
             }
-
+            
             return Ok(book);
         }
     }
