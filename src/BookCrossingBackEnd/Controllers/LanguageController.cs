@@ -80,7 +80,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpGet("paginated")]
-        public async Task<ActionResult<PaginationDto<LanguageDto>>> GetAllGenres([FromQuery] FullPaginationQueryParams fullPaginationQuery)
+        public async Task<ActionResult<PaginationDto<LanguageDto>>> GetAllLanguages([FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
             _logger.LogInformation("Getting all paginated languages");
             return Ok(await _languageService.GetAll(fullPaginationQuery));
