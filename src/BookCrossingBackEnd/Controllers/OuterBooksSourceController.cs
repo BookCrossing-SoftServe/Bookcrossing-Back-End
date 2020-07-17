@@ -19,10 +19,10 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpGet("books")]
-        public async Task<ActionResult<PaginationDto<OuterBookDto>>> Get([FromQuery]OuterSourceQueryParameters query)
+        public async Task<ActionResult<PaginationDto<OuterBookDto>>> GetBooks([FromQuery]OuterSourceQueryParameters query)
         {
             var books = await _outerBookSourceService.SearchBooks(query);
-            return Ok(books);
+            return books;
         }
 
         [HttpGet("book/{id}")]
@@ -34,7 +34,7 @@ namespace BookCrossingBackEnd.Controllers
                 return NotFound();
             }
             
-            return Ok(book);
+            return book;
         }
     }
 }
