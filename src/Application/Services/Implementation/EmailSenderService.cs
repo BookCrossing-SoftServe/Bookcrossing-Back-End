@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Application.Dto.Email;
 using Application.Services.Interfaces;
-using Hangfire;
-using MailKit.Net.Smtp;
-using MailKit.Security;
 using Microsoft.AspNetCore.Hosting;
 using MimeKit;
 using ISmtpClient = Application.Services.Interfaces.ISmtpClient;
@@ -19,6 +15,7 @@ namespace Application.Services.Implementation
         private readonly EmailConfiguration _emailConfig;
         private readonly IHostingEnvironment _env;
         private readonly ISmtpClient _smtpClient;
+        private readonly string UnsubscribeURL = "https://book-crossing-dev.herokuapp.com/email/?email=";
 
         public EmailSenderService(EmailConfiguration emailConfig, IHostingEnvironment env, ISmtpClient smtpClient)
         {
@@ -39,6 +36,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{BOOK.NAME}", bookName);
             body = body.Replace("{BOOK.ID}", bookId.ToString());
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + userAddress + "&number=" + (userAddress + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { userAddress },
                 "Book crossing book receive confirmation!", body);
@@ -58,6 +56,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.OwnerAddress + "&number=" + (requestMessage.OwnerAddress + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Your book {requestMessage.BookName} was received!", body);
@@ -78,6 +77,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.OwnerAddress + "&number=" + (requestMessage.OwnerAddress + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Request for {requestMessage.BookName} was canceled!", body);
@@ -97,6 +97,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{BOOK.ID}", Convert.ToString(requestMessage.BookId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.UserAddress + "&number=" + (requestMessage.UserAddress + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { requestMessage.UserAddress.ToString() },
                 $"Book {requestMessage.BookName} was deactivated!", body);
@@ -116,6 +117,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{BOOK.ID}", Convert.ToString(requestMessage.BookId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.UserAddress + "&number=" + (requestMessage.UserAddress + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { requestMessage.UserAddress.ToString() },
                 $"Book {requestMessage.BookName} was activated!", body);
@@ -138,6 +140,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{REQUEST.DATE}", requestMessage.RequestDate.ToString("MMMM dd, yyyy"));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.OwnerAddress + "&number=" + (requestMessage.OwnerAddress + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Request for {requestMessage.BookName}!", body);
@@ -158,6 +161,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{CONFIRM.NUMBER}", confirmNumber);
             body = body.Replace("{EMAIL}", email);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + email + "&number=" +  (email + "$%_#").GetHashCode());
 
             var message = new Message(new List<string>() { email },
                 "Book crossing password reset!", body);

@@ -138,5 +138,14 @@ namespace Application.Services.Implementation
             }
             await _userRepository.SaveChangesAsync();
         }
+
+        public async Task ForbidEmailNotification(ForbidEmailDto email)
+        {
+            var user = await _userRepository.FindByCondition(u => u.Email == email.Email);
+            if (user != null && (user.Email + "$%_#").GetHashCode().ToString() == email.Code)
+                user.IsEmailAllowed = false;
+            await _userRepository.SaveChangesAsync();
+        }
+
     }
 }

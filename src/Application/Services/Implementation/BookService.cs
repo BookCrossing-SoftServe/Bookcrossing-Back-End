@@ -1,21 +1,19 @@
-﻿using Application.Dto;
-using AutoMapper;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Domain.RDBMS.Entities;
-using Domain.RDBMS;
 using System.Linq;
-using LinqKit;
-using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
+using Application.Dto;
+using Application.Dto.Email;
 using Application.Dto.QueryParams;
 using Application.QueryableExtension;
 using Application.Services.Interfaces;
-using Infrastructure.RDBMS;
-using System;
-using Application.Dto.Email;
+using AutoMapper;
 using Domain.NoSQL;
 using Domain.NoSQL.Entities;
+using Domain.RDBMS;
+using Domain.RDBMS.Entities;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
 namespace Application.Services.Implementation
@@ -38,7 +36,7 @@ namespace Application.Services.Implementation
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
             IRepository<Language> bookLanguageRepository, IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
-            IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService,
+            IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService, 
             IRootRepository<BookRootComment> rootCommentRepository)
         {
             _bookRepository = bookRepository;
@@ -204,15 +202,17 @@ namespace Application.Services.Implementation
             {
                 return false;
             }
-
-            var emailMessageForBookActivated = new RequestMessage()
+            if (_userLocationRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
             {
-                UserName = book.User.FirstName + " " + book.User.LastName,
-                BookName = book.Name,
-                BookId = book.Id,
-                UserAddress = new MailboxAddress($"{book.User.Email}"),
-            };
-            await _emailSenderService.SendForBookActivatedAsync(emailMessageForBookActivated);
+                var emailMessageForBookActivated = new RequestMessage()
+                {
+                    UserName = book.User.FirstName + " " + book.User.LastName,
+                    BookName = book.Name,
+                    BookId = book.Id,
+                    UserAddress = new MailboxAddress($"{book.User.Email}"),
+                };
+                await _emailSenderService.SendForBookActivatedAsync(emailMessageForBookActivated);
+            }
             book.State = BookState.Available;
             await _bookRepository.Update(book, new List<string>() { "State" });
             await _bookRepository.SaveChangesAsync();
@@ -237,26 +237,32 @@ namespace Application.Services.Implementation
                     .Include(i => i.Book)
                     .Include(i => i.User).Where(x=>x.BookId == bookId).ToList()
                     .Last();
-                var emailMessageForBookDeactivatedForRequester = new RequestMessage()
+                if (_userLocationRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
                 {
-                    UserName = request.User.FirstName + " " + request.User.LastName,
-                    BookName = book.Name,
-                    BookId = book.Id,
-                    UserAddress = new MailboxAddress($"{request.User.Email}"),
-                };
-                await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForRequester);
+                    var emailMessageForBookDeactivatedForRequester = new RequestMessage()
+                    {
+                        UserName = request.User.FirstName + " " + request.User.LastName,
+                        BookName = book.Name,
+                        BookId = book.Id,
+                        UserAddress = new MailboxAddress($"{request.User.Email}"),
+                    };
+                    await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForRequester);
+                }
                 _hangfireJobScheduleService.DeleteRequestScheduleJob(request.Id);
                 _requestRepository.Remove(request);
                 await _requestRepository.SaveChangesAsync();
             }
-            var emailMessageForBookDeactivatedForOwner = new RequestMessage()
+            if (_userLocationRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
             {
-                UserName = book.User.FirstName + " " + book.User.LastName,
-                BookName = book.Name,
-                BookId = book.Id,
-                UserAddress = new MailboxAddress($"{book.User.Email}"),
-            };
-            await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForOwner);
+                var emailMessageForBookDeactivatedForOwner = new RequestMessage()
+                {
+                    UserName = book.User.FirstName + " " + book.User.LastName,
+                    BookName = book.Name,
+                    BookId = book.Id,
+                    UserAddress = new MailboxAddress($"{book.User.Email}"),
+                };
+                await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForOwner);
+            }
             book.State = BookState.InActive;
             await _bookRepository.Update(book, new List<string>() { "State" });
             await _bookRepository.SaveChangesAsync();
