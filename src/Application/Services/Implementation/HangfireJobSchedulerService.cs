@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Application.Dto.Email;
 using Application.Services.Interfaces;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using Hangfire;
-using MimeKit;
 
 namespace Application.Services.Implementation
 {

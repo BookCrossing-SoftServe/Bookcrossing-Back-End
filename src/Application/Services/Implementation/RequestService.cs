@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,9 +13,7 @@ using Domain.NoSQL;
 using Domain.NoSQL.Entities;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
-using Hangfire;
 using LinqKit;
-using MailKit;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
@@ -29,7 +26,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IMapper _mapper;
         private readonly IEmailSenderService _emailSenderService;
-        private readonly IRepository<User> _useRepository;
+        private readonly IRepository<User> _userRepository;
         private readonly IPaginationService _paginationService;
         private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
         private readonly IRepository<BookGenre> _bookGenreRepository;
@@ -48,7 +45,7 @@ namespace Application.Services.Implementation
             _bookRepository = bookRepository;
             _mapper = mapper;
             _emailSenderService = emailSenderService;
-            _useRepository = userRepository;
+            _userRepository = userRepository;
             _paginationService = paginationService;
             _hangfireJobScheduleService = hangfireJobScheduleService;
             _bookGenreRepository = bookGenreRepository;
@@ -79,25 +76,32 @@ namespace Application.Services.Implementation
             await _requestRepository.SaveChangesAsync();
             book.State = BookState.Requested;
             await _bookRepository.SaveChangesAsync();
-            var user = _useRepository.FindByIdAsync(userId).Result;
-            var emailMessageForRequest = new RequestMessage()
+            var user = _userRepository.FindByIdAsync(userId).Result;
+            if (_userRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
             {
-                OwnerName = book.User.FirstName + " " + book.User.LastName, BookName = book.Name,
-                RequestDate = request.RequestDate, RequestId = request.Id, OwnerAddress = new MailboxAddress($"{book.User.Email}"),
-                UserName = user.FirstName + " " + user.LastName
-            };
-            await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
-
-            var emailMessageForReceiveConfirmation = new RequestMessage()
-            {
-                UserName = user.FirstName + " " + user.LastName,
-                BookName = book.Name,
-                BookId = book.Id,
-                RequestId = request.Id,
-                UserAddress = new MailboxAddress($"{user.Email}"),
-            };
-            _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
-
+                var emailMessageForRequest = new RequestMessage()
+                {
+                    OwnerName = book.User.FirstName + " " + book.User.LastName,
+                    BookName = book.Name,
+                    RequestDate = request.RequestDate,
+                    RequestId = request.Id,
+                    OwnerAddress = new MailboxAddress($"{book.User.Email}"),
+                    UserName = user.FirstName + " " + user.LastName
+                };
+                await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
+            }
+            if (_userRepository.FindByCondition(u => u.Email == user.Email).Result.IsEmailAllowed)
+            { 
+                var emailMessageForReceiveConfirmation = new RequestMessage()
+                {
+                    UserName = user.FirstName + " " + user.LastName,
+                    BookName = book.Name,
+                    BookId = book.Id,
+                    RequestId = request.Id,
+                    UserAddress = new MailboxAddress($"{user.Email}"),
+                };
+                _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
+            }
             return _mapper.Map<RequestDto>(request);
         }
         /// <inheritdoc />
@@ -240,15 +244,18 @@ namespace Application.Services.Implementation
             request.ReceiveDate = DateTime.UtcNow;
             _requestRepository.Update(request);
             var affectedRows = await _requestRepository.SaveChangesAsync();
-            var emailMessage = new RequestMessage()
+            if (_userRepository.FindByCondition(u => u.Email == request.Owner.Email).Result.IsEmailAllowed)
             {
-                OwnerName = request.User.FirstName + " " + request.User.LastName,
-                BookName = request.Book.Name,
-                RequestId = request.Id,
-                OwnerAddress = new MailboxAddress($"{request.User.Email}")
-            };
+                var emailMessage = new RequestMessage()
+                {
+                    OwnerName = request.User.FirstName + " " + request.User.LastName,
+                    BookName = request.Book.Name,
+                    RequestId = request.Id,
+                    OwnerAddress = new MailboxAddress($"{request.User.Email}")
+                };
+                await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
+            }
             _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
-            await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
             return affectedRows > 0;
         }
         /// <inheritdoc />
@@ -263,16 +270,19 @@ namespace Application.Services.Implementation
             {
                 return false;
             }
-            var emailMessage = new RequestMessage()
-            {
-                UserName = request.User.FirstName + " " + request.User.LastName,
-                OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
-                BookName = request.Book.Name,
-                RequestId = request.Id,
-                OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
-            };
             _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
-            await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
+            if (_userRepository.FindByCondition(u => u.Email == request.Owner.Email).Result.IsEmailAllowed)
+            {
+                var emailMessage = new RequestMessage()
+                {
+                    UserName = request.User.FirstName + " " + request.User.LastName,
+                    OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
+                    BookName = request.Book.Name,
+                    RequestId = request.Id,
+                    OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
+                };
+                await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
+            }
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.State = BookState.Available;
             await _bookRepository.SaveChangesAsync();

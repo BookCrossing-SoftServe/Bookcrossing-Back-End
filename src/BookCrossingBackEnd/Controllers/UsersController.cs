@@ -108,6 +108,13 @@ namespace BookCrossingBackEnd.Controllers
             return Ok();
         }
 
+        [HttpPut("email")]
+        public async Task<IActionResult> ForbidEmailNotification([FromBody]ForbidEmailDto email)
+        {
+            await UserService.ForbidEmailNotification(email);
+            return Ok();
+        }
+
         // POST: api/Users
         [HttpPost]
         public async Task<ActionResult<RegisterDto>> Register([FromBody] RegisterDto user)

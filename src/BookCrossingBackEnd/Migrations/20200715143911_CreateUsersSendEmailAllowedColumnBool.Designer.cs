@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200715143911_CreateUsersSendEmailAllowedColumnBool")]
+    partial class CreateUsersSendEmailAllowedColumnBool
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,7 +124,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 7, 15, 17, 41, 25, 688, DateTimeKind.Local).AddTicks(4497),
+                            DateAdded = new DateTime(2020, 7, 15, 17, 39, 10, 343, DateTimeKind.Local).AddTicks(6781),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,

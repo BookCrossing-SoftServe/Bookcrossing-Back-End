@@ -50,6 +50,11 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.UserRoomId).HasColumnName("user_room_id");
 
+            builder.Property(e => e.IsEmailAllowed)
+               .IsRequired().HasDefaultValue(1)
+               .HasColumnName("email_allowed")
+               .HasColumnType("bit"); ;
+
             builder.HasOne(d => d.Role)
                 .WithMany(p => p.User)
                 .HasForeignKey(d => d.RoleId)
