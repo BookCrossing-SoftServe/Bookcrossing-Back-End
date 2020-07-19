@@ -50,6 +50,7 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new ResetPasswordConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleJobConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageConfiguration());
+            modelBuilder.ApplyConfiguration(new WishConfiguration());
             
             DataSeeder.Seed(modelBuilder);
         }
