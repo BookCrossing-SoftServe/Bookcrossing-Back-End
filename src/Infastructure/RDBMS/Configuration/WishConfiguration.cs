@@ -26,7 +26,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.HasOne(wish => wish.Book)
                 .WithMany()
                 .HasForeignKey(wish => wish.BookId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Application.Services.Interfaces
     public interface IWishListService
     {
         Task<PaginationDto<BookGetDto>> GetWishesOfCurrentUser(PageableParams pageableParams);
-        void AddWish(int bookId);
-        void RemoveWish(int bookId);
+        Task AddWish(int bookId);
+        Task RemoveWish(int bookId);
     }
 }

@@ -32,7 +32,7 @@ namespace BookCrossingBackEnd.Migrations
                         column: x => x.book_id,
                         principalTable: "Book",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Wish_User_user_id",
                         column: x => x.user_id,

@@ -38,7 +38,7 @@ namespace Application.Services.Implementation
             return wishesPaginated;
         }
 
-        public async void AddWish(int bookId)
+        public async Task AddWish(int bookId)
         {
             var currentUserId = _userResolverService.GetUserId();
 
@@ -52,7 +52,7 @@ namespace Application.Services.Implementation
             await _wishRepository.SaveChangesAsync();
         }
 
-        public async void RemoveWish(int bookId)
+        public async Task RemoveWish(int bookId)
         {
             var currentUserId = _userResolverService.GetUserId();
 
