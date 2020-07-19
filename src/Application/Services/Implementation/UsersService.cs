@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 using Application.Dto;
 using Application.Dto.Password;
 using Application.Services.Interfaces;
@@ -143,8 +145,7 @@ namespace Application.Services.Implementation
         public async Task<bool> ForbidEmailNotification(ForbidEmailDto email)
         {
             var user = await _userRepository.FindByCondition(u => u.Email == email.Email);
-            var a = (user.Email + "$%_#").GetHashCode().ToString();
-            if (user != null && (user.Email + "$%_#").GetHashCode().ToString() == email.Code)
+            if (user != null && string.Join(null, SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(user.Email)).Select(x => x.ToString("x2"))) == email.Code)
             {
                 user.IsEmailAllowed = false;
                 await _userRepository.SaveChangesAsync();
