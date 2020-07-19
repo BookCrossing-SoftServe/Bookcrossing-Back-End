@@ -72,6 +72,7 @@ namespace Application.Services.Implementation
                 LastName = userUpdateDto.LastName,
                 BirthDate = userUpdateDto.BirthDate,
                 UserRoomId = newRoomId.Id,
+                IsEmailAllowed = userUpdateDto.IsEmailAllowed,
                 FieldMasks = userUpdateDto.FieldMasks
             };
 
@@ -139,12 +140,17 @@ namespace Application.Services.Implementation
             await _userRepository.SaveChangesAsync();
         }
 
-        public async Task ForbidEmailNotification(ForbidEmailDto email)
+        public async Task<bool> ForbidEmailNotification(ForbidEmailDto email)
         {
             var user = await _userRepository.FindByCondition(u => u.Email == email.Email);
+            var a = (user.Email + "$%_#").GetHashCode().ToString();
             if (user != null && (user.Email + "$%_#").GetHashCode().ToString() == email.Code)
+            {
                 user.IsEmailAllowed = false;
-            await _userRepository.SaveChangesAsync();
+                await _userRepository.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
     }

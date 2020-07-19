@@ -111,8 +111,9 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPut("email")]
         public async Task<IActionResult> ForbidEmailNotification([FromBody]ForbidEmailDto email)
         {
-            await UserService.ForbidEmailNotification(email);
-            return Ok();
+            if (await UserService.ForbidEmailNotification(email))
+                return Ok();
+            return BadRequest();
         }
 
         // POST: api/Users
