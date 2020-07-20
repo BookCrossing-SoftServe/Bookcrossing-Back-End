@@ -25,7 +25,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentUserWishList([FromQuery]PageableParams pageableParams)
+        public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentUserWishList([FromQuery] PageableParams pageableParams)
         {
             return await _wishListService.GetWishesOfCurrentUser(pageableParams);
         }
