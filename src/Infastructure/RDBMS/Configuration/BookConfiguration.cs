@@ -30,7 +30,7 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.Publisher)
                 .HasColumnName("publisher")
-                .HasMaxLength(100);
+                .HasMaxLength(150);
 
             builder.Property(e => e.UserId).HasColumnName("user_id");
 
