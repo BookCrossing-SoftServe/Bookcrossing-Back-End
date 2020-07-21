@@ -272,7 +272,7 @@ namespace Application.Services.Implementation
                 return false;
             }
             _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
-            if (_userRepository.FindByCondition(u => u.Email == request.Owner.Email).Result.IsEmailAllowed)
+            if (request.Owner.IsEmailAllowed)
             {
                 var emailMessage = new RequestMessage()
                 {
