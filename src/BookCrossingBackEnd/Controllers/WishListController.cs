@@ -30,17 +30,17 @@ namespace BookCrossingBackEnd.Controllers
             return await _wishListService.GetWishesOfCurrentUser(pageableParams);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> AddWish(BookPostDto book)
+        [HttpPost("add")]
+        public async Task<ActionResult> AddWish([FromBody]int bookId)
         {
-            await _wishListService.AddWish(book.Id);
+            await _wishListService.AddWish(bookId);
             return Ok();
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteWish(BookPostDto book)
+        [HttpDelete("{bookId}")]
+        public async Task<ActionResult> DeleteWish(int bookId)
         {
-            await _wishListService.RemoveWish(book.Id);
+            await _wishListService.RemoveWish(bookId);
             return Ok();
         }
     }

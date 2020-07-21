@@ -21,7 +21,8 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IPaginationService _paginationService;
 
-        public WishListService(IUserResolverService userResolverService, IRepository<Wish> wishRepository, IPaginationService paginationService, IRepository<Book> bookRepository)
+        public WishListService(IUserResolverService userResolverService, IPaginationService paginationService,
+            IRepository<Wish> wishRepository, IRepository<Book> bookRepository)
         {
             _userResolverService = userResolverService;
             _wishRepository = wishRepository;
@@ -36,7 +37,8 @@ namespace Application.Services.Implementation
             var wishesQuery = _wishRepository.GetAll()
                 .Where(wish => wish.UserId == currentUserId)
                 .Select(wish => wish.Book);
-            var wishesPaginated = await _paginationService.GetPageAsync<BookGetDto, Book>(wishesQuery, pageableParams);
+            var wishesPaginated = 
+                await _paginationService.GetPageAsync<BookGetDto, Book>(wishesQuery, pageableParams);
 
             return wishesPaginated;
         }
@@ -73,7 +75,7 @@ namespace Application.Services.Implementation
             var wishForRemoving = await _wishRepository.FindByIdAsync(currentUserId, bookId);
             if (wishForRemoving == null)
             {
-                throw new ObjectNotFoundException($"There is no book with id = {bookId} for current user");
+                throw new InvalidOperationException($"Cannot delete book with id = {bookId} from current user's wish list, because there is no book with id = {bookId}");
             }
 
             _wishRepository.Remove(wishForRemoving);
