@@ -107,7 +107,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region GetByBoolId
 
         [Test]
-        public async Task GetByBookId_Returns_OkObjectResult()
+        public async Task GetByBookId_BookExists_ReturnsOkObjectResult()
         {
             int bookId = 1;
             IEnumerable<RootDto> rootDtos = GetTestComments().Where(dto => dto.BookId == bookId);
@@ -127,7 +127,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region GetAll
 
         [Test]
-        public async Task GetAll_Returns_OkObjectResultWithRequestedCount()
+        public async Task GetAllComments_ReturnsOkObjectResultWithRequestedCount()
         {
             _mockRootBookCommentService.Setup(s => s.GetAll()).ReturnsAsync(GetTestComments());
 
@@ -144,7 +144,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region Delete
 
         [Test]
-        public async Task Delete_ByUser_Returns_OkObjectResult()
+        public async Task DeleteCommentByUser_CommentExists_ReturnsOkObjectResult()
         {
             RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(1);
@@ -160,7 +160,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByUser_Returns_ForbidResult()
+        public async Task DeleteCommentByUser_NotTheirComment_ReturnsForbidResult()
         {
             RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(1);
@@ -174,7 +174,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByUser_Returns_NotFoundObjectResult()
+        public async Task DeleteCommentByUser_CommentNotExist_ReturnsNotFoundObjectResult()
         {
             RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(0);
@@ -190,7 +190,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByAdmin_Returns_OkObjectResult()
+        public async Task DeleteCommentByAdmin_CommentExists_ReturnsOkObjectResult()
         {
             RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(1);
@@ -206,7 +206,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByAdmin_Returns_NotFoundObjectResult()
+        public async Task DeleteCommentByAdmin_CommentNotExist_ReturnsNotFoundObjectResult()
         {
             RootDeleteDto deleteDto = new RootDeleteDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1 };
             _mockRootBookCommentService.Setup(s => s.Remove(deleteDto.Id)).ReturnsAsync(0);
@@ -227,7 +227,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region Post      
 
         [Test]
-        public async Task Post_Returns_OkObjectResult()
+        public async Task PostComment_Success_ReturnsOkObjectResult()
         {
             RootInsertDto insertDto = new RootInsertDto() { BookId = 1, OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(1);
@@ -242,7 +242,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Post_Returns_BadRequestObjectResult()
+        public async Task PostComment_Invalid_ReturnsBadRequestObjectResult()
         {
             RootInsertDto insertDto = new RootInsertDto() { BookId = 1, OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(0);
@@ -257,7 +257,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Post_Returns_ForbidResult()
+        public async Task PostComment_UnauthorisedUser_ReturnsForbidResult()
         {
             RootInsertDto insertDto = new RootInsertDto() { BookId = 1, OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Add(insertDto)).ReturnsAsync(1);
@@ -275,7 +275,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region Put
 
         [Test]
-        public async Task Put_ByUser_Returns_OkObjectResult()
+        public async Task PutCommentByUser_Success_ReturnsOkObjectResult()
         {
             RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(1);
@@ -290,7 +290,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Put_ByUser_Returns_ForbidResult()
+        public async Task PutCommentByUser_UnauthorisedUser_ReturnsForbidResult()
         {
             RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(1);
@@ -303,7 +303,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Put_ByUser_Returns_NotFoundObjectResult()
+        public async Task PutCommentByUser_NotExists_ReturnsNotFoundObjectResult()
         {
             RootUpdateDto updateDto = new RootUpdateDto() { Id = "5e9c9ee859231a63bc853bf0", OwnerId = 1, Text = "Text" };
             _mockRootBookCommentService.Setup(s => s.Update(updateDto)).ReturnsAsync(0);

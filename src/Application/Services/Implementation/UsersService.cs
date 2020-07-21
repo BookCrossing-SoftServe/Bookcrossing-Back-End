@@ -96,7 +96,7 @@ namespace Application.Services.Implementation
                 user.FirstName = Regex.Replace(user.FirstName, "[ ]+", " ");
                 user.LastName = Regex.Replace(user.LastName, "[ ]+", " ");
                 _userRepository.Add(user);
-                await _userRepository.SaveChangesAsync();
+                await _userRepository.SaveChangesAsync();  
                 return _mapper.Map<RegisterDto>(user);
             }
             else
@@ -125,7 +125,6 @@ namespace Application.Services.Implementation
             _resetPasswordRepository.Add(resetPassword);
             await _resetPasswordRepository.SaveChangesAsync();
             await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
-
         }
         /// <inheritdoc />
         public async Task ResetPassword(ResetPasswordDto newPassword)

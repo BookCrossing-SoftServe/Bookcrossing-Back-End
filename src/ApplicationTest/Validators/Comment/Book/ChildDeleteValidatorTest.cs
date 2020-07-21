@@ -18,7 +18,7 @@ namespace ApplicationTest.Validators.Comment.Book
         }
 
         [Test]
-        public void ChildDeleteValidator_ModelInvalid_ThrowsException()
+        public void ChildCommentDeleteValidator_ModelInvalid_ThrowsException()
         {
             var invalidDto = new ChildDeleteDto();
             var result = _validator.TestValidate(invalidDto);
@@ -26,7 +26,7 @@ namespace ApplicationTest.Validators.Comment.Book
         }
 
         [Test]
-        public void ChildDeleteValidator_ModelValid_DontThrowsException()
+        public void ChildCommentDeleteValidator_ModelValid_DontThrowsException()
         {
             var validDto = new ChildDeleteDto()
             {
@@ -40,31 +40,31 @@ namespace ApplicationTest.Validators.Comment.Book
         #region Ids
 
         [Test]
-        public void Ids_ElementsBatFormat_ThrowsException()
+        public void ChildCommentIds_ElementsBadFormat_ThrowsException()
         {
             _validator.ShouldHaveValidationErrorFor(dto => dto.Ids, new List<string>() { "1", "2", "3" });
         }
 
         [Test]
-        public void Ids_Null_ThrowsException()
+        public void ChildCommentIds_IsNull_ThrowsException()
         {
             _validator.ShouldHaveValidationErrorFor(dto => dto.Ids, null as List<string>);
         }
 
         [Test]
-        public void Ids_ContainNullElement_ThrowsException()
+        public void ChildCommentIds_ContainNullElement_ThrowsException()
         {
             _validator.ShouldHaveValidationErrorFor(dto => dto.Ids, new List<string>() { null, "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf0" });
         }
 
         [Test]
-        public void Ids_CountLessThen2Elements_ThrowsException()
+        public void ChildCommentIds_CountLessThen2Elements_ThrowsException()
         {
             _validator.ShouldHaveValidationErrorFor(dto => dto.Ids, new List<string>() { "5e9c9ee859231a63bc853bf0" });
         }
 
         [Test]
-        public void Ids_CountGreaterThen2Elements_ShouldNotThrowsException()
+        public void ChildCommentIds_CountGreaterThen2Elements_ShouldNotThrowsException()
         {
             _validator.ShouldNotHaveValidationErrorFor(dto => dto.Ids, new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" });
         }
@@ -76,13 +76,13 @@ namespace ApplicationTest.Validators.Comment.Book
         [Test]
         [TestCase(-1)]
         [TestCase(0)]
-        public void OwnerId_LessOrEqualToZero_ThrowsException(int value)
+        public void ChildCommentOwnerId_LessOrEqualToZero_ThrowsException(int value)
         {
             _validator.ShouldHaveValidationErrorFor(dto => dto.OwnerId, value);
         }
 
         [Test]
-        public void OwnerId_GreaterThanZero_ShouldNotThrowsException()
+        public void ChildCommentOwnerId_GreaterThanZero_ShouldNotThrowsException()
         {
             _validator.ShouldNotHaveValidationErrorFor(dto => dto.OwnerId, 1);
         }
