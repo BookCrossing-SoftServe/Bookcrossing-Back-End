@@ -16,7 +16,7 @@ namespace BookCrossingBackEnd.Validators
             RuleFor(b => b.UserId)
                 .NotNull();
             RuleFor(b => b.Publisher)
-                .Length(1,100);          
+                .Length(1,150);          
         }
     }
 }
