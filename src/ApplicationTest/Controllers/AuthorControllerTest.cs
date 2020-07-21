@@ -79,7 +79,7 @@ namespace ApplicationTest.Controllers
         #region Post
 
         [Test]
-        public async Task Add_Author_Returns_ActionResultWithSamePropertyValues()
+        public async Task AddAuthor_Success_ReturnsActionResultAuthorDtoWhichWasAdded()
         {
             var insertDto = new AuthorDto() {FirstName = "Max", LastName = "Novitskyi"};
             var expectedAuthorDto = new AuthorDto()

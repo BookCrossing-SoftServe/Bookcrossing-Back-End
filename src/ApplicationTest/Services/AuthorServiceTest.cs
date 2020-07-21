@@ -40,7 +40,7 @@ namespace ApplicationTest.Services
 
         [Test]
         [TestCase(201)]
-        public async Task GetById_AuthorExists_Returns_AuthorDtoWithRequestedId(int id)
+        public async Task GetAuthorById_AuthorExists_Returns_AuthorDtoWithRequestedId(int id)
         {
             var expectedAuthor = new Author() {Id = 201};
             _authorRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(expectedAuthor);
@@ -53,7 +53,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task GetById_AuthorDoesNotExist_Returns_Null()
+        public async Task GetAuthorById_AuthorDoesNotExist_Returns_Null()
         {
             _authorRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(null as Author);
             _mapper.Setup(s => s.Map<AuthorDto>(It.IsAny<Author>())).Returns(null as AuthorDto);
@@ -68,7 +68,7 @@ namespace ApplicationTest.Services
         #region Post
 
         [Test]
-        public async Task Add_AuthorIsValid_Returns_AuthorDto()
+        public async Task AddAuthor_AuthorIsValid_Returns_AuthorDto()
         {
             var author = new Author();
             var authorDto = new AuthorDto();
@@ -88,7 +88,7 @@ namespace ApplicationTest.Services
         #region Delete
 
         [Test]
-        public async Task Remove_AuthorExists_Returns_True()
+        public async Task RemoveAuthor_AuthorExists_Returns_True()
         {
             var author = new Author();
             _authorRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(author);
@@ -102,7 +102,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task Remove_AuthorDoesNotExist_Returns_False()
+        public async Task RemoveAuthor_AuthorDoesNotExist_Returns_False()
         {
             _authorRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(null as Author);
 
@@ -116,7 +116,7 @@ namespace ApplicationTest.Services
         #region Update
 
         [Test]
-        public async Task Update_AuthorExists_Returns_true()
+        public async Task UpdateAuthor_AuthorExists_Returns_true()
         {
             var author = new Author();
             _authorRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
@@ -131,7 +131,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task Update_AuthorDoesNotExist_Returns_false()
+        public async Task UpdateAuthor_AuthorDoesNotExist_Returns_false()
         {
             _mapper.Setup(s => s.Map<Author>(It.IsAny<AuthorDto>())).Returns(new Author());
 

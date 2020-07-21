@@ -28,7 +28,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task GetAllGenresAsync_Returns_OkObjectResultWithRequestedCount()
+        public async Task GetAllGenresAsync_Success_ReturnsOkObjectResultWithRequestedCount()
         {
             var testGenres = GetTestGenres();
             _genreService.Setup(s => s.GetAll()).ReturnsAsync(testGenres);

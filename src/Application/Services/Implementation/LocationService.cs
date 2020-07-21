@@ -16,18 +16,17 @@ namespace Application.Services.Implementation
         private readonly IRepository<Location> _locationRepository;
         private readonly IMapper _mapper;
         private readonly IPaginationService _paginationService;
-        public LocationService(IRepository<Location> bookRepository, IMapper mapper, IPaginationService paginationService)
+        public LocationService(IRepository<Location> locationRepository, IMapper mapper, IPaginationService paginationService)
         {
-            _locationRepository = bookRepository;
+            _locationRepository = locationRepository;
             _paginationService = paginationService;
             _mapper = mapper;
         }
 
         public async Task<LocationDto> GetById(int locationId)
         {
-            return _mapper.Map<LocationDto>(await _locationRepository.GetAll()
-                                                               .Include(p => p.UserRoom)                                                              
-                                                               .FirstOrDefaultAsync(p => p.Id == locationId));
+            var a = await _locationRepository.GetAll().Include(p => p.UserRoom).FirstOrDefaultAsync(p => p.Id == locationId);
+            return _mapper.Map<LocationDto>(a);
         }
 
         public async Task<List<LocationDto>> GetAll()

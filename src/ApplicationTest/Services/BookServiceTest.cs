@@ -89,7 +89,7 @@ namespace ApplicationTest.Services
 
 
         [Test]
-        public async Task GetByIdAsync_BookExists_Returns_BookDtoWithRequestedId()
+        public async Task GetBookByIdAsync_BookExists_ReturnsBookDtoWithRequestedId()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
@@ -110,7 +110,7 @@ namespace ApplicationTest.Services
         }
  
         [Test]
-        public async Task GetByIdAsync_BookDoesNotExist_Returns_Null()
+        public async Task GetBookByIdAsync_BookDoesNotExist_Returns_Null()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
@@ -120,7 +120,7 @@ namespace ApplicationTest.Services
             bookResult.Should().BeNull();
         }
         [Test]
-        public async Task AddAsync_BookIsValid_Returns_BookDto()
+        public async Task AddBookAsync_BookIsValid_Returns_BookDto()
         {
             var bookDto = new BookPostDto();
             _bookRepositoryMock.Setup(s => s.Add(It.IsAny<Book>()));
@@ -135,7 +135,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveAsync_BookExists_Returns_True()
+        public async Task RemoveBookAsync_BookExists_Returns_True()
         {
             var book = new Book();
             _bookRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(book);
@@ -151,7 +151,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveAsync_BookDoesNotExist_Returns_False()
+        public async Task RemoveBookAsync_BookDoesNotExist_Returns_False()
         {
             var book = new Book();
             _bookRepositoryMock.Setup(s => s.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(null as Book);
@@ -165,7 +165,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task Update_BookExists_Returns_True()
+        public async Task UpdateBook_BookExists_Returns_True()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
@@ -179,7 +179,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task Update_BookDoesNotExist_Returns_False()
+        public async Task UpdateBook_BookDoesNotExist_Returns_False()
         {
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
@@ -249,7 +249,7 @@ namespace ApplicationTest.Services
             };
         }
         [Test]
-        public async Task GetAll_WhenHasSearchTermWithOneWord_Returns_books_filtered_by_LastName()
+        public async Task GetAllBooks_WhenHasSearchTermWithOneWord_Returns_books_filtered_by_LastName()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -261,7 +261,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(1);
         }
         [Test]
-        public async Task GetAll_WhenHasSearchTerm_Returns_books_filtered_by_Book_Title()
+        public async Task GetAllBooks_WhenHasSearchTerm_Returns_books_filtered_by_Book_Title()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -275,7 +275,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task GetAll_WhenHasSearchTermWitTwoWords_Returns_books_filtered_By_FirstName_And_LastName()
+        public async Task GetAllBooks_WhenHasSearchTermWitTwoWords_Returns_books_filtered_By_FirstName_And_LastName()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -288,7 +288,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(2);
         }
         [Test]
-        public async Task GetAll_WhenHasManyGenreIds_Returns_books_with_either_ids()
+        public async Task GetAllBooks_WhenHasManyGenreIds_Returns_books_with_either_ids()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -301,7 +301,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(4);
         }
         [Test]
-        public async Task GetAll_WhenHasOneGenreId_Returns_books_containing_the_id()
+        public async Task GetAllBooks_WhenHasOneGenreId_Returns_books_containing_the_id()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -314,7 +314,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(1);
         }
         [Test]
-        public async Task GetAll_WhenHasShowAvailableTrue_Returns_available_books()
+        public async Task GetAllBooks_WhenHasShowAvailableTrue_Returns_available_books()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -327,7 +327,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(4);
         }
         [Test]
-        public async Task GetAll_WhenHasShowAvailableFalse_Returns_all_books()
+        public async Task GetAllBooks_WhenHasShowAvailableFalse_Returns_all_books()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -340,7 +340,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(GetPopulatedBooks().Count());
         }
         [Test]
-        public async Task GetAll_WhenHasLocation_Returns_books_with_LocationId()
+        public async Task GetAllBooks_WhenHasLocation_Returns_books_with_LocationId()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -353,7 +353,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(3);
         }
         [Test]
-        public async Task GetAll_WheAllQueryParamsPresent_Returns_filtered_books()
+        public async Task GetAllBooks_WheAllQueryParamsPresent_Returns_filtered_books()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
 
@@ -366,7 +366,7 @@ namespace ApplicationTest.Services
             booksResult.Page.Should().HaveCount(1);
         }
         [Test]
-        public async Task GetAll_Returns_ListOfBookWithSameCount()
+        public async Task GetAllBooks_Returns_ListOfBookWithSameCount()
         {
             var booksMock = GetPopulatedBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);

@@ -26,7 +26,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task GetAllBooksAsync_Returns_OkObjectResultWithRequestedCount()
+        public async Task GetAllBooksAsync_BooksExist_ReturnsOkObjectResultWithRequestedCount()
         {
             var testBooks = new List<BookGetDto>()
                 {
@@ -45,14 +45,6 @@ namespace ApplicationTest.Controllers
             books.Page.Should().HaveCount(testBooks.Count);
         }
 
-        private List<BookPutDto> GetTestBooks()
-        {
-            return new List<BookPutDto>
-            {
-                new BookPutDto(),
-                new BookPutDto()
-            };
-        }
 
         [Test]
         public async Task GetBookAsync_BookExists_Returns_OkObjectResultWithRequestedId()
@@ -127,7 +119,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task PostBookAsync_Returns_CreatedAtActionResult()
+        public async Task PostBookAsync_Success_ReturnsCreatedAtActionResult()
         {
             var testBook = new BookGetDto() { Id = 1};
             _bookService.Setup(m => m.AddAsync(It.IsAny<BookPostDto>())).ReturnsAsync(testBook);
