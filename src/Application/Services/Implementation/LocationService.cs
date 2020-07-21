@@ -25,8 +25,7 @@ namespace Application.Services.Implementation
 
         public async Task<LocationDto> GetById(int locationId)
         {
-            var a = await _locationRepository.GetAll().Include(p => p.UserRoom).FirstOrDefaultAsync(p => p.Id == locationId);
-            return _mapper.Map<LocationDto>(a);
+            return _mapper.Map<LocationDto>(await _locationRepository.GetAll().Include(p => p.UserRoom).FirstOrDefaultAsync(p => p.Id == locationId));
         }
 
         public async Task<List<LocationDto>> GetAll()
