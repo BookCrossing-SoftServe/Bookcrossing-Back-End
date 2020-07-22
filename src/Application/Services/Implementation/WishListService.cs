@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
-using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
@@ -19,9 +19,9 @@ namespace Application.Services.Implementation
         private readonly IPaginationService _paginationService;
 
         public WishListService(
-            IUserResolverService userResolverService, 
+            IUserResolverService userResolverService,
             IPaginationService paginationService,
-            IRepository<Wish> wishRepository, 
+            IRepository<Wish> wishRepository,
             IRepository<Book> bookRepository)
         {
             _userResolverService = userResolverService;
@@ -35,6 +35,10 @@ namespace Application.Services.Implementation
             var currentUserId = _userResolverService.GetUserId();
 
             var wishesQuery = _wishRepository.GetAll()
+                .Include(wish => wish.Book.Language)
+                .Include(wish => wish.Book.BookAuthor).ThenInclude(bookAuthor => bookAuthor.Author)
+                .Include(wish => wish.Book.BookGenre).ThenInclude(bookGenre => bookGenre.Genre)
+                .Include(wish => wish.Book.User.UserRoom.Location)
                 .Where(wish => wish.UserId == currentUserId)
                 .Select(wish => wish.Book);
             var wishesPaginated =
