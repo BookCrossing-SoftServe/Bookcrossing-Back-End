@@ -9,10 +9,10 @@ namespace BookCrossingBackEnd.Validators
     {
         public LanguageValidator()
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
             RuleFor(x => x.Name)
-                .NotNull()
                 .Length(1, 20)
-                .Matches(@"а-яА-Яa-zA-Z0-9+$");
+                .Matches(@"^[a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ]+$");
         }
     }
 }

@@ -31,7 +31,7 @@ namespace ApplicationTest.ContollerTests
         #region api/users/password [put]
 
         [Test]
-        public async Task ResetPassword_ReturnsIActionResult()
+        public async Task ResetPassword_ValidUser_ReturnsIActionResultOK()
         {
             var resetPasswordDto = new ResetPasswordDto() {Email = "test@gmail.com"};
             _mockUserService.Setup(x => x.SendPasswordResetConfirmation(resetPasswordDto.Email))
@@ -46,7 +46,7 @@ namespace ApplicationTest.ContollerTests
         #region api/users/password [post]
 
         [Test]
-        public async Task ForgotPassword_ReturnsIActionResult()
+        public async Task ForgotPassword_ValidUser_ReturnsIActionResultOK()
         {
 
             var resetPasswordDto = new ResetPasswordDto() { Email = "test@gmail.com" };
@@ -85,7 +85,7 @@ namespace ApplicationTest.ContollerTests
 
 
         [Test]
-        public async Task Get_ReturnsAViewResult_WithAListOfUsers()
+        public async Task Get_WithAListOfUsers_ReturnsViewResultListOfUsers()
         {
             //arrange
             
@@ -100,7 +100,7 @@ namespace ApplicationTest.ContollerTests
             jsonResult.Subject.Count.Should().Be(5);
         }
         [Test]
-        public async Task Get_ReturnsANoContentResult_WhenThereIsNoUsers()
+        public async Task GetUsers_WhenThereIsNoUsers_ReturnsNoContentResult()
         {
             //arrange
             
@@ -120,7 +120,7 @@ namespace ApplicationTest.ContollerTests
         [TestCase(false,1)]
         [TestCase(false,5)]
         [TestCase(false,8)]
-        public async Task Update_ReturnsForbidden_UserWantsChangeNotHisProfileAndUserIsNotAdmin(bool userIsAdmin,int idFromCredential)
+        public async Task UpdateUser_UserWantsChangeNotHisProfileAndUserIsNotAdmin_ReturnsForbidden(bool userIsAdmin,int idFromCredential)
         {
             //arrange
             
@@ -147,7 +147,7 @@ namespace ApplicationTest.ContollerTests
         [TestCase(1,1,false)]
         [TestCase(5,5,false)]
         [TestCase(2,5,true)]
-        public async Task Update_ReturnsNotContent204_UserChangesHisProfileOrUserIsAdmin(int idFromRoute,int idFromCredentials,bool userIsAdmin)
+        public async Task UpdateUser_ChangesHisProfileUserIsAdmin__ReturnsNoContent204(int idFromRoute,int idFromCredentials,bool userIsAdmin)
         {
             //arrange
             _mockUserResolverService.Setup(p => p.IsUserAdmin()).Returns(userIsAdmin);

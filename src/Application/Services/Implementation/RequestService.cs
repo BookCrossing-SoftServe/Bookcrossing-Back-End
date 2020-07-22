@@ -36,9 +36,9 @@ namespace Application.Services.Implementation
         private readonly IRootRepository<BookRootComment> _rootCommentRepository;
 
 
-        public RequestService(IRepository<Request> requestRepository,IRepository<Book> bookRepository, IMapper mapper, 
+        public RequestService(IRepository<Request> requestRepository, IRepository<Book> bookRepository, IMapper mapper,
             IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
-            IRepository<Language> bookLanguageRepository, IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository, 
+            IRepository<Language> bookLanguageRepository, IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository,
             IRepository<BookGenre> bookGenreRepository, IRepository<UserRoom> userLocationRepository, IRootRepository<BookRootComment> rootCommentRepository)
         {
             _requestRepository = requestRepository;
@@ -57,7 +57,7 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task<RequestDto> MakeAsync(int userId, int bookId)
         {
-            var book = await _bookRepository.GetAll().Include(x=> x.User).FirstOrDefaultAsync(x=> x.Id == bookId);
+            var book = await _bookRepository.GetAll().Include(x => x.User).FirstOrDefaultAsync(x => x.Id == bookId);
             var isNotAvailableForRequest = book == null || book.State != BookState.Available;
 
             if (isNotAvailableForRequest)
@@ -91,7 +91,7 @@ namespace Application.Services.Implementation
                 await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
             }
             if (_userRepository.FindByCondition(u => u.Email == user.Email).Result.IsEmailAllowed)
-            { 
+            {
                 var emailMessageForReceiveConfirmation = new RequestMessage()
                 {
                     UserName = user.FirstName + " " + user.LastName,
@@ -118,7 +118,7 @@ namespace Application.Services.Implementation
                     .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                     .FirstOrDefaultAsync(predicate);
             }
-            else if(query.Last)
+            else if (query.Last)
             {
                 request = _requestRepository.GetAll()
                     .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
@@ -145,7 +145,7 @@ namespace Application.Services.Implementation
                 .Include(i => i.Owner).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate);
-            if(requests == null)
+            if (requests == null)
             {
                 return null;
             }
@@ -220,7 +220,7 @@ namespace Application.Services.Implementation
                 .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location)
                 .Where(predicate).Where(x => bookIds.Contains(x.BookId));
 
-            var requests =  await _paginationService.GetPageAsync<RequestDto, Request>(query, parameters);
+            var requests = await _paginationService.GetPageAsync<RequestDto, Request>(query, parameters);
             var isEmpty = !requests.Page.Any();
             return isEmpty ? null : requests;
         }
@@ -229,8 +229,9 @@ namespace Application.Services.Implementation
         public async Task<bool> ApproveReceiveAsync(int requestId)
         {
             var request = await _requestRepository.GetAll()
-                .Include(x=>x.Book)
-                .Include(x=>x.User)
+                .Include(x => x.Book)
+                .Include(x => x.User)
+                .Include(x => x.Owner)
                 .FirstOrDefaultAsync(x => x.Id == requestId);
             if (request == null)
             {
@@ -244,7 +245,7 @@ namespace Application.Services.Implementation
             request.ReceiveDate = DateTime.UtcNow;
             _requestRepository.Update(request);
             var affectedRows = await _requestRepository.SaveChangesAsync();
-            if (_userRepository.FindByCondition(u => u.Email == request.Owner.Email).Result.IsEmailAllowed)
+            if (request.Owner.IsEmailAllowed)
             {
                 var emailMessage = new RequestMessage()
                 {
@@ -255,7 +256,7 @@ namespace Application.Services.Implementation
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
             }
-            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
+            await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             return affectedRows > 0;
         }
         /// <inheritdoc />
@@ -264,14 +265,14 @@ namespace Application.Services.Implementation
             var request = await _requestRepository.GetAll()
                 .Include(x => x.Book)
                 .Include(x => x.Owner)
-                .Include(x=>x.User)
+                .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id == requestId);
             if (request == null)
             {
                 return false;
             }
-            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
-            if (_userRepository.FindByCondition(u => u.Email == request.Owner.Email).Result.IsEmailAllowed)
+            await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
+            if (request.Owner.IsEmailAllowed)
             {
                 var emailMessage = new RequestMessage()
                 {

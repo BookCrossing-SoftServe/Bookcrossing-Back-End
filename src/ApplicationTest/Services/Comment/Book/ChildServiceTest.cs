@@ -28,7 +28,9 @@ namespace ApplicationTest.Services.Comment.Book
         #region Update
 
         [Test]
-        public async Task Update_BookChildCommentExists_Returns_1()
+        [TestCase(1, "5e9c9ee859231a63bc853bf0", 1)]
+        [TestCase(0, null, 0)]
+        public async Task UpdateComment_BookChildCommentExistsAndNot_ReturnsNumberOfUpdatedComments(int updateValue, string commentId, int expectedResult)
         {
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {
@@ -40,31 +42,11 @@ namespace ApplicationTest.Services.Comment.Book
                     "5e9c9ee859231a63bc853bf0", 
                     It.IsAny<BookChildComment>(),
                     path))
-                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, "5e9c9ee859231a63bc853bf0"));
+                .ReturnsAsync(new UpdateResult.Acknowledged(updateValue, updateValue, commentId));
 
             var result = await _bookChildCommentService.Update(updateDto);
 
-            result.Should().Be(1);         
-        }
-
-        [Test]
-        public async Task Update_BookChildCommentNotExists_Returns_0()
-        {
-            ChildUpdateDto updateDto = new ChildUpdateDto()
-            {
-                Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-            };
-            List<(string, string)> path = new List<(string, string)>() { ("Comments", "5e9c9ee859231a63bc853bf1") };
-            _childRepository
-                .Setup(s => s.SetAsync(
-                    "5e9c9ee859231a63bc853bf0",
-                    It.IsAny<BookChildComment>(),
-                    path))
-                .ReturnsAsync(new UpdateResult.Acknowledged(0, 0, null));
-
-            var result = await _bookChildCommentService.Update(updateDto);
-
-            result.Should().Be(0);
+            result.Should().Be(expectedResult);         
         }
 
         #endregion
@@ -72,7 +54,9 @@ namespace ApplicationTest.Services.Comment.Book
         #region Remove
 
         [Test]
-        public async Task Remove_BookChildCommentExists_Returns_1()
+        [TestCase(1, "5e9c9ee859231a63bc853bf0", 1)]
+        [TestCase(0, null, 0)]
+        public async Task RemoveComment_BookChildCommentExistsAndNot_ReturnsNumberOfRemovedComments(int updateValue, string commentId, int expectedResult)
         {
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
@@ -84,31 +68,11 @@ namespace ApplicationTest.Services.Comment.Book
                     "5e9c9ee859231a63bc853bf1",
                     new List<(string, string)>(),
                     "Comments"))
-                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, "5e9c9ee859231a63bc853bf0"));
+                .ReturnsAsync(new UpdateResult.Acknowledged(updateValue, updateValue, commentId));
 
             var result = await _bookChildCommentService.Remove(deleteDto.Ids);
 
-            result.Should().Be(1);
-        }
-
-        [Test]
-        public async Task Remove_BookChildCommentNotExists_Returns_0()
-        {
-            ChildDeleteDto deleteDto = new ChildDeleteDto()
-            {
-                Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
-            };
-            _childRepository
-                .Setup(s => s.PullAsync(
-                    "5e9c9ee859231a63bc853bf0",
-                    "5e9c9ee859231a63bc853bf1",
-                    new List<(string,string)>(),
-                    "Comments"))
-                .ReturnsAsync(new UpdateResult.Acknowledged(0, 0, null));
-
-            var result = await _bookChildCommentService.Remove(deleteDto.Ids);
-
-            result.Should().Be(0);
+            result.Should().Be(expectedResult);
         }
 
         #endregion
@@ -116,27 +80,9 @@ namespace ApplicationTest.Services.Comment.Book
         #region Add
 
         [Test]
-        public async Task Add_BookChildComment_Returns_1()
-        {
-            ChildInsertDto insertDto = new ChildInsertDto()
-            {
-                Ids = new List<string>() { "5e9c9ee859231a63bc853bf0"},
-            };
-            _childRepository
-                .Setup(s => s.PushAsync(
-                    "5e9c9ee859231a63bc853bf0",
-                    It.IsAny<BookChildComment>(),
-                    new List<(string, string)>(),
-                    "Comments"))
-                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, "5e9c9ee859231a63bc853bf0"));
-
-            var result = await _bookChildCommentService.Add(insertDto);
-
-            result.Should().Be(1);
-        }
-
-        [Test]
-        public async Task Add_BookChildComment_Returns_0()
+        [TestCase(1, "5e9c9ee859231a63bc853bf0", 1)]
+        [TestCase(0, null, 0)]
+        public async Task AddComment_BookChildComment_ReturnsNumberOfAddedComments(int updateValue,string commentId, int expectedResult)
         {
             ChildInsertDto insertDto = new ChildInsertDto()
             {
@@ -148,11 +94,11 @@ namespace ApplicationTest.Services.Comment.Book
                     It.IsAny<BookChildComment>(),
                     new List<(string, string)>(),
                     "Comments"))
-                .ReturnsAsync(new UpdateResult.Acknowledged(0, 0, null));
+                .ReturnsAsync(new UpdateResult.Acknowledged(updateValue, updateValue, commentId));
 
             var result = await _bookChildCommentService.Add(insertDto);
 
-            result.Should().Be(0);
+            result.Should().Be(expectedResult);
         }
 
         #endregion

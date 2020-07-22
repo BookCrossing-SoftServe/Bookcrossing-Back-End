@@ -41,27 +41,6 @@ namespace BookCrossingBackEnd.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.UpdateData(
-                table: "Book",
-                keyColumn: "id",
-                keyValue: 1,
-                columns: new[] { "DateAdded", "State" },
-                values: new object[] { new DateTime(2020, 7, 19, 13, 10, 2, 301, DateTimeKind.Local).AddTicks(8615), "Available" });
-
-            migrationBuilder.UpdateData(
-                table: "User",
-                keyColumn: "id",
-                keyValue: 1,
-                column: "role_id",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                table: "User",
-                keyColumn: "id",
-                keyValue: 2,
-                column: "role_id",
-                value: 1);
-
             migrationBuilder.CreateIndex(
                 name: "IX_Wish_book_id",
                 table: "Wish",
@@ -82,27 +61,6 @@ namespace BookCrossingBackEnd.Migrations
                 oldClrType: typeof(bool),
                 oldType: "bit",
                 oldDefaultValue: true);
-
-            migrationBuilder.UpdateData(
-                table: "Book",
-                keyColumn: "id",
-                keyValue: 1,
-                columns: new[] { "DateAdded", "State" },
-                values: new object[] { new DateTime(2020, 7, 15, 17, 41, 25, 688, DateTimeKind.Local).AddTicks(4497), "Available" });
-
-            migrationBuilder.UpdateData(
-                table: "User",
-                keyColumn: "id",
-                keyValue: 1,
-                column: "role_id",
-                value: 2);
-
-            migrationBuilder.UpdateData(
-                table: "User",
-                keyColumn: "id",
-                keyValue: 2,
-                column: "role_id",
-                value: 1);
         }
     }
 }

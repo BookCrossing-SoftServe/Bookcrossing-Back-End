@@ -30,7 +30,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region Delete
 
         [Test]
-        public async Task Delete_ByUser_Returns_OkObjectResult()
+        public async Task DeleteCommentByUser_CommentExists_ReturnsOkObjectResult()
         {
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
@@ -50,7 +50,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByUser_Returns_ForbidResult()
+        public async Task DeleteCommentByUser_CommentExistsButNotTheirComment_ReturnsForbidResult()
         {
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
@@ -68,7 +68,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByUser_Returns_NotFoundObjectResult()
+        public async Task DeleteCommentByUser_CommentNotExists_ReturnsNotFoundObjectResult()
         {
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
@@ -88,7 +88,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByAdmin_Returns_OkObjectResult()
+        public async Task DeleteCommentByAdmin_CommentExists_ReturnsOkObjectResult()
         {
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
@@ -108,7 +108,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Delete_ByAdmin_Returns_NotFoundObjectResult()
+        public async Task DeleteCommentByAdmin_CommentNotExist_ReturnsNotFoundObjectResult()
         {
             ChildDeleteDto deleteDto = new ChildDeleteDto()
             {
@@ -133,7 +133,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region Post      
 
         [Test]
-        public async Task Post_Returns_OkObjectResult()
+        public async Task PostComment_Success_ReturnsOkObjectResult()
         {
             ChildInsertDto insertDto = new ChildInsertDto()
             {
@@ -153,7 +153,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Post_Returns_BadRequestObjectResult()
+        public async Task PostComment_Invalid_ReturnsBadRequestObjectResult()
         {
             ChildInsertDto insertDto = new ChildInsertDto()
             {
@@ -173,7 +173,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Post_Returns_ForbidResult()
+        public async Task PostComment_Unauthorised_ReturnsForbidResult()
         {
             ChildInsertDto insertDto = new ChildInsertDto()
             {
@@ -196,7 +196,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         #region Put
 
         [Test]
-        public async Task Put_ByUser_Returns_OkObjectResult()
+        public async Task PutCommentByUser_Success_ReturnsOkObjectResult()
         {
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {
@@ -216,7 +216,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Put_ByUser_Returns_ForbidResult()
+        public async Task PutCommentByUser_Unauthorised_ReturnsForbidResult()
         {
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {
@@ -234,7 +234,7 @@ namespace ApplicationTest.Controllers.Comment.Book
         }
 
         [Test]
-        public async Task Put_ByUser_Returns_NotFoundObjectResult()
+        public async Task PutCommentByUser_NotExists_ReturnsNotFoundObjectResult()
         {
             ChildUpdateDto updateDto = new ChildUpdateDto()
             {

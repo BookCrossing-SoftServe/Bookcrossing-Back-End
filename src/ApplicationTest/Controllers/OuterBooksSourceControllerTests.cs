@@ -26,7 +26,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task GetBooks_AnyQueryParameters_ReturnsObjectResultWithPaginationDto()
+        public async Task GetBooks_AnyQueryParameters_ReturnsObjectResultWithPaginationDtoWithoutNulls()
         {
             _outerBookSourceServiceMock.Setup(obj => obj.SearchBooks(It.IsAny<OuterSourceQueryParameters>()))
                 .ReturnsAsync(new PaginationDto<OuterBookDto>
