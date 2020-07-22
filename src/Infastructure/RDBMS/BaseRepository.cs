@@ -103,7 +103,10 @@ namespace Infrastructure.RDBMS
 
         public async Task<int> SaveChangesAsync()
         {
-            return await Context.SaveChangesAsync();
+            lock (Context)
+            {
+                return Context.SaveChangesAsync().Result;
+            }
         }
 
         #region IDisposable Support

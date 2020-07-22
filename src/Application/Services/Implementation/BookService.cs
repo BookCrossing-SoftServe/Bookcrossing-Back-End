@@ -248,7 +248,7 @@ namespace Application.Services.Implementation
                     };
                     await _emailSenderService.SendForBookDeactivatedAsync(emailMessageForBookDeactivatedForRequester);
                 }
-                _hangfireJobScheduleService.DeleteRequestScheduleJob(request.Id);
+                await _hangfireJobScheduleService.DeleteRequestScheduleJob(request.Id);
                 _requestRepository.Remove(request);
                 await _requestRepository.SaveChangesAsync();
             }

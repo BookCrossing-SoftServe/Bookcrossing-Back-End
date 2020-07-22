@@ -256,7 +256,7 @@ namespace Application.Services.Implementation
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
             }
-            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
+            await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             return affectedRows > 0;
         }
         /// <inheritdoc />
@@ -271,7 +271,7 @@ namespace Application.Services.Implementation
             {
                 return false;
             }
-            _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
+            await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             if (request.Owner.IsEmailAllowed)
             {
                 var emailMessage = new RequestMessage()
