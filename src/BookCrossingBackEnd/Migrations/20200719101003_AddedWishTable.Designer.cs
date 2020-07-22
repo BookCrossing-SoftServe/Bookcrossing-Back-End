@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200719101003_AddedWishTable")]
+    partial class AddedWishTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,8 +93,8 @@ namespace BookCrossingBackEnd.Migrations
 
                     b.Property<string>("Publisher")
                         .HasColumnName("publisher")
-                        .HasColumnType("nvarchar(150)")
-                        .HasMaxLength(150);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<double>("Rating")
                         .ValueGeneratedOnAdd()
@@ -122,7 +124,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 7, 20, 22, 34, 58, 574, DateTimeKind.Local).AddTicks(9566),
+                            DateAdded = new DateTime(2020, 7, 19, 13, 10, 2, 301, DateTimeKind.Local).AddTicks(8615),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,

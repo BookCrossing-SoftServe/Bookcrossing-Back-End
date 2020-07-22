@@ -40,5 +40,6 @@ namespace Domain.RDBMS.Entities
         public virtual List<RefreshToken> RefreshTokens { get; set; }
 
         public virtual UserRoom UserRoom { get; set; }
+        public virtual List<Wish> Wish { get; set; }
     }
 }

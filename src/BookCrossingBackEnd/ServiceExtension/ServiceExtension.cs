@@ -43,6 +43,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddSingleton<IPaginationService, PaginationService>();
             services.AddSingleton<ISmtpClient, FakeSmtpClientService>();
             services.AddScoped<ILanguageService, LanguageService>();
+            services.AddScoped<IWishListService, WishListService>();
         }
 
         public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)
