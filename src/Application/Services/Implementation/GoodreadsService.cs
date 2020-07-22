@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 using Application.Dto;
 using Application.Dto.OuterSource;
 using Application.Dto.QueryParams;
@@ -41,7 +42,7 @@ namespace Application.Services.Implementation
             xmlDocument.LoadXml(await response.Content.ReadAsStringAsync());
 
             var totalCountNode = xmlDocument.SelectSingleNode("//search/total-results");
-            var totalCountOfBooks = int.Parse(totalCountNode?.InnerText ?? "0");
+            int.TryParse(totalCountNode?.InnerText, out var totalCountOfBooks);
 
             var bookNodes = xmlDocument.SelectNodes("//results//best_book[@type='Book']");
             var bookList = new List<OuterBookDto>();
@@ -93,30 +94,11 @@ namespace Application.Services.Implementation
                 throw new ArgumentNullException(nameof(xmlBookNode), "Xml node of book cannot be null");
             }
 
-            var id = int.Parse(xmlBookNode.SelectSingleNode("id")?.InnerText ?? "0");
-            var title = xmlBookNode.SelectSingleNode("title")?.InnerText;
-            var imageUrl = xmlBookNode.SelectSingleNode("image_url")?.InnerText;
-            var publisher = xmlBookNode.SelectSingleNode("publisher")?.InnerText;
-            var langCode = xmlBookNode.SelectSingleNode("language_code")?.InnerText;
-            var description = xmlBookNode.SelectSingleNode("description")?.InnerText;
-            var authorNodes = xmlBookNode.SelectNodes("./authors/author | ./author");
-            var authors = new List<string>();
-            foreach (XmlNode authorNode in authorNodes)
-            {
-                var name = authorNode.SelectSingleNode("name")?.InnerText;
-                authors.Add(name);
-            }
+            var xmlReader = new XmlNodeReader(xmlBookNode);
+            var serializer = new XmlSerializer(typeof(OuterBookDto), new XmlRootAttribute(xmlBookNode.Name));
+            var obj = serializer.Deserialize(xmlReader) as OuterBookDto;
 
-            return new OuterBookDto()
-            {
-                Id = id,
-                Title = title,
-                AuthorsFullNames = authors.ToArray(),
-                ImageUrl = imageUrl,
-                LanguageCode = langCode,
-                Publisher = publisher,
-                Description = description
-            };
+            return obj ?? new OuterBookDto();
         }
     }
 }

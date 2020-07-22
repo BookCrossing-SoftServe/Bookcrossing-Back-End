@@ -25,6 +25,12 @@ namespace ApplicationTest.Controllers
             _controller = new OuterBooksSourceController(_outerBookSourceServiceMock.Object);
         }
 
+        [SetUp]
+        public void InitializeTest()
+        {
+            _outerBookSourceServiceMock.Invocations.Clear();
+        }
+
         [Test]
         public async Task GetBooks_AnyQueryParameters_ReturnsObjectResultWithPaginationDtoWithoutNulls()
         {
@@ -37,9 +43,12 @@ namespace ApplicationTest.Controllers
 
             var result = await _controller.GetBooks(It.IsAny<OuterSourceQueryParameters>());
 
+            _outerBookSourceServiceMock.Verify(
+                obj => obj.SearchBooks(It.IsAny<OuterSourceQueryParameters>()), 
+                Times.Once);
+
             result.Should().NotBeNull();
             result.Value.Should().BeOfType<PaginationDto<OuterBookDto>>();
-            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
         }
 
         [Test]
