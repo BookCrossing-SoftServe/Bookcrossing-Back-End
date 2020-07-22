@@ -22,7 +22,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasColumnName("name")
-                .HasMaxLength(100);
+                .HasMaxLength(150);
 
             builder.Property(e => e.Rating)
                 .HasColumnName("rating")
@@ -40,7 +40,7 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.Notice)
                 .HasColumnName("notice")
-                .HasMaxLength(255);
+                .HasMaxLength(250);
 
             builder.Property(a => a.ImagePath)
                 .HasColumnName("imagepath")

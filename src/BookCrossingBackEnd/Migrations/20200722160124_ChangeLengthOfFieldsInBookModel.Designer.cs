@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200722160124_ChangeLengthOfFieldsInBookModel")]
+    partial class ChangeLengthOfFieldsInBookModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -546,23 +548,6 @@ namespace BookCrossingBackEnd.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.RDBMS.Entities.Wish", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnName("user_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnName("book_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("Wish");
-                });
-
             modelBuilder.Entity("Domain.RDBMS.Entities.Book", b =>
                 {
                     b.HasOne("Domain.RDBMS.Entities.Language", "Language")
@@ -652,21 +637,6 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasOne("Domain.RDBMS.Entities.Location", "Location")
                         .WithMany("UserRoom")
                         .HasForeignKey("LocationId")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.RDBMS.Entities.Wish", b =>
-                {
-                    b.HasOne("Domain.RDBMS.Entities.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.RDBMS.Entities.User", "User")
-                        .WithMany("Wish")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
