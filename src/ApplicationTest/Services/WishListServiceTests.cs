@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
@@ -12,13 +10,12 @@ using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using FluentAssertions;
 using Moq;
-using Moq.Protected;
 using NUnit.Framework;
 
 namespace ApplicationTest.Services
 {
     [TestFixture]
-    class WishListServiceTests
+    internal class WishListServiceTests
     {
         private Mock<IRepository<Wish>> _wishRepositoryMock;
         private Mock<IRepository<Book>> _bookRepositoryMock;

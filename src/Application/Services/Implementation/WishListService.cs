@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
@@ -10,7 +8,6 @@ using Application.QueryableExtension;
 using Application.Services.Interfaces;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
@@ -21,8 +18,11 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IPaginationService _paginationService;
 
-        public WishListService(IUserResolverService userResolverService, IPaginationService paginationService,
-            IRepository<Wish> wishRepository, IRepository<Book> bookRepository)
+        public WishListService(
+            IUserResolverService userResolverService, 
+            IPaginationService paginationService,
+            IRepository<Wish> wishRepository, 
+            IRepository<Book> bookRepository)
         {
             _userResolverService = userResolverService;
             _wishRepository = wishRepository;
@@ -37,7 +37,7 @@ namespace Application.Services.Implementation
             var wishesQuery = _wishRepository.GetAll()
                 .Where(wish => wish.UserId == currentUserId)
                 .Select(wish => wish.Book);
-            var wishesPaginated = 
+            var wishesPaginated =
                 await _paginationService.GetPageAsync<BookGetDto, Book>(wishesQuery, pageableParams);
 
             return wishesPaginated;

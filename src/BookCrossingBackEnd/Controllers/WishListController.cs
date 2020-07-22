@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
-using Domain.RDBMS.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
@@ -33,8 +29,15 @@ namespace BookCrossingBackEnd.Controllers
         [HttpPost("add")]
         public async Task<ActionResult> AddWish([FromBody]int bookId)
         {
-            await _wishListService.AddWish(bookId);
-            return Ok();
+            try
+            {
+                await _wishListService.AddWish(bookId);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
         }
 
         [HttpDelete("{bookId}")]
