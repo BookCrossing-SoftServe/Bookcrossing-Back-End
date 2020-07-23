@@ -10,9 +10,9 @@ namespace BookCrossingBackEnd.Validators
         public LanguageValidator()
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
-            RuleFor(x => x.Name)              
+            RuleFor(x => x.Name)
                 .Length(1, 20)
-                .Matches(@"^([a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ]+(?:'|-)?[a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ])+$")
+                .Matches(@"^([a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ]+(?:'|-)?[a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ])+$");
         }
     }
 }
