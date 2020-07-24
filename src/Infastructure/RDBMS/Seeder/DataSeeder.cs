@@ -103,7 +103,7 @@ namespace Infrastructure.RDBMS.Seeder
             builder.HasData(
                 new User
                 {
-                    Id = 1,
+                    Id = 2,
                     FirstName = "Admin",
                     MiddleName = "Adminovski",
                     LastName = "Adminovich",
@@ -113,10 +113,10 @@ namespace Infrastructure.RDBMS.Seeder
                 },
                 new User
                 {
-                    Id = 2,
-                    FirstName = "Toster",
+                    Id = 1,
+                    FirstName = "Tester",
                     MiddleName = "Test",
-                    LastName = "Tosterovich",
+                    LastName = "Testerovich",
                     Email = "test@gmail.com",
                     Password = "test",
                     RoleId = 1,

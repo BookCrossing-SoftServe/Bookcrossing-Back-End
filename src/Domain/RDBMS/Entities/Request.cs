@@ -6,7 +6,7 @@ namespace Domain.RDBMS.Entities
     {
         public int Id { get; set; }
         public int BookId { get; set; }
-        public int OwnerId { get; set; }
+        public int? OwnerId { get; set; }
         public int UserId { get; set; }
         public DateTime RequestDate { get; set; }
         public DateTime? ReceiveDate { get; set; }

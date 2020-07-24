@@ -8,7 +8,7 @@ namespace Domain.RDBMS.Entities
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public string Publisher { get; set; }
         public BookState? State { get; set; }
         public double Rating { get; set; }

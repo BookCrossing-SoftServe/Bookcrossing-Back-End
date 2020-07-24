@@ -32,11 +32,14 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasColumnName("publisher")
                 .HasMaxLength(150);
 
-            builder.Property(e => e.UserId).HasColumnName("user_id");
+            builder.Property(e => e.UserId)
+                .IsRequired(false)
+                .HasColumnName("user_id");
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Book)
-                .HasForeignKey(d => d.UserId);
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.Property(e => e.Notice)
                 .HasColumnName("notice")
