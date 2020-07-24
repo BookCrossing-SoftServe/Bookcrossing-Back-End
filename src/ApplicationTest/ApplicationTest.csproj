@@ -43,19 +43,4 @@
     <ProjectReference Include="..\Infastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Services\GoodreadsServiceTest\TestData.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>TestData.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Services\GoodreadsServiceTest\TestData.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TestData.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>

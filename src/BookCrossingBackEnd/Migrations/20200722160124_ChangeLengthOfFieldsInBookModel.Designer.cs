@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200722160124_ChangeLengthOfFieldsInBookModel")]
+    partial class ChangeLengthOfFieldsInBookModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,7 +108,7 @@ namespace BookCrossingBackEnd.Migrations
                         .HasMaxLength(50)
                         .HasDefaultValue("Available");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnName("user_id")
                         .HasColumnType("int");
 
@@ -307,7 +309,7 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("book_id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OwnerId")
+                    b.Property<int>("OwnerId")
                         .HasColumnName("owner_id")
                         .HasColumnType("int");
 
@@ -487,7 +489,7 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 2,
+                            Id = 1,
                             BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             FirstName = "Admin",
@@ -500,12 +502,12 @@ namespace BookCrossingBackEnd.Migrations
                         },
                         new
                         {
-                            Id = 1,
+                            Id = 2,
                             BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@gmail.com",
-                            FirstName = "Tester",
+                            FirstName = "Toster",
                             IsEmailAllowed = false,
-                            LastName = "Testerovich",
+                            LastName = "Tosterovich",
                             MiddleName = "Test",
                             Password = "test",
                             RegisteredDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -546,23 +548,6 @@ namespace BookCrossingBackEnd.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.RDBMS.Entities.Wish", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnName("user_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookId")
-                        .HasColumnName("book_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "BookId");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("Wish");
-                });
-
             modelBuilder.Entity("Domain.RDBMS.Entities.Book", b =>
                 {
                     b.HasOne("Domain.RDBMS.Entities.Language", "Language")
@@ -574,7 +559,8 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasOne("Domain.RDBMS.Entities.User", "User")
                         .WithMany("Book")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.BookAuthor", b =>
@@ -625,7 +611,8 @@ namespace BookCrossingBackEnd.Migrations
 
                     b.HasOne("Domain.RDBMS.Entities.User", "Owner")
                         .WithMany("RequestOwner")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .IsRequired();
 
                     b.HasOne("Domain.RDBMS.Entities.User", "User")
                         .WithMany("RequestUser")
@@ -650,21 +637,6 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasOne("Domain.RDBMS.Entities.Location", "Location")
                         .WithMany("UserRoom")
                         .HasForeignKey("LocationId")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.RDBMS.Entities.Wish", b =>
-                {
-                    b.HasOne("Domain.RDBMS.Entities.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.RDBMS.Entities.User", "User")
-                        .WithMany("Wish")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

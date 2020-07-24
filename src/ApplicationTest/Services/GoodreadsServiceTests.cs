@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Resources;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -17,7 +15,7 @@ using Moq.Protected;
 using NUnit.Framework;
 using Org.BouncyCastle.Security;
 
-namespace ApplicationTest.Services.GoodreadsServiceTest
+namespace ApplicationTest.Services
 {
     [TestFixture]
     internal class GoodreadsServiceTests
@@ -98,10 +96,26 @@ namespace ApplicationTest.Services.GoodreadsServiceTest
         }
 
         [Test]
+        public void GetBookFromXml_NullNodePassedAsParameter_ThrowsArgumentNullException()
+        {
+            _service.Invoking(obj => obj.GetBookFromXmlProxy(null))
+                .Should()
+                .Throw<ArgumentNullException>();
+        }
+
+        [Test]
+        public void GetBookFromXml_ParameterIsNotNull_ReturnsOuterBookDto()
+        {
+            var xmlDocument = new XmlDocument();
+
+            var result = _service.GetBookFromXmlProxy(xmlDocument);
+
+            result.Should().BeOfType<OuterBookDto>();
+        }
+
+        [Test]
         public async Task SearchBooks_SendGetRequestDoesNotThrowException_ReturnPaginationDtoObject()
         {
-            var validResponseExample = TestData.ResourceManager.GetString("ValidSearchBooksResponse");
-
             var requestUri = new Uri(string.Format(
                 "{0}/search/index.xml?key={1}&page={2}&q={3}&per_page={2}",
                 _baseUrl,
@@ -115,12 +129,14 @@ namespace ApplicationTest.Services.GoodreadsServiceTest
                     ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
                 {
-                    Content = new StringContent(validResponseExample)
+                    Content = new StringContent("<results><best_book type='Book'></best_book></results>")
                 })
                 .Verifiable();
             UseValidApiKey();
 
             var result = await _service.SearchBooks(Mock.Of<OuterSourceQueryParameters>());
+
+            _httpMessageHandlerMock.Verify();
 
             result.Should().BeOfType<PaginationDto<OuterBookDto>>();
             result.TotalCount.Should()
@@ -150,14 +166,14 @@ namespace ApplicationTest.Services.GoodreadsServiceTest
 
             var result = await _service.GetBook(It.IsAny<int>());
 
+            _httpMessageHandlerMock.Verify();
+
             result.Should().Be(null);
         }
 
         [Test]
         public async Task GetBook_BookWithEnteredIdExists_ReturnOuterBookDtoObject()
         {
-            var validGetBookResponse = TestData.ResourceManager.GetString("ValidGetBookResponse");
-
             var requestUri = new Uri(string.Format(
                 "{0}/book/show?key={1}&id={2}",
                 _baseUrl,
@@ -170,22 +186,16 @@ namespace ApplicationTest.Services.GoodreadsServiceTest
                     ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
                 {
-                    Content = new StringContent(validGetBookResponse)
+                    Content = new StringContent("<book></book>")
                 })
                 .Verifiable();
             UseValidApiKey();
 
             var result = await _service.GetBook(It.IsAny<int>());
 
-            result.Should().BeOfType<OuterBookDto>();
-        }
+            _httpMessageHandlerMock.Verify();
 
-        [Test]
-        public void GetBookFromXml_NullNodePassedAsParameter_ThrowsArgumentNullException()
-        {
-            _service.Invoking(obj => obj.GetBookFromXmlProxy(null))
-                .Should()
-                .Throw<ArgumentNullException>();
+            result.Should().BeOfType<OuterBookDto>();
         }
 
         private void UseValidApiKey()
@@ -204,9 +214,14 @@ namespace ApplicationTest.Services.GoodreadsServiceTest
             {
             }
 
-            public async Task<HttpResponseMessage> SendGetRequestProxy(string requestUrl) => await SendGetRequest(requestUrl);
+            public async Task<HttpResponseMessage> SendGetRequestProxy(string requestUrl) => await base.SendGetRequest(requestUrl);
 
-            public OuterBookDto GetBookFromXmlProxy(XmlNode bookNode) => GetBookFromXml(bookNode);
+            public OuterBookDto GetBookFromXmlProxy(XmlNode bookNode) => base.GetBookFromXml(bookNode);
+
+            protected override OuterBookDto GetBookFromXml(XmlNode xmlBookNode)
+            {
+                return new OuterBookDto();
+            }
         }
     }
 }
