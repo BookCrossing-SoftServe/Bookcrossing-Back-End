@@ -148,5 +148,41 @@ namespace ApplicationTest.Services
             _wishRepositoryMock.Verify(obj => obj.Remove(wish), Times.Once);
             _wishRepositoryMock.Verify(obj => obj.SaveChangesAsync(), Times.Once);
         }
+
+        [Test]
+        public async Task CheckIfBookInWishListAsync_WishRepositoryReturnsNull_ReturnsFalse()
+        {
+            var userId = 1;
+            var bookId = 1;
+            _userResolverServiceMock.Setup(obj => obj.GetUserId())
+                .Returns(userId);
+            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(userId, bookId))
+                .ReturnsAsync(value: null);
+
+            var result = await _service.CheckIfBookInWishListAsync(bookId);
+
+            _userResolverServiceMock.Verify(obj => obj.GetUserId());
+            _wishRepositoryMock.Verify(obj => obj.FindByIdAsync(userId, bookId));
+
+            result.Should().Be(false);
+        }
+
+        [Test]
+        public async Task CheckIfBookInWishListAsync_WishRepositoryReturnsWishObject_ReturnsTrue()
+        {
+            var userId = 1;
+            var bookId = 1;
+            _userResolverServiceMock.Setup(obj => obj.GetUserId())
+                .Returns(userId);
+            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(userId, bookId))
+                .ReturnsAsync(new Wish());
+
+            var result = await _service.CheckIfBookInWishListAsync(bookId);
+
+            _userResolverServiceMock.Verify(obj => obj.GetUserId());
+            _wishRepositoryMock.Verify(obj => obj.FindByIdAsync(userId, bookId));
+
+            result.Should().Be(true);
+        }
     }
 }

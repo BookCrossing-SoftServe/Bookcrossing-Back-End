@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Application.Dto.OuterSource
@@ -14,7 +13,7 @@ namespace Application.Dto.OuterSource
 
         [XmlArray("authors")]
         [XmlArrayItem("author")]
-        public OuterAuthorDto[] Authors { get; set; }
+        public List<OuterAuthorDto> Authors { get; set; }
 
         [XmlElement("author")]
         public OuterAuthorDto Author { get; set; }

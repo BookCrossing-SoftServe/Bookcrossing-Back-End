@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
@@ -31,6 +32,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<User>> _userRepositoryMock;
         private Mock<IRepository<UserRoom>> _userRoomRepositoryMock;
         private Mock<IRepository<ResetPassword>> _resetPasswordRepositoryMock;
+        private Mock<IBookService> _bookServiceMock;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -40,6 +42,7 @@ namespace ApplicationTest.Services
             _mapperMock = new Mock<IMapper>();
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
             _userRoomRepositoryMock = new Mock<IRepository<UserRoom>>();
+            _bookServiceMock = new Mock<IBookService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -54,7 +57,7 @@ namespace ApplicationTest.Services
             var _mapper = mappingConfig.CreateMapper();
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
-            _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object, _resetPasswordRepositoryMock.Object, _userRoomRepositoryMock.Object);
+            _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object, _resetPasswordRepositoryMock.Object, _userRoomRepositoryMock.Object, _bookServiceMock.Object, _context);
         }
         [SetUp]
         public void SetUp()
@@ -170,12 +173,51 @@ namespace ApplicationTest.Services
         [Test]
         public async Task RemoveUser_AffectedRows0_ThrowsDbUpdateException()
         {
-            _userRepositoryMock.Setup(s => s.SaveChangesAsync()).ReturnsAsync(0);
             int userId = 5;
+            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId)).ReturnsAsync(new User());
+            _userRepositoryMock.Setup(s => s.SaveChangesAsync()).ReturnsAsync(0);
 
             Func<Task> a = async () => await _usersService.RemoveUser(userId);
 
             a.Should().Throw<DbUpdateException>();
+        }
+
+        [Test]
+        public async Task RemoveUser_UserDoesNotExist_ThrowsObjectNotFound()
+        {
+            var userId = 5;
+            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
+                .ReturnsAsync(value: null);
+
+            Func<Task> a = async () => await _usersService.RemoveUser(userId);
+
+            a.Should().Throw<ObjectNotFoundException>();
+        }
+
+        [Test]
+        public async Task RemoveUser_UserExists_ShouldDeactivateUsersBooksAndRemoveHis()
+        {
+            var userId = 5;
+            var books = new List<Book>
+            {
+                new Book {Id = 1},
+                new Book {Id = 2}
+            };
+            var user = new User {Id = userId, Book = books };
+            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
+                .ReturnsAsync(user);
+            _userRepositoryMock.Setup(r => r.SaveChangesAsync())
+                .ReturnsAsync(1);
+
+            await _usersService.RemoveUser(userId);
+
+            foreach (var book in books)
+            {
+                _bookServiceMock.Verify(s => s.DeactivateAsync(book.Id), Times.Once);
+            }
+
+            _userRepositoryMock.Verify(r => r.Remove(user), Times.Once);
+            _userRepositoryMock.Verify(r => r.SaveChangesAsync());
         }
     }
 }

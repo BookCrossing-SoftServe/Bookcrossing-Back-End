@@ -46,5 +46,11 @@ namespace BookCrossingBackEnd.Controllers
             await _wishListService.RemoveWish(bookId);
             return Ok();
         }
+
+        [HttpGet("{bookId}/is-wished")]
+        public async Task<ActionResult<bool>> IsWished(int bookId)
+        {
+            return await _wishListService.CheckIfBookInWishListAsync(bookId);
+        }
     }
 }

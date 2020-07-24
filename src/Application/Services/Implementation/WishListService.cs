@@ -85,5 +85,14 @@ namespace Application.Services.Implementation
             _wishRepository.Remove(wishForRemoving);
             await _wishRepository.SaveChangesAsync();
         }
+
+        public async Task<bool> CheckIfBookInWishListAsync(int bookId)
+        {
+            var currentUserId = _userResolverService.GetUserId();
+
+            var wish = await _wishRepository.FindByIdAsync(currentUserId, bookId);
+
+            return wish != null;
+        }
     }
 }

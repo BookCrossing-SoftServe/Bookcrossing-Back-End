@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -12,6 +13,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Infrastructure.RDBMS;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,19 +23,23 @@ namespace Application.Services.Implementation
     {
 
         private readonly IRepository<User> _userRepository;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
         private readonly IRepository<UserRoom> _userRoomRepository;
         private readonly PasswordHasher<User> _passwordHasher;
+        private readonly BookCrossingContext _context; 
 
-        public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
+        public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository, IBookService bookService, BookCrossingContext context)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
             _userRoomRepository = userRoomRepository;
+            _bookService = bookService;
+            _context = context;
             _passwordHasher = new PasswordHasher<User>();
         }
         ///<inheritdoc/>
@@ -105,13 +111,28 @@ namespace Application.Services.Implementation
 
         public async Task RemoveUser(int userId)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             var user = await _userRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
+            }
+
+            if (user.Book != null)
+            {
+                foreach (var book in user.Book)
+                {
+                    await _bookService.DeactivateAsync(book.Id);
+                }
+            }
+
             _userRepository.Remove(user);
-            var afftectedRows = await _userRepository.SaveChangesAsync();
-            if (afftectedRows == 0)
+            var affectedRows = await _userRepository.SaveChangesAsync();
+            if (affectedRows == 0)
             {
                 throw new DbUpdateException();
             }
+            await transaction.CommitAsync();
         }
         /// <inheritdoc />
         public async Task SendPasswordResetConfirmation(string email)
