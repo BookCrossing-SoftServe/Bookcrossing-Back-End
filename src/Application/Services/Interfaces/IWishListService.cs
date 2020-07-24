@@ -11,5 +11,7 @@ namespace Application.Services.Interfaces
         Task AddWish(int bookId);
 
         Task RemoveWish(int bookId);
+
+        Task<bool> CheckIfBookInWishListAsync(int bookId);
     }
 }
