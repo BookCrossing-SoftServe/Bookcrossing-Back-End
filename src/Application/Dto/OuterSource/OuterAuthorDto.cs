@@ -8,6 +8,6 @@ namespace Application.Dto.OuterSource
     public class OuterAuthorDto
     {
         [XmlElement("name")]
-        public string Name { get; set; }
+        public string FullName { get; set; }
     }
 }

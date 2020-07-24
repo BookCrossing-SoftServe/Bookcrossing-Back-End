@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
@@ -172,12 +173,51 @@ namespace ApplicationTest.Services
         [Test]
         public async Task RemoveUser_AffectedRows0_ThrowsDbUpdateException()
         {
-            _userRepositoryMock.Setup(s => s.SaveChangesAsync()).ReturnsAsync(0);
             int userId = 5;
+            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId)).ReturnsAsync(new User());
+            _userRepositoryMock.Setup(s => s.SaveChangesAsync()).ReturnsAsync(0);
 
             Func<Task> a = async () => await _usersService.RemoveUser(userId);
 
             a.Should().Throw<DbUpdateException>();
+        }
+
+        [Test]
+        public async Task RemoveUser_UserDoesNotExist_ThrowsObjectNotFound()
+        {
+            var userId = 5;
+            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
+                .ReturnsAsync(value: null);
+
+            Func<Task> a = async () => await _usersService.RemoveUser(userId);
+
+            a.Should().Throw<ObjectNotFoundException>();
+        }
+
+        [Test]
+        public async Task RemoveUser_UserExists_ShouldDeactivateUsersBooksAndRemoveHis()
+        {
+            var userId = 5;
+            var books = new List<Book>
+            {
+                new Book {Id = 1},
+                new Book {Id = 2}
+            };
+            var user = new User {Id = userId, Book = books };
+            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
+                .ReturnsAsync(user);
+            _userRepositoryMock.Setup(r => r.SaveChangesAsync())
+                .ReturnsAsync(1);
+
+            await _usersService.RemoveUser(userId);
+
+            foreach (var book in books)
+            {
+                _bookServiceMock.Verify(s => s.DeactivateAsync(book.Id), Times.Once);
+            }
+
+            _userRepositoryMock.Verify(r => r.Remove(user), Times.Once);
+            _userRepositoryMock.Verify(r => r.SaveChangesAsync());
         }
     }
 }

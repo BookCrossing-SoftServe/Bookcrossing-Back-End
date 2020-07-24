@@ -118,11 +118,14 @@ namespace Application.Services.Implementation
                 throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
             }
 
-            foreach (var book in user.Book)
+            if (user.Book != null)
             {
-                await _bookService.DeactivateAsync(book.Id);
+                foreach (var book in user.Book)
+                {
+                    await _bookService.DeactivateAsync(book.Id);
+                }
             }
-            
+
             _userRepository.Remove(user);
             var affectedRows = await _userRepository.SaveChangesAsync();
             if (affectedRows == 0)
