@@ -27,7 +27,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult> AddWish([FromBody]int bookId)
+        public async Task<IActionResult> AddWish([FromBody]int bookId)
         {
             try
             {
@@ -41,10 +41,16 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpDelete("{bookId}")]
-        public async Task<ActionResult> DeleteWish(int bookId)
+        public async Task<IActionResult> DeleteWish(int bookId)
         {
             await _wishListService.RemoveWish(bookId);
             return Ok();
+        }
+
+        [HttpGet("{bookId}/is-wished")]
+        public async Task<ActionResult<bool>> IsWished(int bookId)
+        {
+            return await _wishListService.CheckIfBookInWishListAsync(bookId);
         }
     }
 }
