@@ -9,6 +9,7 @@
     <None Remove="Controllers\AController.cs~RF3109555.TMP" />
     <None Remove="Settings.StyleCop" />
     <None Remove="StyleCop.Cache" />
+    <None Remove="Templates\WishBecameAvailable.html" />
     <None Remove="Validators\BookCommentInsertValidator.cs~RF310e123.TMP" />
   </ItemGroup>
 

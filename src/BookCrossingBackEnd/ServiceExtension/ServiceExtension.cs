@@ -41,7 +41,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddScoped<IHangfireJobScheduleService, HangfireJobSchedulerService>();
             services.AddSingleton<IImageService, ImageService>();
             services.AddSingleton<IPaginationService, PaginationService>();
-            services.AddSingleton<ISmtpClient, FakeSmtpClientService>();
+            services.AddSingleton<ISmtpClient, SmtpClientService>();
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IWishListService, WishListService>();
         }

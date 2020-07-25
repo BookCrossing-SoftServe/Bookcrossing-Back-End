@@ -23,7 +23,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentUserWishList([FromQuery] PageableParams pageableParams)
         {
-            return await _wishListService.GetWishesOfCurrentUser(pageableParams);
+            return await _wishListService.GetWishesOfCurrentUserAsync(pageableParams);
         }
 
         [HttpPost("add")]
@@ -31,7 +31,7 @@ namespace BookCrossingBackEnd.Controllers
         {
             try
             {
-                await _wishListService.AddWish(bookId);
+                await _wishListService.AddWishAsync(bookId);
                 return Ok();
             }
             catch (InvalidOperationException ex)
@@ -43,7 +43,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpDelete("{bookId}")]
         public async Task<ActionResult> DeleteWish(int bookId)
         {
-            await _wishListService.RemoveWish(bookId);
+            await _wishListService.RemoveWishAsync(bookId);
             return Ok();
         }
 

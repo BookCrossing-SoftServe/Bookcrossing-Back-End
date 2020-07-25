@@ -17,7 +17,6 @@ using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
-
 namespace Application.Services.Implementation
 {
     public class RequestService : IRequestService
@@ -34,12 +33,22 @@ namespace Application.Services.Implementation
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
         private readonly IRepository<UserRoom> _userLocationRepository;
         private readonly IRootRepository<BookRootComment> _rootCommentRepository;
+        private readonly IWishListService _wishListService;
 
-
-        public RequestService(IRepository<Request> requestRepository, IRepository<Book> bookRepository, IMapper mapper,
-            IEmailSenderService emailSenderService, IRepository<User> userRepository, IPaginationService paginationService,
-            IRepository<Language> bookLanguageRepository, IHangfireJobScheduleService hangfireJobScheduleService, IRepository<BookAuthor> bookAuthorRepository,
-            IRepository<BookGenre> bookGenreRepository, IRepository<UserRoom> userLocationRepository, IRootRepository<BookRootComment> rootCommentRepository)
+        public RequestService(
+            IRepository<Request> requestRepository, 
+            IRepository<Book> bookRepository, 
+            IMapper mapper,
+            IEmailSenderService emailSenderService, 
+            IRepository<User> userRepository, 
+            IPaginationService paginationService,
+            IRepository<Language> bookLanguageRepository, 
+            IHangfireJobScheduleService hangfireJobScheduleService, 
+            IRepository<BookAuthor> bookAuthorRepository,
+            IRepository<BookGenre> bookGenreRepository, 
+            IRepository<UserRoom> userLocationRepository, 
+            IRootRepository<BookRootComment> rootCommentRepository, 
+            IWishListService wishListService)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -53,7 +62,9 @@ namespace Application.Services.Implementation
             _bookAuthorRepository = bookAuthorRepository;
             _userLocationRepository = userLocationRepository;
             _rootCommentRepository = rootCommentRepository;
+            _wishListService = wishListService;
         }
+
         /// <inheritdoc />
         public async Task<RequestDto> MakeAsync(int userId, int bookId)
         {
@@ -90,6 +101,7 @@ namespace Application.Services.Implementation
                 };
                 await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
             }
+
             if (_userRepository.FindByCondition(u => u.Email == user.Email).Result.IsEmailAllowed)
             {
                 var emailMessageForReceiveConfirmation = new RequestMessage()
@@ -100,10 +112,12 @@ namespace Application.Services.Implementation
                     RequestId = request.Id,
                     UserAddress = new MailboxAddress($"{user.Email}"),
                 };
-                _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
+                await _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
             }
+
             return _mapper.Map<RequestDto>(request);
         }
+
         /// <inheritdoc />
         public async Task<RequestDto> GetByBookAsync(Expression<Func<Request, bool>> predicate, RequestsQueryParams query)
         {
@@ -128,16 +142,18 @@ namespace Application.Services.Implementation
                     .Include(i => i.User).ThenInclude(i => i.UserRoom).ThenInclude(i => i.Location).Where(predicate).ToList()
                     .Last();
             }
+
             if (request == null)
             {
                 return null;
             }
+
             return _mapper.Map<RequestDto>(request);
         }
+
         /// <inheritdoc />
         public async Task<IEnumerable<RequestDto>> GetAllByBookAsync(Expression<Func<Request, bool>> predicate)
         {
-
             var requests = _requestRepository.GetAll()
                 .Include(i => i.Book).ThenInclude(i => i.BookAuthor).ThenInclude(i => i.Author)
                 .Include(i => i.Book).ThenInclude(i => i.BookGenre).ThenInclude(i => i.Genre)
@@ -149,8 +165,10 @@ namespace Application.Services.Implementation
             {
                 return null;
             }
+
             return _mapper.Map<List<RequestDto>>(requests);
         }
+
         /// <inheritdoc />
         public async Task<PaginationDto<RequestDto>> GetAsync(Expression<Func<Request, bool>> predicate, BookQueryParams parameters)
         {
@@ -180,6 +198,7 @@ namespace Application.Services.Implementation
                     var tempId = id;
                     wherePredicate = wherePredicate.Or(g => g.Genre.Id == tempId);
                 }
+
                 genre = genre.Where(wherePredicate);
             }
 
@@ -192,6 +211,7 @@ namespace Application.Services.Implementation
                     var tempId = id;
                     wherePredicate = wherePredicate.Or(g => g.Id == tempId);
                 }
+
                 lang = lang.Where(wherePredicate);
             }
 
@@ -205,6 +225,7 @@ namespace Application.Services.Implementation
             {
                 location = location.Where(l => l.Location.Id == parameters.Location);
             }
+
             var bookIds =
                 from b in books
                 join g in genre on b.Id equals g.BookId
@@ -237,6 +258,7 @@ namespace Application.Services.Implementation
             {
                 return false;
             }
+
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.User = request.User;
             book.State = BookState.Reading;
@@ -256,9 +278,11 @@ namespace Application.Services.Implementation
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
             }
+
             await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             return affectedRows > 0;
         }
+
         /// <inheritdoc />
         public async Task<bool> RemoveAsync(int requestId)
         {
@@ -271,6 +295,7 @@ namespace Application.Services.Implementation
             {
                 return false;
             }
+
             await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             if (request.Owner.IsEmailAllowed)
             {
@@ -284,9 +309,15 @@ namespace Application.Services.Implementation
                 };
                 await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
             }
+
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.State = BookState.Available;
-            await _bookRepository.SaveChangesAsync();
+            var isBookUpdated = await _bookRepository.SaveChangesAsync() > 0;
+            if (isBookUpdated)
+            {
+                await _wishListService.NotifyAboutAvailableBookAsync(book.Id);
+            }
+            
             _requestRepository.Remove(request);
 
             var affectedRows = await _requestRepository.SaveChangesAsync();
