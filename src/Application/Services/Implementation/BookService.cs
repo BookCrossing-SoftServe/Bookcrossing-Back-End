@@ -18,7 +18,7 @@ using MimeKit;
 
 namespace Application.Services.Implementation
 {
-    public class BookService : Interfaces.IBookService
+    public class BookService : IBookService
     {
         private readonly IRepository<Book> _bookRepository;
         private readonly IRepository<BookAuthor> _bookAuthorRepository;
@@ -33,11 +33,12 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
         private readonly IHangfireJobScheduleService _hangfireJobScheduleService;
         private readonly IEmailSenderService _emailSenderService;
+        private readonly IWishListService _wishListService;
 
         public BookService(IRepository<Book> bookRepository, IMapper mapper, IRepository<BookAuthor> bookAuthorRepository, IRepository<BookGenre> bookGenreRepository,
             IRepository<Language> bookLanguageRepository, IRepository<User> userLocationRepository, IPaginationService paginationService, IRepository<Request> requestRepository,
             IUserResolverService userResolverService, IImageService imageService, IHangfireJobScheduleService hangfireJobScheduleService, IEmailSenderService emailSenderService, 
-            IRootRepository<BookRootComment> rootCommentRepository)
+            IRootRepository<BookRootComment> rootCommentRepository, IWishListService wishListService)
         {
             _bookRepository = bookRepository;
             _bookAuthorRepository = bookAuthorRepository;
@@ -52,6 +53,7 @@ namespace Application.Services.Implementation
             _hangfireJobScheduleService = hangfireJobScheduleService;
             _emailSenderService = emailSenderService;
             _rootCommentRepository = rootCommentRepository;
+            _wishListService = wishListService;
         }
 
         public async Task<BookGetDto> GetByIdAsync(int bookId)
@@ -126,7 +128,14 @@ namespace Application.Services.Implementation
             }
             await _bookRepository.Update(book, bookDto.FieldMasks);
             var affectedRows = await _bookRepository.SaveChangesAsync();
-            return affectedRows > 0;
+            var isDatabaseUpdated = affectedRows > 0;
+            if (isDatabaseUpdated && 
+                bookDto.FieldMasks.Contains("State") && 
+                bookDto.State == BookState.Available)
+            {
+                await _wishListService.NotifyAboutAvailableBookAsync(book.Id);
+            }
+            return isDatabaseUpdated;
         }
 
         public async Task<PaginationDto<BookGetDto>> GetAllAsync(BookQueryParams parameters)
@@ -202,20 +211,27 @@ namespace Application.Services.Implementation
             {
                 return false;
             }
-            if (_userLocationRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
-            {
-                var emailMessageForBookActivated = new RequestMessage()
-                {
-                    UserName = book.User.FirstName + " " + book.User.LastName,
-                    BookName = book.Name,
-                    BookId = book.Id,
-                    UserAddress = new MailboxAddress($"{book.User.Email}"),
-                };
-                await _emailSenderService.SendForBookActivatedAsync(emailMessageForBookActivated);
-            }
+            
             book.State = BookState.Available;
             await _bookRepository.Update(book, new List<string>() { "State" });
-            await _bookRepository.SaveChangesAsync();
+            var isDatabaseUpdated = await _bookRepository.SaveChangesAsync() > 0;
+
+            if (isDatabaseUpdated)
+            {
+                if (_userLocationRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
+                {
+                    var emailMessageForBookActivated = new RequestMessage()
+                    {
+                        UserName = book.User.FirstName + " " + book.User.LastName,
+                        BookName = book.Name,
+                        BookId = book.Id,
+                        UserAddress = new MailboxAddress($"{book.User.Email}"),
+                    };
+                    await _emailSenderService.SendForBookActivatedAsync(emailMessageForBookActivated);
+                }
+
+                _wishListService.NotifyAboutAvailableBookAsync(book.Id);
+            }
 
             return true;
         }

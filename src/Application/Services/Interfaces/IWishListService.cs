@@ -6,11 +6,13 @@ namespace Application.Services.Interfaces
 {
     public interface IWishListService
     {
-        Task<PaginationDto<BookGetDto>> GetWishesOfCurrentUser(PageableParams pageableParams);
+        Task<PaginationDto<BookGetDto>> GetWishesOfCurrentUserAsync(PageableParams pageableParams);
 
-        Task AddWish(int bookId);
+        Task AddWishAsync(int bookId);
 
-        Task RemoveWish(int bookId);
+        Task RemoveWishAsync(int bookId);
+
+        Task NotifyAboutAvailableBookAsync(int bookId);
 
         Task<bool> CheckIfBookInWishListAsync(int bookId);
     }

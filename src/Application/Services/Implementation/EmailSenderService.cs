@@ -172,6 +172,26 @@ namespace Application.Services.Implementation
             await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
 
+        public async Task SendForWishBecameAvailable(string userName, int bookId, string bookName, string email)
+        {
+            string body;
+            using (StreamReader reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "WishBecameAvailable.html")))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            body = body.Replace("{USER.NAME}", userName);
+            body = body.Replace("{BOOK.ID}", bookId.ToString());
+            body = body.Replace("{BOOK.NAME}", bookName);
+            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + email + "&number=" + CreateSecurityHash(email));
+
+            var message = new Message(new List<string>() { email },
+                "Book from your wish list became available!", body);
+
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
+        }
+
         private MimeMessage CreateEmailMessage(Message message)
         {
             var emailMessage = new MimeMessage();
@@ -185,7 +205,9 @@ namespace Application.Services.Implementation
 
         private string CreateSecurityHash(string email)
         {
-            return string.Join(null, SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(email)).Select(x => x.ToString("x2")));
+            return string.Join(
+                null,
+                SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(email)).Select(x => x.ToString("x2")));
         }
     }
 }

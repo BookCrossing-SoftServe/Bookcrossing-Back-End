@@ -17,10 +17,12 @@ namespace Application.Services.Implementation
         private readonly IRepository<Wish> _wishRepository;
         private readonly IRepository<Book> _bookRepository;
         private readonly IPaginationService _paginationService;
+        private readonly IEmailSenderService _emailSenderService;
 
         public WishListService(
             IUserResolverService userResolverService,
             IPaginationService paginationService,
+            IEmailSenderService emailSenderService,
             IRepository<Wish> wishRepository,
             IRepository<Book> bookRepository)
         {
@@ -28,9 +30,10 @@ namespace Application.Services.Implementation
             _wishRepository = wishRepository;
             _paginationService = paginationService;
             _bookRepository = bookRepository;
+            _emailSenderService = emailSenderService;
         }
 
-        public async Task<PaginationDto<BookGetDto>> GetWishesOfCurrentUser(PageableParams pageableParams)
+        public async Task<PaginationDto<BookGetDto>> GetWishesOfCurrentUserAsync(PageableParams pageableParams)
         {
             var currentUserId = _userResolverService.GetUserId();
 
@@ -47,7 +50,7 @@ namespace Application.Services.Implementation
             return wishesPaginated;
         }
 
-        public async Task AddWish(int bookId)
+        public async Task AddWishAsync(int bookId)
         {
             var currentUserId = _userResolverService.GetUserId();
             var book = await _bookRepository.FindByIdAsync(bookId);
@@ -72,7 +75,7 @@ namespace Application.Services.Implementation
             await _wishRepository.SaveChangesAsync();
         }
 
-        public async Task RemoveWish(int bookId)
+        public async Task RemoveWishAsync(int bookId)
         {
             var currentUserId = _userResolverService.GetUserId();
 
@@ -84,6 +87,23 @@ namespace Application.Services.Implementation
 
             _wishRepository.Remove(wishForRemoving);
             await _wishRepository.SaveChangesAsync();
+        }
+
+        public async Task NotifyAboutAvailableBookAsync(int bookId)
+        {
+            var wishesQuery = _wishRepository.GetAll()
+                .Where(wish => wish.BookId == bookId && wish.User.IsEmailAllowed)
+                .Include(wish => wish.User)
+                .Include(wish => wish.Book);
+
+            foreach (var wish in wishesQuery)
+            {
+                await _emailSenderService.SendForWishBecameAvailable(
+                    wish.User.FirstName + " " + wish.User.LastName,
+                    wish.BookId, 
+                    wish.Book.Name, 
+                    wish.User.Email);
+            }
         }
 
         public async Task<bool> CheckIfBookInWishListAsync(int bookId)

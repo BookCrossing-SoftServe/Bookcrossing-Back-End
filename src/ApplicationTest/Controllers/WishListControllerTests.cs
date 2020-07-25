@@ -41,12 +41,12 @@ namespace ApplicationTest.Controllers
                 Page = new List<BookGetDto>(),
                 TotalCount = 0
             };
-            _wishListServiceMock.Setup(obj => obj.GetWishesOfCurrentUser(pageableParams))
+            _wishListServiceMock.Setup(obj => obj.GetWishesOfCurrentUserAsync(pageableParams))
                 .ReturnsAsync(paginatedBooks);
 
             var result = await _controller.GetCurrentUserWishList(pageableParams);
 
-            _wishListServiceMock.Verify(obj => obj.GetWishesOfCurrentUser(pageableParams), Times.Once);
+            _wishListServiceMock.Verify(obj => obj.GetWishesOfCurrentUserAsync(pageableParams), Times.Once);
             result.Value.Should().Be(paginatedBooks);
         }
 
@@ -54,7 +54,7 @@ namespace ApplicationTest.Controllers
         public async Task AddWish_ServiceMethodThrowsInvalidOperationException_ReturnsForbiddenStatusCodeWishMessage()
         {
             var exceptionMessage = "User cannot add his book to wish list";
-            _wishListServiceMock.Setup(obj => obj.AddWish(It.IsAny<int>()))
+            _wishListServiceMock.Setup(obj => obj.AddWishAsync(It.IsAny<int>()))
                 .Throws(new InvalidOperationException(exceptionMessage));
 
             var result = await _controller.AddWish(It.IsAny<int>());
@@ -71,7 +71,7 @@ namespace ApplicationTest.Controllers
 
             var result = await _controller.AddWish(bookId);
 
-            _wishListServiceMock.Verify(obj => obj.AddWish(bookId));
+            _wishListServiceMock.Verify(obj => obj.AddWishAsync(bookId));
 
             result.Should().BeOfType<OkResult>();
         }
@@ -83,7 +83,7 @@ namespace ApplicationTest.Controllers
 
             var result = await _controller.DeleteWish(bookId);
 
-            _wishListServiceMock.Verify(obj => obj.RemoveWish(bookId));
+            _wishListServiceMock.Verify(obj => obj.RemoveWishAsync(bookId));
 
             result.Should().BeOfType<OkResult>();
         }
