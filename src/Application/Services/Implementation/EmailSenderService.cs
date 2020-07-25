@@ -16,30 +16,28 @@ namespace Application.Services.Implementation
     public class EmailSenderService : IEmailSenderService
     {
         private readonly EmailConfiguration _emailConfig;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly ISmtpClient _smtpClient;
-        private readonly string UnsubscribeURL = "https://book-crossing-dev.herokuapp.com/email/?email=";
+        private readonly string _unsubscribeUrl;
+        private readonly string _templatesFolderName;
 
-        public EmailSenderService(EmailConfiguration emailConfig, IHostingEnvironment env, ISmtpClient smtpClient)
+        public EmailSenderService(EmailConfiguration emailConfig, IWebHostEnvironment env, ISmtpClient smtpClient)
         {
             _emailConfig = emailConfig;
             _env = env;
             _smtpClient = smtpClient;
+            _unsubscribeUrl = "https://book-crossing-dev.herokuapp.com/email/?email=";
+            _templatesFolderName = "Templates";
         }
         /// <inheritdoc />
         public async Task SendReceiveConfirmationAsync(string userName, string bookName, int bookId, int requestId, string userAddress)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestReceiveConfirmation.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("RequestReceiveConfirmation.html");
 
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{BOOK.NAME}", bookName);
             body = body.Replace("{BOOK.ID}", bookId.ToString());
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + userAddress + "&number=" + CreateSecurityHash(userAddress));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + userAddress + "&number=" + CreateSecurityHash(userAddress));
 
             var message = new Message(new List<string>() { userAddress },
                 "Book crossing book receive confirmation!", body);
@@ -49,17 +47,12 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task SendThatBookWasReceivedAsync(RequestMessage requestMessage)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestReceived.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("RequestReceived.html");
 
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Your book {requestMessage.BookName} was received!", body);
@@ -69,18 +62,13 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task SendForCanceledRequestAsync(RequestMessage requestMessage)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestCanceled.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("RequestCanceled.html");
 
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Request for {requestMessage.BookName} was canceled!", body);
@@ -90,17 +78,12 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task SendForBookDeactivatedAsync(RequestMessage requestMessage)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "BookDeactivated.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("BookDeactivated.html");
 
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{BOOK.ID}", Convert.ToString(requestMessage.BookId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.UserAddress + "&number=" + CreateSecurityHash(requestMessage.UserAddress.ToString()));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.UserAddress + "&number=" + CreateSecurityHash(requestMessage.UserAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.UserAddress.ToString() },
                 $"Book {requestMessage.BookName} was deactivated!", body);
@@ -110,17 +93,12 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task SendForBookActivatedAsync(RequestMessage requestMessage)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "BookActivated.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("BookDeactivated.html");
 
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{BOOK.ID}", Convert.ToString(requestMessage.BookId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.UserAddress + "&number=" + CreateSecurityHash(requestMessage.UserAddress.ToString()));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.UserAddress + "&number=" + CreateSecurityHash(requestMessage.UserAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.UserAddress.ToString() },
                 $"Book {requestMessage.BookName} was activated!", body);
@@ -131,19 +109,14 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task SendForRequestAsync(RequestMessage requestMessage)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "RequestEmail.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("RequestEmail.html");
 
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
             body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{REQUEST.DATE}", requestMessage.RequestDate.ToString("MMMM dd, yyyy"));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
                 $"Request for {requestMessage.BookName}!", body);
@@ -154,17 +127,12 @@ namespace Application.Services.Implementation
         /// <inheritdoc />
         public async Task SendForPasswordResetAsync(string userName, string confirmNumber, string email)
         {
-            string body = string.Empty;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "ResetPassword.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("ResetPassword.html");
 
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{CONFIRM.NUMBER}", confirmNumber);
             body = body.Replace("{EMAIL}", email);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + email + "&number=" + CreateSecurityHash(email));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + email + "&number=" + CreateSecurityHash(email));
 
             var message = new Message(new List<string>() { email },
                 "Book crossing password reset!", body);
@@ -174,22 +142,24 @@ namespace Application.Services.Implementation
 
         public async Task SendForWishBecameAvailable(string userName, int bookId, string bookName, string email)
         {
-            string body;
-            using (StreamReader reader =
-                new StreamReader(Path.Combine(_env.ContentRootPath, "Templates", "WishBecameAvailable.html")))
-            {
-                body = await reader.ReadToEndAsync();
-            }
+            var body = await GetMessageTemplateFromFile("WishBecameAvailable.html");
 
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{BOOK.ID}", bookId.ToString());
             body = body.Replace("{BOOK.NAME}", bookName);
-            body = body.Replace("{UnsubscribeURL}", UnsubscribeURL + email + "&number=" + CreateSecurityHash(email));
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + email + "&number=" + CreateSecurityHash(email));
 
             var message = new Message(new List<string>() { email },
                 "Book from your wish list became available!", body);
 
             await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
+        }
+
+        protected virtual async Task<string> GetMessageTemplateFromFile(string templateFileName)
+        {
+            using var reader =
+                new StreamReader(Path.Combine(_env.ContentRootPath, _templatesFolderName, templateFileName));
+            return await reader.ReadToEndAsync();
         }
 
         private MimeMessage CreateEmailMessage(Message message)
