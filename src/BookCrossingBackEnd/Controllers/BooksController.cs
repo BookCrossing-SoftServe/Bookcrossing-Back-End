@@ -21,7 +21,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetAllBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetAllAsync(parameters));
+            return await _bookService.GetAllAsync(parameters);
         }
 
         // GET: api/Books/5
@@ -51,16 +51,12 @@ namespace BookCrossingBackEnd.Controllers
                 return BadRequest();
             }
 
-            if (bookDto == null)
-            {
-                return BadRequest();
-            }
-
             var isBookUpdated = await _bookService.UpdateAsync(bookDto);
             if (!isBookUpdated)
             {
                 return BadRequest();
             }
+
             return NoContent();
         }
         
@@ -102,19 +98,19 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet("registered")]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetRegisteredBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetRegistered(parameters));
+            return await _bookService.GetRegistered(parameters);
         }
 
         [HttpGet("current")]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentOwnedBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetCurrentOwned(parameters));
+            return await _bookService.GetCurrentOwned(parameters);
         }
 
         [HttpGet("read")]
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetReadBooksAsync([FromQuery]BookQueryParams parameters)
         {
-            return Ok(await _bookService.GetReadBooksAsync(parameters));
+            return await _bookService.GetReadBooksAsync(parameters);
         }
 
     }

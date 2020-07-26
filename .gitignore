@@ -348,3 +348,4 @@ healthchecksdb
 
 #book images
 book_images/
+*.DotSettings

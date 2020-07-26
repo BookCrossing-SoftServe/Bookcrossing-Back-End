@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
 using FluentAssertions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -23,6 +23,40 @@ namespace ApplicationTest.Controllers
             _authorController = new AuthorsController(_authorServiceMock.Object);
         }
 
+        #region GetByFilter
+
+        [Test]
+        public async Task GetAuthors_WereFound_ReturnsListOfAuthorDto()
+        {
+            _authorServiceMock.Setup(m => m.FilterAuthors(It.IsAny<string>()))
+                .ReturnsAsync(new List<AuthorDto>()
+                {
+                    new AuthorDto() {Id = 1}
+                });
+
+            var result = await _authorController.GetAuthors(It.IsAny<string>());
+
+            _authorServiceMock.Verify(m => m.FilterAuthors(It.IsAny<string>()));
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<List<AuthorDto>>>();
+            result.Value.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task GetAuthors_WereNotFound_ReturnsNotFoundResult()
+        {
+            _authorServiceMock.Setup(m => m.FilterAuthors(It.IsAny<string>()))
+                .ReturnsAsync(value: null);
+
+            var result = await _authorController.GetAuthors(It.IsAny<string>());
+
+            _authorServiceMock.Verify(m => m.FilterAuthors(It.IsAny<string>()));
+            result.Should().NotBeNull();
+            result.Result.Should().BeOfType<NotFoundResult>();
+            result.Value.Should().BeNull();
+        }
+
+        #endregion
 
         #region GetById
 
@@ -48,6 +82,18 @@ namespace ApplicationTest.Controllers
             var result = await _authorController.GetAuthor(It.IsAny<int>());
 
             result.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Test]
+        public async Task GetAuthors_AnyIssue_ReturnsOkObjectResultWithListOfAuthorDto()
+        {
+            _authorServiceMock.Setup(m => m.GetAll(It.IsAny<int[]>()))
+                .ReturnsAsync(new List<AuthorDto>());
+
+            var result = await _authorController.GetAuthors(It.IsAny<int[]>());
+
+            result.Should().BeOfType<ActionResult<List<AuthorDto>>>();
+            result.Value.Should().NotBeNull();
         }
 
         #endregion GetById
@@ -118,15 +164,29 @@ namespace ApplicationTest.Controllers
             result.Should().BeOfType<NotFoundResult>();
         }
 
-        #endregion Put
-
-        [Ignore("Authorization filter is disabled until fully implemented")]
         [Test]
-        public void AuthorsController_has_Authorized_Attribute()
+        public async Task PutAuthor_AuthorsSuccessfullyMerged_ReturnsCreatedAtActionResult()
         {
-            var controller = typeof(AuthorsController);
+            _authorServiceMock.Setup(m => m.Merge(It.IsAny<AuthorMergeDto>()))
+                .ReturnsAsync(new AuthorDto() {Id = 0});
 
-            controller.Should().BeDecoratedWith<AuthorizeAttribute>();
+            var result = await _authorController.PutAuthor(It.IsAny<AuthorMergeDto>());
+
+            result.Should().BeOfType<CreatedAtActionResult>();
+            (result as CreatedAtActionResult).Value.Should().NotBeNull().And.BeOfType<AuthorDto>();
         }
+
+        [Test]
+        public async Task PutAuthor_AuthorsWereNotMerged_ReturnsBadRequest()
+        {
+            _authorServiceMock.Setup(m => m.Merge(It.IsAny<AuthorMergeDto>()))
+                .ReturnsAsync(value: null);
+
+            var result = await _authorController.PutAuthor(It.IsAny<AuthorMergeDto>());
+
+            result.Should().BeOfType<BadRequestResult>();
+        }
+
+        #endregion Put
     }
 }

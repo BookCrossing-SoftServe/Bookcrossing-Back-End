@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.Password;
@@ -49,7 +48,7 @@ namespace BookCrossingBackEnd.Controllers
             var user = await UserService.GetById(x=>x.Id == userId);
             if (user == null)
                 return NotFound();
-            return Ok(user);
+            return user;
         }
 
         // GET api/<controller>/5
@@ -84,13 +83,11 @@ namespace BookCrossingBackEnd.Controllers
         /// </summary>
         /// <param name="id"></param>
         // DELETE api/<controller>/5
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var claimsIdentity = this.User.Identity as ClaimsIdentity;
-            var userId = claimsIdentity?.FindFirst("id")?.Value;
-            await UserService.RemoveUser(int.Parse(userId));
+            await UserService.RemoveUser(id);
             return Ok();
         }
 
@@ -122,7 +119,10 @@ namespace BookCrossingBackEnd.Controllers
         {
             var createdUser = await UserService.AddUser(user);
             if (createdUser != null)
-                return Ok();
+            {
+                return CreatedAtAction(nameof(GetUserId), new { id = createdUser.Id }, createdUser);
+            }
+
             return BadRequest();
         }
     }

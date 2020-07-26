@@ -3,12 +3,14 @@ using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RequestsController : ControllerBase
     {
         private readonly IRequestService _requestService;
@@ -25,13 +27,14 @@ namespace BookCrossingBackEnd.Controllers
         {
             var userId = _userResolverService.GetUserId();
             var request = await _requestService.MakeAsync(userId, bookId);
-
             if (request == null)
             {
                 return NotFound();
             }
+
             return Ok(request);
         }
+
         [HttpGet]
         public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] BookQueryParams query)
         {
@@ -41,7 +44,8 @@ namespace BookCrossingBackEnd.Controllers
             {
                 return NotFound();
             }
-            return Ok(requests);
+
+            return requests;
         }
 
 
