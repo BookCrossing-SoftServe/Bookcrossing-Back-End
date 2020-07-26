@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
@@ -47,7 +46,7 @@ namespace ApplicationTest.Controllers
                     Owner = new UserDto() { Id = 1 },
                     ReceiveDate = null
                 }
-        };
+            };
             var queryParameter = new RequestsQueryParams();
             _requestServiceMock.Setup(s => s.GetAllByBookAsync(x => x.BookId == It.IsAny<int>()))
                 .ReturnsAsync(expectedRequests);
@@ -180,13 +179,59 @@ namespace ApplicationTest.Controllers
 
         #endregion ApproveReceive
 
-        [Ignore("Authorization filter is disabled until fully implemented")]
         [Test]
-        public void RequestsController_has_Authorized_Attribute()
+        public void RequestsController_hasAuthorizedAttribute_True()
         {
-            var controller = typeof(AuthorsController);
+            var controller = typeof(RequestsController);
 
             controller.Should().BeDecoratedWith<AuthorizeAttribute>();
+        }
+
+        [Test]
+        public async Task GetByUser_RequestsWereFound_ReturnsPaginatedDtoListOfRequestDto()
+        {
+            var expectedRequests = new List<RequestDto>
+            {
+                new RequestDto()
+                {
+                    Id = 1,
+                    RequestDate = new DateTime(1999, 05, 28),
+                    User = new UserDto() { Id = 1 },
+                    Book = new BookGetDto() { Id = 1 },
+                    Owner = new UserDto() { Id = 1 },
+                    ReceiveDate = null
+                }
+            };
+
+            _requestServiceMock.Setup(m => m.GetAsync(
+                    It.IsAny<Expression<Func<Request, bool>>>(),
+                    It.IsAny<BookQueryParams>()))
+                .ReturnsAsync(new PaginationDto<RequestDto>()
+                {
+                    Page = expectedRequests,
+                    TotalCount = 1
+                });
+
+            var result = await _requestController.GetByUser(It.IsAny<BookQueryParams>());
+
+            _userResolverServiceMock.Verify(m => m.GetUserId());
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<PaginationDto<RequestDto>>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
+        }
+
+        [Test]
+        public async Task GetByUser_RequestsWereNotFound_ReturnsPaginatedDtoListOfRequestDto()
+        {
+            _requestServiceMock.Setup(m => m.GetAsync(
+                    It.IsAny<Expression<Func<Request, bool>>>(),
+                    It.IsAny<BookQueryParams>()))
+                .ReturnsAsync(value: null);
+
+            var result = await _requestController.GetByUser(It.IsAny<BookQueryParams>());
+
+            result.Result.Should().BeOfType<NotFoundResult>();
+            result.Value.Should().BeNull();
         }
     }
 }

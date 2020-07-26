@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
@@ -34,25 +35,27 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet("paginated")]
         public async Task<ActionResult<PaginationDto<AuthorDto>>> GetAuthors([FromQuery] FullPaginationQueryParams paginationQuery)
         {
-            return Ok(await _authorService.GetAll(paginationQuery));
+            return await _authorService.GetAll(paginationQuery);
         }
+
         // GET: api/Authors
         [HttpGet]
-        public async Task<ActionResult> GetAuthors([FromQuery] int[] ids)
+        public async Task<ActionResult<List<AuthorDto>>> GetAuthors([FromQuery] int[] ids)
         {
-            return Ok(await _authorService.GetAll(ids));
+            return await _authorService.GetAll(ids);
         }
 
         // GET: api/Authors/"Tom"
         [HttpGet("{filter}")]
-        public async Task<ActionResult> GetAuthor(string filter)
+        public async Task<ActionResult<List<AuthorDto>>> GetAuthors(string filter)
         {
             var authors = await _authorService.FilterAuthors(filter);
             if (authors == null)
             {
                 return NotFound();
             }
-            return Ok(authors);
+
+            return authors;
         }
 
 

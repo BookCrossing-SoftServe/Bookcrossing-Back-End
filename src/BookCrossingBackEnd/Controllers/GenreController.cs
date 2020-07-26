@@ -83,7 +83,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<PaginationDto<GenreDto>>> GetAllGenres([FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
             _logger.LogInformation("Getting all paginated genres");
-            return Ok(await _genreService.GetAll(fullPaginationQuery));
+            return await _genreService.GetAll(fullPaginationQuery);
         }
     }
 }
