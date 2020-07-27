@@ -352,5 +352,13 @@ namespace Application.Services.Implementation
                 .Include(x => x.Language);
         }
 
+        public async Task<bool> CheckIfBookIsOwned(int bookId)
+        {
+            var currentUserId =  _userResolverService.GetUserId();
+
+            var query =  _bookRepository.GetAll().Where(p => p.UserId == currentUserId);
+
+            return query.FirstOrDefault((book) => book.Id == bookId) != null;
+        }
     }
 }

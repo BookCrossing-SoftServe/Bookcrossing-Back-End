@@ -75,5 +75,7 @@ namespace Application.Services.Interfaces
         ///  <param name="bookId">Book Id</param>
         /// <returns></returns>
         Task<bool> DeactivateAsync(int bookId);
+
+        Task<bool> CheckIfBookIsOwned(int bookId);
     }
 }

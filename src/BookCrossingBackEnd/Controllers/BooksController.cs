@@ -113,5 +113,11 @@ namespace BookCrossingBackEnd.Controllers
             return await _bookService.GetReadBooksAsync(parameters);
         }
 
+
+        [HttpGet("{bookId}/is-owned")]
+        public async Task<ActionResult<bool>> IsOwnedBooksAsync(int bookId)
+        {
+            return await _bookService.CheckIfBookIsOwned(bookId);
+        }
     }
 }
