@@ -9,6 +9,7 @@ using Application.Dto.Email;
 using Application.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using MimeKit;
+using MimeKit.Cryptography;
 using ISmtpClient = Application.Services.Interfaces.ISmtpClient;
 
 namespace Application.Services.Implementation
@@ -144,9 +145,12 @@ namespace Application.Services.Implementation
         {
             var body = await GetMessageTemplateFromFile("WishBecameAvailable.html");
 
+            var bookUrl = $"https://book-crossing-dev.herokuapp.com/book/{bookId}";
+
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{BOOK.ID}", bookId.ToString());
             body = body.Replace("{BOOK.NAME}", bookName);
+            body = body.Replace("{BOOK.URL}", bookUrl);
             body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + email + "&number=" + CreateSecurityHash(email));
 
             var message = new Message(new List<string>() { email },
