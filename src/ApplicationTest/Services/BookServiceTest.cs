@@ -55,6 +55,7 @@ namespace ApplicationTest.Services
             _imageServiceMock = new Mock<IImageService>();
             _rootCommentRepository = new Mock<IRootRepository<BookRootComment>>();
             _wishListServiceMock = new Mock<IWishListService>();
+
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -69,11 +70,23 @@ namespace ApplicationTest.Services
             });
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
-            _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                 _bookLanguageRepositoryMock.Object, _userLocationServiceMock.Object,  pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
-                _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object, _rootCommentRepository.Object, _wishListServiceMock.Object);
+            _bookService = new BookService(
+                _bookRepositoryMock.Object, 
+                _mapper, 
+                _bookAuthorRepositoryMock.Object, 
+                _bookGenreRepositoryMock.Object,
+                _bookLanguageRepositoryMock.Object, 
+                _userLocationServiceMock.Object,  
+                pagination,
+                _requestServiceMock.Object,
+                _userResolverServiceMock.Object,
+                _imageServiceMock.Object,
+                _hangfireJobScheduleService.Object,
+                _emailSenderServiceMock.Object,
+                _rootCommentRepository.Object,
+                _wishListServiceMock.Object);
 
-                var authorMock = GetBookAuthor().AsQueryable();
+            var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
             var languageMock = GetBookLanguage().AsQueryable();
             var usersMock = GetUsers().AsQueryable();

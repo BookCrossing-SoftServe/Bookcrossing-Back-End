@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.QueryableExtension;
@@ -6,13 +8,9 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Infrastructure.RDBMS;
 using LinqKit;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
@@ -24,7 +22,12 @@ namespace Application.Services.Implementation
         private readonly IPaginationService _paginationService;
         private readonly BookCrossingContext _context;
 
-        public AuthorService(IRepository<Author> authorRepository, IMapper mapper, IPaginationService paginationService,IRepository<BookAuthor> bookAuthorRepository, BookCrossingContext context)
+        public AuthorService(
+            IRepository<Author> authorRepository, 
+            IMapper mapper, 
+            IPaginationService paginationService,
+            IRepository<BookAuthor> bookAuthorRepository, 
+            BookCrossingContext context)
         {
             _authorRepository = authorRepository;
             _bookAuthorRepository = bookAuthorRepository;

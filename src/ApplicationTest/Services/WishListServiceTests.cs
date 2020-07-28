@@ -68,8 +68,7 @@ namespace ApplicationTest.Services
 
             _service.Invoking(s => s.AddWishAsync(bookId))
                 .Should()
-                .Throw<ObjectNotFoundException>()
-                .WithMessage($"There is no book with id = {bookId} in database");
+                .Throw<ObjectNotFoundException>();
         }
 
         [Test]
@@ -83,8 +82,7 @@ namespace ApplicationTest.Services
 
             _service.Invoking(s => s.AddWishAsync(It.IsAny<int>()))
                 .Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage("User cannot add his book to wish list");
+                .Throw<InvalidOperationException>();
         }
 
         [Test]
@@ -127,9 +125,7 @@ namespace ApplicationTest.Services
 
             _service.Invoking(s => s.RemoveWishAsync(bookId))
                 .Should()
-                .Throw<InvalidOperationException>()
-                .WithMessage(
-                    $"Cannot delete book with id = {bookId} from current user's wish list, because there is no book with id = {bookId}");
+                .Throw<InvalidOperationException>();
         }
 
         [Test]
@@ -195,24 +191,31 @@ namespace ApplicationTest.Services
             var bookId = 1;
             var book = new Book { Id = bookId, Name = "Name" };
             var userId = 1;
-            var userWithEmailAllowed = new User { Id = 1, FirstName = "User1", LastName = "User1", IsEmailAllowed = true, Email = "user@mail.com"};
+            var userWithEmailAllowed = new User
+            {
+                Id = 1,
+                FirstName = "User1",
+                LastName = "User1",
+                IsEmailAllowed = true,
+                Email = "user@mail.com"
+            };
             var userFullName = userWithEmailAllowed.FirstName + " " + userWithEmailAllowed.LastName;
             var userWishEmailNotAllowed = new User { IsEmailAllowed = false };
             var wishes = new List<Wish>
             {
-                new Wish {BookId = 1, Book = book, UserId = userId, User = userWithEmailAllowed},
-                new Wish {BookId = 1, Book = book, User = userWishEmailNotAllowed},
-                new Wish {BookId = 2, UserId = userId, User = userWithEmailAllowed},
-                new Wish {BookId = 2, User = userWishEmailNotAllowed},
+                new Wish { BookId = 1, Book = book, UserId = userId, User = userWithEmailAllowed },
+                new Wish { BookId = 1, Book = book, User = userWishEmailNotAllowed },
+                new Wish { BookId = 2, UserId = userId, User = userWithEmailAllowed },
+                new Wish { BookId = 2, User = userWishEmailNotAllowed },
             };
             _wishRepositoryMock.Setup(obj => obj.GetAll()).Returns(wishes.AsQueryable());
 
             await _service.NotifyAboutAvailableBookAsync(bookId);
 
             _emailSenderServiceMock.Verify(obj => obj.SendForWishBecameAvailable(
-                userFullName, 
-                bookId, 
-                book.Name, 
+                userFullName,
+                bookId,
+                book.Name,
                 userWithEmailAllowed.Email));
         }
     }
