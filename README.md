@@ -14,6 +14,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 [Docker](https://www.docker.com) version 17.05 or higher
+
 [Docker-compose](https://github.com/docker/compose)
 
 
