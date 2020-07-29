@@ -1,60 +1,43 @@
-version: '3.7'
-
+version: '3'
 services:
-    web:
-        build:
-            context: ./Bookcrossing-Front-End
-            dockerfile: Dockerfile
-        init: true
-        volumes:
-            - ./Bookcrossing-Front-End:/usr/src/app
-            - /usr/src/app/node_modules
-            - /usr/src/app/dist
-        environment:
-            - NODE_ENV=development
-        command: npm run start
-        ports:
-            - 4200:4200
-        networks:
-            - frontend
-    api:
-        build:
-            context: ./Bookcrossing-Back-End
-            dockerfile: Dockerfile
-        init: true
-        ports:
-            - 5000:5000
-        depends_on:
-            - mssql_db
-            - mongo_db
-        networks:
-            - frontend
-            - backend
-    mongo_db:
-        image: mongo:4
-        init: true
-        volumes:
-            - mongo-data:/data/db:cached
-        working_dir: /usr/src/app
-        environment:
-            - MONGO_INITDB_DATABASE=BookCrossingDB
-        networks:
-            - backend
-    mssql_db:
-        image: mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
-        init: true
-        volumes:
-            - mongo-data:/data/db:cached
-        working_dir: /usr/src/app
-        environment:
-            ACCEPT_EULA: "Y"
-            SA_PASSWORD: "your_Strong_Password"
-            MSSQL_PID: "Developer"
-        networks:
-            - backend
+  api:
+    build: .
+    container_name: api
+    environment:
+      ConnectionStrings:DefaultConnection: "Server=mssqldb,1433;Database=BookCrossing;User Id=SA;Password=P@ssw0rd;Trusted_Connection=False;MultipleActiveResultSets=true"
+      MongoSettings:ConnectionString: "mongodb://mongodb:27017"
+      MongoSettings:DatabaseName: "BookCrossingDB"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - mssqldb
+    entrypoint: ["/wait-for-it.sh", "mssqldb:1433", "-t", "120", "--", "dotnet", "BookCrossingBackEnd.dll"]
+    networks:
+      - backend
+  mongodb:
+    image: "mongo:4.2.8"
+    container_name: mongodb
+    volumes:
+      - mongodbdata:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+  mssqldb:
+    image: "mcr.microsoft.com/mssql/server:2019-CU5-ubuntu-18.04"
+    container_name: mssqldb
+    volumes:
+      - mssqldbdata:/var/opt/mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "P@ssw0rd"
+    ports:
+      - "1433:1433"
+    networks:
+      - backend
 networks:
-    frontend:
-    backend:
-
+  backend:
 volumes:
-    mongo-data:
+  mongodbdata:
+  mssqldbdata:

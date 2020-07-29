@@ -10,30 +10,28 @@ All features must be merged into develop branch!!!
 Only the release should merge into the main branch!!!
 
 ## Getting Started
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes using docker containers. 
 
 ### Prerequisites
-[Microsoft SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) 
+[Docker](https://www.docker.com) version 17.05 or higher
+[Docker-compose](https://github.com/docker/compose)
+
 
 ### Installing
-1. Clone it from git hub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
+1. Clone repository from GitHub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
 
-2. In project BookCrossingBackEnd create file appsettings.json. And paste the code below.
+2. Move to the Bookcrossing-Back-End/src/BookCrossingBackEnd/ and create file appsettings.json then paste the code below.
 ```
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(LocalDB)\\MSSQLLocalDB;Database=BookCrossingDB;Trusted_Connection=True;MultipleActiveResultSets=true",
-    "AzureConnection": "Server=tcp:{server_name}.database.windows.net,1433;Initial Catalog={database_name};Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"
-  },
-  "MongoSettings": {
-    "ConnectionString": "mongodb://{Server name}",
-    "DatabaseName": "BookCrossingDB"
-  },
+  "iKeyForDevelop": "1efe21aa-574a-49cc-ab53-8e93c75074bf",
+
+  "iKeyForProduction": "1f191e43-3248-4c80-9160-d12ba9f10044",
+
   "EmailConfiguration": {
-    "From": "{Sender email}",
-    "SmtpServer": "{Smtp server}",
-    "Port": {Port},
-    "Username": "{Username}",
+    "From": "{sender_email}",
+    "SmtpServer": "{smtp_server}",
+    "Port": 587,
+    "Username": "{username}",
     "Password": "{Password}"
   },
   "Logging": {
@@ -44,6 +42,7 @@ These instructions will get you a copy of the project up and running on your loc
     }
   },
   "AllowedHosts": "*",
+
   "Data": {
     "DefaultConnection": {
       "ConnectionString": ""
@@ -55,17 +54,13 @@ These instructions will get you a copy of the project up and running on your loc
   },
 
   "StorageConfiguration": {
-    "FolderForBookImages" : "book_images"
+    "FolderForBookImages": "book_images"
   }
 }
 ```
+###### 07.29.2020
 
-3. Run BookCrossingBackEnd project
-
-### Setup with dockers
-To start application using docker containers, execute steps 1 and 2 from above,  
-place docker-compose.yml outside Bookcrossing-Back-End directory,  
-Compose Up docker containers.
+3. Move back to Bookcrossing-Back-End and execute "docker-compose up"
   
 **Note! Contribution rules:**  
 1. All Pull Requests should start from prefix *#xxx-yyy* where *xxx* - task number and and *yyy* - short description 
