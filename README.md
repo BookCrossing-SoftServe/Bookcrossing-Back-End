@@ -23,16 +23,16 @@ These instructions will get you a copy of the project up and running on your loc
 2. Move to the Bookcrossing-Back-End/src/BookCrossingBackEnd/ and create file appsettings.json then paste the code below.
 ```
 {
-  "iKeyForDevelop": "1efe21aa-574a-49cc-ab53-8e93c75074bf",
+  "iKeyForDevelop": "{microsoft_insights_key}",
 
-  "iKeyForProduction": "1f191e43-3248-4c80-9160-d12ba9f10044",
+  "iKeyForProduction": "{microsoft_insights_key}",
 
   "EmailConfiguration": {
     "From": "{sender_email}",
     "SmtpServer": "{smtp_server}",
     "Port": 587,
     "Username": "{username}",
-    "Password": "{Password}"
+    "Password": "{password}"
   },
   "Logging": {
     "LogLevel": {
