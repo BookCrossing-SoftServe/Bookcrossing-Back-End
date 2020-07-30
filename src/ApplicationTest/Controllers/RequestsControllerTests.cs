@@ -179,13 +179,6 @@ namespace ApplicationTest.Controllers
 
         #endregion ApproveReceive
 
-        [Test]
-        public void RequestsController_hasAuthorizedAttribute_True()
-        {
-            var controller = typeof(RequestsController);
-
-            controller.Should().BeDecoratedWith<AuthorizeAttribute>();
-        }
 
         [Test]
         public async Task GetByUser_RequestsWereFound_ReturnsPaginatedDtoListOfRequestDto()
