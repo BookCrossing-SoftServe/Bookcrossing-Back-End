@@ -17,14 +17,14 @@ These instructions will get you a copy of the project up and running on your loc
 
 [Docker-compose](https://github.com/docker/compose)
 
-######Note: It's better to use docker-desktop if you are on windows
+###### Note: It's better to use docker-desktop if you are on windows
 
 ### Installing
 1. Clone repository from GitHub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
 
 2. Move to Bookcrossing-Back-End and execute "docker-compose up"
 
-######Note: Also check Bookcrossing-Back-End/src/BookCrossingBackEnd/appsettings.json if you need to pass any extra variables!
+###### Note: Also check Bookcrossing-Back-End/src/BookCrossingBackEnd/appsettings.json if you need to pass any extra variables!
   
 **Note! Contribution rules:**  
 1. All Pull Requests should start from prefix *#xxx-yyy* where *xxx* - task number and and *yyy* - short description 
