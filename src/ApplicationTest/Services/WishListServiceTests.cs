@@ -25,6 +25,11 @@ namespace ApplicationTest.Services
         private Mock<IEmailSenderService> _emailSenderServiceMock;
         private WishListService _service;
 
+        private User _currentUser;
+        private Book _book;
+        private Wish _wish;
+        private List<Wish> _wishes;
+
         [OneTimeSetUp]
         public void InitializeClass()
         {
@@ -39,6 +44,8 @@ namespace ApplicationTest.Services
                 _emailSenderServiceMock.Object,
                 _wishRepositoryMock.Object,
                 _bookRepositoryMock.Object);
+
+            MockData();
         }
 
         [SetUp]
@@ -62,11 +69,10 @@ namespace ApplicationTest.Services
         [Test]
         public void AddWish_NoBookWithPassedIdInDatabase_ThrowsObjectNotFoundException()
         {
-            var bookId = 1;
-            _bookRepositoryMock.Setup(obj => obj.FindByIdAsync(bookId))
+            _bookRepositoryMock.Setup(obj => obj.FindByIdAsync(_book.Id))
                 .ReturnsAsync(value: null);
 
-            _service.Invoking(s => s.AddWishAsync(bookId))
+            _service.Invoking(s => s.AddWishAsync(_book.Id))
                 .Should()
                 .Throw<ObjectNotFoundException>();
         }
@@ -74,11 +80,10 @@ namespace ApplicationTest.Services
         [Test]
         public void AddWish_CurrentUserIdAndBookOwnerIdIsEqual_ThrowsInvalidOperationException()
         {
-            var currentUserId = 1;
             _userResolverServiceMock.Setup(obj => obj.GetUserId())
-                .Returns(currentUserId);
+                .Returns(_currentUser.Id);
             _bookRepositoryMock.Setup(obj => obj.FindByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(new Book { UserId = currentUserId });
+                .ReturnsAsync(new Book { UserId = _currentUser.Id });
 
             _service.Invoking(s => s.AddWishAsync(It.IsAny<int>()))
                 .Should()
@@ -88,27 +93,16 @@ namespace ApplicationTest.Services
         [Test]
         public async Task AddWish_NoExceptionsWasThrown_WishShouldBeAddedToDatabase()
         {
-            var currentUserId = 1;
-            var book = new Book
-            {
-                Id = 1,
-                UserId = It.Is<int>(x => x != currentUserId)
-            };
-            var wish = new Wish
-            {
-                UserId = currentUserId,
-                BookId = book.Id
-            };
             _userResolverServiceMock.Setup(obj => obj.GetUserId())
-                .Returns(currentUserId);
-            _bookRepositoryMock.Setup(obj => obj.FindByIdAsync(book.Id))
-                .ReturnsAsync(book);
+                .Returns(_currentUser.Id);
+            _bookRepositoryMock.Setup(obj => obj.FindByIdAsync(_book.Id))
+                .ReturnsAsync(_book);
 
-            await _service.AddWishAsync(book.Id);
+            await _service.AddWishAsync(_book.Id);
 
             _wishRepositoryMock.Verify(
                 obj => obj.Add(
-                    It.Is<Wish>(w => w.UserId == currentUserId && w.BookId == book.Id)),
+                    It.Is<Wish>(w => w.UserId == _currentUser.Id && w.BookId == _book.Id)),
                 Times.Once);
             _wishRepositoryMock.Verify(obj => obj.SaveChangesAsync(), Times.Once);
         }
@@ -116,14 +110,12 @@ namespace ApplicationTest.Services
         [Test]
         public void RemoveWish_NoBookWithPassedIdInWishListOfUser_ThrowsInvalidOperationException()
         {
-            var currentUserId = 1;
-            var bookId = 1;
             _userResolverServiceMock.Setup(obj => obj.GetUserId())
-                .Returns(currentUserId);
-            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(currentUserId, bookId))
+                .Returns(_currentUser.Id);
+            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(_currentUser.Id, _book.Id))
                 .ReturnsAsync(value: null);
 
-            _service.Invoking(s => s.RemoveWishAsync(bookId))
+            _service.Invoking(s => s.RemoveWishAsync(_book.Id))
                 .Should()
                 .Throw<InvalidOperationException>();
         }
@@ -131,38 +123,29 @@ namespace ApplicationTest.Services
         [Test]
         public async Task RemoveWish_NoExceptionWasThrown_WishShouldBeRemovedFromDatabase()
         {
-            var currentUserId = 1;
-            var bookId = 1;
-            var wish = new Wish
-            {
-                UserId = currentUserId,
-                BookId = bookId
-            };
             _userResolverServiceMock.Setup(obj => obj.GetUserId())
-                .Returns(currentUserId);
-            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(currentUserId, bookId))
-                .ReturnsAsync(wish);
+                .Returns(_currentUser.Id);
+            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(_currentUser.Id, _book.Id))
+                .ReturnsAsync(_wish);
 
-            await _service.RemoveWishAsync(bookId);
+            await _service.RemoveWishAsync(_book.Id);
 
-            _wishRepositoryMock.Verify(obj => obj.Remove(wish), Times.Once);
+            _wishRepositoryMock.Verify(obj => obj.Remove(_wish), Times.Once);
             _wishRepositoryMock.Verify(obj => obj.SaveChangesAsync(), Times.Once);
         }
 
         [Test]
         public async Task CheckIfBookInWishListAsync_WishRepositoryReturnsNull_ReturnsFalse()
         {
-            var userId = 1;
-            var bookId = 1;
             _userResolverServiceMock.Setup(obj => obj.GetUserId())
-                .Returns(userId);
-            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(userId, bookId))
+                .Returns(_currentUser.Id);
+            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(_currentUser.Id, _book.Id))
                 .ReturnsAsync(value: null);
 
-            var result = await _service.CheckIfBookInWishListAsync(bookId);
+            var result = await _service.CheckIfBookInWishListAsync(_book.Id);
 
             _userResolverServiceMock.Verify(obj => obj.GetUserId());
-            _wishRepositoryMock.Verify(obj => obj.FindByIdAsync(userId, bookId));
+            _wishRepositoryMock.Verify(obj => obj.FindByIdAsync(_currentUser.Id, _book.Id));
 
             result.Should().Be(false);
         }
@@ -170,17 +153,15 @@ namespace ApplicationTest.Services
         [Test]
         public async Task CheckIfBookInWishListAsync_WishRepositoryReturnsWishObject_ReturnsTrue()
         {
-            var userId = 1;
-            var bookId = 1;
             _userResolverServiceMock.Setup(obj => obj.GetUserId())
-                .Returns(userId);
-            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(userId, bookId))
+                .Returns(_currentUser.Id);
+            _wishRepositoryMock.Setup(obj => obj.FindByIdAsync(_currentUser.Id, _book.Id))
                 .ReturnsAsync(new Wish());
 
-            var result = await _service.CheckIfBookInWishListAsync(bookId);
+            var result = await _service.CheckIfBookInWishListAsync(_book.Id);
 
             _userResolverServiceMock.Verify(obj => obj.GetUserId());
-            _wishRepositoryMock.Verify(obj => obj.FindByIdAsync(userId, bookId));
+            _wishRepositoryMock.Verify(obj => obj.FindByIdAsync(_currentUser.Id, _book.Id));
 
             result.Should().Be(true);
         }
@@ -188,35 +169,64 @@ namespace ApplicationTest.Services
         [Test]
         public async Task NotifyAboutAvailableBookAsync_ShouldNotifyUserWithBookInWishListAndAllowedEmail()
         {
-            var bookId = 1;
-            var book = new Book { Id = bookId, Name = "Name" };
-            var userId = 1;
-            var userWithEmailAllowed = new User
-            {
-                Id = 1,
-                FirstName = "User1",
-                LastName = "User1",
-                IsEmailAllowed = true,
-                Email = "user@mail.com"
-            };
-            var userFullName = userWithEmailAllowed.FirstName + " " + userWithEmailAllowed.LastName;
-            var userWishEmailNotAllowed = new User { IsEmailAllowed = false };
-            var wishes = new List<Wish>
-            {
-                new Wish { BookId = 1, Book = book, UserId = userId, User = userWithEmailAllowed },
-                new Wish { BookId = 1, Book = book, User = userWishEmailNotAllowed },
-                new Wish { BookId = 2, UserId = userId, User = userWithEmailAllowed },
-                new Wish { BookId = 2, User = userWishEmailNotAllowed },
-            };
-            _wishRepositoryMock.Setup(obj => obj.GetAll()).Returns(wishes.AsQueryable());
+            var userFullName = $"{_currentUser.FirstName} {_currentUser.LastName}".Trim();
+            _wishRepositoryMock.Setup(obj => obj.GetAll()).Returns(_wishes.AsQueryable());
 
-            await _service.NotifyAboutAvailableBookAsync(bookId);
+            await _service.NotifyAboutAvailableBookAsync(_book.Id);
 
             _emailSenderServiceMock.Verify(obj => obj.SendForWishBecameAvailable(
                 userFullName,
-                bookId,
-                book.Name,
-                userWithEmailAllowed.Email));
+                _book.Id,
+                _book.Name,
+                _currentUser.Email));
+        }
+
+        private void MockData()
+        {
+            _currentUser = new User
+            {
+                Id = 1,
+                FirstName = "User",
+                LastName = "Userovich",
+                Email = "user@gmail.com",
+                IsEmailAllowed = true
+            };
+            var userWithEmailNotAllowed = new User
+            {
+                Id = 2,
+                FirstName = "Customer",
+                LastName = "Customerovich",
+                Email = "customer@gmail.com",
+                IsEmailAllowed = false
+            };
+
+            _book = new Book
+            {
+                Id = 1,
+                Name = "History of Test",
+                UserId = It.Is<int>(id => id != _currentUser.Id)
+            };
+            var otherBook = new Book
+            {
+                Id = 2,
+                Name = "History of Code",
+                UserId = It.Is<int>(id => id != _currentUser.Id)
+            };
+
+            _wish = new Wish
+            {
+                UserId = _currentUser.Id,
+                User = _currentUser,
+                BookId = _book.Id,
+                Book = _book
+            };
+            _wishes = new List<Wish>
+            {
+                _wish,
+                new Wish { BookId = _book.Id, Book = _book, UserId = userWithEmailNotAllowed.Id, User = userWithEmailNotAllowed },
+                new Wish { BookId = otherBook.Id, Book = otherBook, UserId = _currentUser.Id, User = _currentUser },
+                new Wish { BookId = otherBook.Id, Book = otherBook, UserId = userWithEmailNotAllowed.Id, User = userWithEmailNotAllowed },
+            };
         }
     }
 }
