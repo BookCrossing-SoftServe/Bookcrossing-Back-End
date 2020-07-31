@@ -17,7 +17,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 [Docker-compose](https://github.com/docker/compose)
 
-###### Note: It's better to use docker-desktop if you are on windows
+###### Note: It's better to use [docker-desktop](https://www.docker.com/products/docker-desktop) if you are on windows
 
 ### Installing
 1. Clone repository from GitHub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
