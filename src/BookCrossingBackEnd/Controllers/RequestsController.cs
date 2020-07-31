@@ -10,7 +10,6 @@ namespace BookCrossingBackEnd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class RequestsController : ControllerBase
     {
         private readonly IRequestService _requestService;
@@ -21,6 +20,7 @@ namespace BookCrossingBackEnd.Controllers
             _userResolverService = userResolverService;
         }
 
+        [Authorize]
         [Route("{bookId:min(1)}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
@@ -35,6 +35,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(request);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] BookQueryParams query)
         {
@@ -71,6 +72,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
 
+        [Authorize]
         [Route("{requestId:min(1)}")]
         [HttpPut]
         public async Task<IActionResult> ApproveReceive([FromRoute] int requestId)
@@ -83,6 +85,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok();
         }
 
+        [Authorize]
         [Route("{requestId:min(1)}")]
         [HttpDelete]
         public async Task<IActionResult> Remove([FromRoute] int requestId)
