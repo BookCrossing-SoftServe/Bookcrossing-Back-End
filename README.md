@@ -24,7 +24,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 2. Move to Bookcrossing-Back-End and execute "docker-compose up"
 
-###### Note: Also check Bookcrossing-Back-End/src/BookCrossingBackEnd/appsettings.json if you need to pass any extra variables!
+###### Note: Also check Bookcrossing-Back-End/src/BookCrossingBackEnd/examplesettings.json and save it as appsettings.json if you want to deploy without docker-compose or pass any extra variables!
   
 **Note! Contribution rules:**  
 1. All Pull Requests should start from prefix *#xxx-yyy* where *xxx* - task number and and *yyy* - short description 
