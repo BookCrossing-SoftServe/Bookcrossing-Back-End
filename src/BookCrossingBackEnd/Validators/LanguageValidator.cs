@@ -1,7 +1,5 @@
-﻿using System.Data;
-using Application.Dto;
+﻿using Application.Dto;
 using FluentValidation;
-using MimeKit.Encodings;
 
 namespace BookCrossingBackEnd.Validators
 {
@@ -10,7 +8,9 @@ namespace BookCrossingBackEnd.Validators
         public LanguageValidator()
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
+            RuleFor(x => x.Id).GreaterThanOrEqualTo(0);
             RuleFor(x => x.Name)
+                .NotNull()
                 .Length(1, 20)
                 .Matches(@"^([a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ]+(?:'|-)?[a-zA-Z||а-щА-ЩЬьЮюЯяЇїІіЄєҐґыЫэЭ])+$");
         }
