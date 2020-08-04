@@ -192,6 +192,13 @@ namespace Application.Services.Implementation
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
 
+        public async Task<int> GetCurrentOwnedByIdCount(int userId)
+        {
+            var books = _bookRepository.GetAll().Where(p => p.UserId == userId);
+            return books.Count();
+        }
+
+
         public async Task<PaginationDto<BookGetDto>> GetReadBooksAsync(BookQueryParams parameters)
         {
             var userId = _userResolverService.GetUserId();

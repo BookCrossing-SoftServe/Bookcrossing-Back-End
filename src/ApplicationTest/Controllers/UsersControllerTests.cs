@@ -9,6 +9,7 @@ using BookCrossingBackEnd.Controllers;
 using Domain.RDBMS.Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
@@ -19,6 +20,7 @@ namespace ApplicationTest.ContollerTests
     {
         private Mock<IUserResolverService> _mockUserResolverService;
         private Mock<IUserService> _mockUserService;
+        private Mock<ILogger<UsersController>> _mockLogger;
         private UsersController _usersController;
 
         [SetUp]
@@ -26,7 +28,8 @@ namespace ApplicationTest.ContollerTests
         {
             _mockUserResolverService = new Mock<IUserResolverService>();
             _mockUserService = new Mock<IUserService>();
-            _usersController = new UsersController(_mockUserService.Object, _mockUserResolverService.Object);
+            _mockLogger = new Mock<ILogger<UsersController>>();
+            _usersController = new UsersController(_mockUserService.Object, _mockUserResolverService.Object, _mockLogger.Object);
         }
 
         [Test]

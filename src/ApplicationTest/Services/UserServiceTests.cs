@@ -30,6 +30,7 @@ namespace ApplicationTest.Services
         private Mock<IEmailSenderService> _emailSenderServiceMock;
         private Mock<IMapper> _mapperMock;
         private Mock<IRepository<User>> _userRepositoryMock;
+        private Mock<IPaginationService> _paginationServiceMock;
         private Mock<IRepository<UserRoom>> _userRoomRepositoryMock;
         private Mock<IRepository<ResetPassword>> _resetPasswordRepositoryMock;
         private Mock<IBookService> _bookServiceMock;
@@ -43,6 +44,7 @@ namespace ApplicationTest.Services
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
             _userRoomRepositoryMock = new Mock<IRepository<UserRoom>>();
             _bookServiceMock = new Mock<IBookService>();
+            _paginationServiceMock = new Mock<IPaginationService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -57,7 +59,9 @@ namespace ApplicationTest.Services
             var _mapper = mappingConfig.CreateMapper();
             var options = new DbContextOptionsBuilder<BookCrossingContext>().UseInMemoryDatabase(databaseName: "Fake DB").ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning)).Options;
             _context = new BookCrossingContext(options);
-            _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object, _resetPasswordRepositoryMock.Object, _userRoomRepositoryMock.Object, _bookServiceMock.Object, _context);
+            _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object,
+                                                _resetPasswordRepositoryMock.Object, _userRoomRepositoryMock.Object, _bookServiceMock.Object,
+                                                    _context, _paginationServiceMock.Object);
         }
         [SetUp]
         public void SetUp()

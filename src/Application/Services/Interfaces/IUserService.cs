@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.Password;
+using Application.Dto.QueryParams;
 using Domain.RDBMS.Entities;
 
 namespace Application.Services.Interfaces
@@ -18,6 +19,9 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="predicate">Predicate</param>
         /// <returns></returns>
+        /// 
+        Task<PaginationDto<UserDto>> GetAllUsers(FullPaginationQueryParams parameters);
+
         Task<UserDto> GetById(Expression<Func<User, bool>> predicate);
 
         Task UpdateUser(UserUpdateDto userDto);
