@@ -43,8 +43,8 @@ namespace BookCrossingBackEnd.Controllers
 
 
         [HttpGet("paginated")]
-        //[Authorize]
-        public async Task<ActionResult<PaginationDto<UserDto>>> GetAllGenres([FromQuery] FullPaginationQueryParams fullPaginationQuery)
+        [Authorize]
+        public async Task<ActionResult<PaginationDto<UserDto>>> GetAllUsers([FromQuery] FullPaginationQueryParams fullPaginationQuery)
         {
             _logger.LogInformation("Getting all paginated users");
             return await _userService.GetAllUsers(fullPaginationQuery);

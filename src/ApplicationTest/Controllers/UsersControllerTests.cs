@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.Password;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
 using Domain.RDBMS.Entities;
@@ -102,6 +103,24 @@ namespace ApplicationTest.ContollerTests
             var viewResult = result.Should().BeOfType<NoContentResult>();
         }
 
+        [Test]
+        public async Task GetAllUsers_AnyFullPaginationQueryParams_ReturnsPaginatedDtoListOfUserDto()
+        {
+            var testUsers = GetTestUsers();
+
+            _mockUserService.Setup(s => s.GetAllUsers(It.IsAny<FullPaginationQueryParams>()))
+                .ReturnsAsync(new PaginationDto<UserDto>()
+                {
+                    Page = testUsers,
+                    TotalCount = 1
+                });
+
+            var result = await _usersController.GetAllUsers(It.IsAny<FullPaginationQueryParams>());
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<PaginationDto<UserDto>>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
+        }
         #endregion
 
 
@@ -181,6 +200,7 @@ namespace ApplicationTest.ContollerTests
                     opt => opt.Excluding(m => m.Id));
         }
 
+
         [Test]
         public async Task Register_Fail_ReturnsBadRequestResult()
         {
@@ -224,6 +244,30 @@ namespace ApplicationTest.ContollerTests
 
             _mockUserService.Verify(m => m.RemoveUser(It.IsAny<int>()));
             result.Should().BeOfType<OkResult>();
+        }
+
+        [Test]
+        public async Task ForbidEmailNotifications_EmailExists_ReturnsOkStatusCode200()
+        {
+            var email = new ForbidEmailDto();
+            _mockUserService.Setup(s => s.ForbidEmailNotification(email))
+                .ReturnsAsync(true);
+
+            var result = await _usersController.ForbidEmailNotification(email);
+
+            result.Should().BeOfType<OkResult>();
+        }
+
+        [Test]
+        public async Task ForbidEmailNotifications_EmailNotExists_ReturnsBadRequest()
+        {
+            var email = new ForbidEmailDto();
+            _mockUserService.Setup(s => s.ForbidEmailNotification(email))
+                .ReturnsAsync(false);
+
+            var result = await _usersController.ForbidEmailNotification(email);
+
+            result.Should().BeOfType<BadRequestResult>();
         }
 
         private List<UserDto> GetTestUsers()
