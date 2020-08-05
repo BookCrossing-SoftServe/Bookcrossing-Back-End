@@ -44,6 +44,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddSingleton<ISmtpClient, SmtpClientService>();
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IWishListService, WishListService>();
+            services.AddScoped<IAphorismService, AphorismService>();
         }
 
         public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)
@@ -135,6 +136,7 @@ namespace BookCrossingBackEnd.ServiceExtension
                 mc.AddProfile(new Application.MapperProfilers.UserProfile());
                 mc.AddProfile(new Application.MapperProfilers.BookProfile());
                 mc.AddProfile(new Application.MapperProfilers.LanguageProfile());
+                mc.AddProfile(new Application.MapperProfilers.AphorismProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
