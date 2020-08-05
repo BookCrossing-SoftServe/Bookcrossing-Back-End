@@ -59,8 +59,7 @@ namespace ApplicationTest.Services
                 var goodreadsService = new GoodreadsService(
                     Mock.Of<HttpClient>(),
                     new OptionsWrapper<GoodreadsSettings>(_goodreadsSettings));
-            },
-                "Api key cannot be null or white spaces");
+            });
         }
 
         [Test]
@@ -91,8 +90,7 @@ namespace ApplicationTest.Services
 
             _service.Invoking(s => s.SendGetRequestProxy(requestUri.ToString()))
                 .Should()
-                .Throw<InvalidKeyException>()
-                .WithMessage("Api key for 'Goodreads' is invalid");
+                .Throw<InvalidKeyException>();
         }
 
         [Test]
@@ -210,7 +208,7 @@ namespace ApplicationTest.Services
 
         private class GoodreadsServiceProxy : GoodreadsService
         {
-            public GoodreadsServiceProxy(HttpClient _httpClient, IOptions<GoodreadsSettings> settings) : base(_httpClient, settings)
+            public GoodreadsServiceProxy(HttpClient httpClient, IOptions<GoodreadsSettings> settings) : base(httpClient, settings)
             {
             }
 

@@ -1,4 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+COPY docker/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x wait-for-it.sh
 WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Development
 ENV ASPNETCORE_URLS http://*:5000

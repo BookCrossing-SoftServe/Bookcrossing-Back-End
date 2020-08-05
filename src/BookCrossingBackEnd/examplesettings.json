@@ -1,0 +1,50 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server={servername}\\SQLEXPRESS;Database={database};Trusted_Connection=True;MultipleActiveResultSets=true",
+    "AzureConnection": "Server=tcp:{servername},1433;Initial Catalog={database};Persist Security Info=False;User ID={username};Password={password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;MultipleActiveResultSets=true"
+  },
+
+  "iKeyForDevelop": "{microsoft_insight_key}",
+
+  "iKeyForProduction": "{microsoft_insight_key}",
+
+  "MongoSettings": {
+    "ConnectionString": "mongodb://{servername}:27017",
+    "DatabaseName": "{database}"
+  },
+  "CosmoDBSettings": {
+    "ConnectionString": "mongodb://{servername}:10255/?ssl=true&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@{appname}@&retrywrites=false",
+    "DatabaseName": "{database}"
+  },
+
+  "EmailConfiguration": {
+    "From": "{sender_email}",
+    "SmtpServer": "{servername}",
+    "Port": 587,
+    "Username": "{username}",
+    "Password": "{password}"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+
+  "Data": {
+    "DefaultConnection": {
+      "ConnectionString": ""
+    }
+  },
+  "Jwt": {
+    "Key": "SoftServeBookCrossingSecretKey",
+    "Issuer": "BookCrossing.com"
+  },
+
+  "StorageConfiguration": {
+    "FolderForBookImages": "book_images"
+  }
+}
+//8.3.2020

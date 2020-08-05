@@ -99,7 +99,7 @@ namespace Application.Services.Implementation
             foreach (var wish in wishesQuery)
             {
                 await _emailSenderService.SendForWishBecameAvailable(
-                    wish.User.FirstName + " " + wish.User.LastName,
+                    $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
                     wish.BookId, 
                     wish.Book.Name, 
                     wish.User.Email);
