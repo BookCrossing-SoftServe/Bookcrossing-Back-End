@@ -8,8 +8,8 @@ namespace Application.Services.Interfaces
         /// <summary>
         /// Retrieve aphorism by ID
         /// </summary>
-        /// <param name="aphorismId">Language ID</param>
+        /// <param name="aphorismId">Aphorism ID</param>
         /// <returns>returns Aphorism DTO</returns>
-        Task<AphorismDto> GetById(int aphorismId);
+        Task<AphorismDto> GetByIdAsync(int aphorismId);
     }
 }

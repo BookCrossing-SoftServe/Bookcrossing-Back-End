@@ -18,7 +18,7 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task<AphorismDto> GetById(int aphorismId)
+        public async Task<AphorismDto> GetByIdAsync(int aphorismId)
         {
             return _mapper.Map<AphorismDto>(await _aphorismRepository.FindByIdAsync(aphorismId));
         }
