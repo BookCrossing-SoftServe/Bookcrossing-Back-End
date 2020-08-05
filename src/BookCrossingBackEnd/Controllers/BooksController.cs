@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
@@ -105,6 +106,12 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<PaginationDto<BookGetDto>>> GetCurrentOwnedBooksAsync([FromQuery]BookQueryParams parameters)
         {
             return await _bookService.GetCurrentOwned(parameters);
+        }
+
+        [HttpGet("current/{id}")]
+        public async Task<ActionResult<List<BookGetDto>>> GetCurrentOwnedBooksByIdAsync(int id)
+        {
+            return await _bookService.GetCurrentOwnedById(id);
         }
 
         [HttpGet("read")]

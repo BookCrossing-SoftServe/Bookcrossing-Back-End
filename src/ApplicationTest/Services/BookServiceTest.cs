@@ -70,10 +70,10 @@ namespace ApplicationTest.Services
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
             _bookService = new BookService(_bookRepositoryMock.Object, _mapper, _bookAuthorRepositoryMock.Object, _bookGenreRepositoryMock.Object,
-                 _bookLanguageRepositoryMock.Object, _userLocationServiceMock.Object,  pagination,_requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
+                 _bookLanguageRepositoryMock.Object, _userLocationServiceMock.Object, pagination, _requestServiceMock.Object, _userResolverServiceMock.Object, _imageServiceMock.Object,
                 _hangfireJobScheduleService.Object, _emailSenderServiceMock.Object, _rootCommentRepository.Object, _wishListServiceMock.Object);
 
-                var authorMock = GetBookAuthor().AsQueryable();
+            var authorMock = GetBookAuthor().AsQueryable();
             var genreMock = GetBookGenre().AsQueryable();
             var languageMock = GetBookLanguage().AsQueryable();
             var usersMock = GetUsers().AsQueryable();
@@ -110,7 +110,7 @@ namespace ApplicationTest.Services
                 new Book(){ Id = 2}
             };
         }
- 
+
         [Test]
         public async Task GetBookByIdAsync_BookDoesNotExist_Returns_Null()
         {
@@ -174,7 +174,7 @@ namespace ApplicationTest.Services
             var booksMock = GetTestBooks().AsQueryable().BuildMock();
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
 
-            var result =  _bookService.GetCurrentOwnedByIdCount(userId).Result;
+            var result = _bookService.GetCurrentOwnedByIdCount(userId).Result;
 
             result.Should().Be(expectedNumber);
         }
@@ -187,7 +187,7 @@ namespace ApplicationTest.Services
             _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
             _bookRepositoryMock.Setup(s => s.Update(It.IsAny<Book>(), It.IsAny<List<string>>()));
             _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-            var bookDto = new BookPutDto() { Id = 1, FieldMasks = new List<string>{"Name"}  };
+            var bookDto = new BookPutDto() { Id = 1, FieldMasks = new List<string> { "Name" } };
 
             var result = await _bookService.UpdateAsync(bookDto);
 
