@@ -1,23 +1,21 @@
-using Application.Dto;
-using Application.Services.Implementation;
-using Application.Services.Interfaces;
-using AutoMapper;
-using Domain.RDBMS;
-using Domain.RDBMS.Entities;
-using FluentAssertions;
-using Infrastructure.RDBMS;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using MockQueryable.Moq;
-using Moq;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Dto;
 using Application.Dto.QueryParams;
+using Application.MapperProfilers;
+using Application.Services.Implementation;
+using Application.Services.Interfaces;
+using AutoMapper;
 using Domain.NoSQL;
 using Domain.NoSQL.Entities;
+using Domain.RDBMS;
+using Domain.RDBMS.Entities;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using MockQueryable.Moq;
+using Moq;
+using NUnit.Framework;
 
 namespace ApplicationTest.Services
 {
@@ -57,15 +55,15 @@ namespace ApplicationTest.Services
             _wishListServiceMock = new Mock<IWishListService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
-                mc.AddProfile(new Application.MapperProfilers.BookChildCommentProfile());
-                mc.AddProfile(new Application.MapperProfilers.BookRootCommentProfile());
-                mc.AddProfile(new Application.MapperProfilers.GenreProfile());
-                mc.AddProfile(new Application.MapperProfilers.LanguageProfile());
-                mc.AddProfile(new Application.MapperProfilers.LocationProfile());
-                mc.AddProfile(new Application.MapperProfilers.RequestProfile());
-                mc.AddProfile(new Application.MapperProfilers.UserProfile());
-                mc.AddProfile(new Application.MapperProfilers.BookProfile());
+                mc.AddProfile(new AuthorProfile());
+                mc.AddProfile(new BookChildCommentProfile());
+                mc.AddProfile(new BookRootCommentProfile());
+                mc.AddProfile(new GenreProfile());
+                mc.AddProfile(new LanguageProfile());
+                mc.AddProfile(new LocationProfile());
+                mc.AddProfile(new RequestProfile());
+                mc.AddProfile(new UserProfile());
+                mc.AddProfile(new BookProfile());
             });
             _mapper = mappingConfig.CreateMapper();
             var pagination = new PaginationService(_mapper);
