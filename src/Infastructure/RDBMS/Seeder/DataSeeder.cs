@@ -19,6 +19,19 @@ namespace Infrastructure.RDBMS.Seeder
             Seed(builder.Entity<Book>());
             Seed(builder.Entity<BookGenre>());
             Seed(builder.Entity<BookAuthor>());
+            Seed(builder.Entity<Aphorism>());
+        }
+
+        private static void Seed(EntityTypeBuilder<Aphorism> builder)
+        {
+            builder.HasData(
+                new Aphorism
+                {  
+                    Id=1,
+                    Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
+                    PhraseAuthor = "Taras Shevchenko"
+                }
+            );
         }
 
         private static void Seed(EntityTypeBuilder<Author> builder)
