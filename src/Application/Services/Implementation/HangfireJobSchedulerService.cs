@@ -20,11 +20,11 @@ namespace Application.Services.Implementation
         {
             var jobId = BackgroundJob.Schedule<EmailSenderService>(x => x.SendReceiveConfirmationAsync(message.UserName, message.BookName, 
                     message.BookId, message.RequestId, message.UserAddress.ToString()),
-                TimeSpan.FromDays(9));
+                TimeSpan.FromSeconds(15));
             _scheduleRepository.Add(new ScheduleJob{ ScheduleId = jobId, RequestId = message.RequestId});
             await _scheduleRepository.SaveChangesAsync();
             var secondJobId = BackgroundJob.Schedule<RequestService>(x => x.RemoveAsync(message.RequestId),
-                TimeSpan.FromDays(10));
+                TimeSpan.FromSeconds(15));
             _scheduleRepository.Add(new ScheduleJob { ScheduleId = secondJobId, RequestId = message.RequestId });
             await _scheduleRepository.SaveChangesAsync();
         }
