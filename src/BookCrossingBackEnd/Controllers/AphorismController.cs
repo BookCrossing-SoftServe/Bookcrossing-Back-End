@@ -19,17 +19,10 @@ namespace BookCrossingBackEnd.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id:min(1)}")]
-        public async Task<ActionResult<AphorismDto>> GetAphorismAsync(int id)
-        {
-            _logger.LogInformation("Getting aphorism {Id}", id);
-            var aphorism = await _aphorismService.GetByIdAsync(id);
-            if (aphorism == null)
-            {
-                _logger.LogWarning("GetAphorism({Id}) NOT FOUND", id);
-                return NotFound();
-            }
-            return Ok(aphorism);
+        [HttpGet]
+        public async Task<IActionResult> GetNextAphorism()
+        { 
+            return Ok(await _aphorismService.GetNextAsync());
         }
     }
 }

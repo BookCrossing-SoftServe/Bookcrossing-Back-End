@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -18,9 +19,24 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task<AphorismDto> GetByIdAsync(int aphorismId)
+        /// <inheritdoc />
+        public async Task<AphorismDto> GetNextAsync()
         {
-            return _mapper.Map<AphorismDto>(await _aphorismRepository.FindByIdAsync(aphorismId));
+            var newAphorism = await _aphorismRepository.FindByCondition(ar => !ar.IsCurrent);
+            if(newAphorism == null)
+            {
+               var aphorismes = _aphorismRepository.GetAll();
+                aphorismes.ToList().ForEach(a => {
+                    a.IsCurrent = !a.IsCurrent;
+                    _aphorismRepository.Update(a);
+                });
+                await _aphorismRepository.SaveChangesAsync();
+                newAphorism = await _aphorismRepository.FindByCondition(ar => !ar.IsCurrent);
+            }
+            newAphorism.IsCurrent = !newAphorism.IsCurrent;
+            _aphorismRepository.Update(newAphorism);
+            await _aphorismRepository.SaveChangesAsync();
+            return _mapper.Map<AphorismDto>(newAphorism);
         }
     }
 }
