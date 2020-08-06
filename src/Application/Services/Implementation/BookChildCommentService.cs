@@ -48,12 +48,11 @@ namespace Application.Services.Implementation
         {
             string rootId = ids.First();
             string childId = ids.Last();
-
             var rootComment = await _bookRootCommentService.GetById(rootId);
-            var childComment = await FindChild(rootComment.Comments, childId);
+            var childComment = await FindChild(rootComment.Comments, 
+                childId);
             MongoDB.Driver.UpdateResult updateResult;
-
-            if (childComment.Comments.Any())
+            if (childComment != null && childComment.Comments.Any())
             {
                 var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
 
@@ -72,7 +71,6 @@ namespace Application.Services.Implementation
                     childId,
                     path,
                     "Comments");
-
                 rootComment = await _bookRootCommentService.GetById(rootId);
                 if (!HasNotDeletedComments(rootComment.Comments))
                 {
@@ -91,7 +89,6 @@ namespace Application.Services.Implementation
         {
             string rootId = updateDto.Ids.First();
             List<(string nestedArrayName, string itemId)> path = updateDto.Ids.Skip(1).Select(x => ("Comments", x)).ToList();
-
             var updateResult = await _childCommentRepository.SetAsync(
                 rootId,
                 new BookChildComment() { Text = updateDto.Text },
@@ -127,13 +124,11 @@ namespace Application.Services.Implementation
         {
             List<(string nestedArrayName, string itemId)> path = ids.Skip(skip).Select(x => ("Comments", x)).ToList();
             var child = await FindChild(root.Comments, path[0].itemId);
-
             if (!HasNotDeletedComments(child.Comments))
             {
                 var rootId = root.Id;
                 var childId = child.Id;
                 var x = ids.SkipLast(ids.Count() - skip).Select(x => ("Comments", x)).ToList();
-
                 await _childCommentRepository.PullAsync(
                     rootId,
                     childId,

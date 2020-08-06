@@ -62,7 +62,7 @@ namespace Application.Services.Implementation
             var comment = await _rootCommentRepository.FindByIdAsync(id);
             var book = _bookRepository.FindByIdAsync(comment.BookId).Result;
             int deletedCount = 0;
-            if (comment.Comments.Any(c => c.IsDeleted == false))
+            if (comment.Comments != null && comment.Comments.Any(c => c.IsDeleted == false))
             {
                 comment.IsDeleted = true;
                 var updateResult = await _rootCommentRepository.UpdateByIdAsync(id, comment);
