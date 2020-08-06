@@ -1,14 +1,15 @@
-﻿using Application.Dto.Comment.Book;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto.Comment.Book;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
+using AutoMapper;
 using Domain.NoSQL;
 using Domain.NoSQL.Entities;
 using FluentAssertions;
 using MongoDB.Driver;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace ApplicationTest.Services.Comment.Book
 {
@@ -17,12 +18,16 @@ namespace ApplicationTest.Services.Comment.Book
     {
         private IBookChildCommentService _bookChildCommentService;
         private Mock<IChildRepository<BookRootComment,BookChildComment>> _childRepository;
+        private Mock<IBookRootCommentService> _rootRepository;
+        private Mock<IMapper> _mapper;
 
         [SetUp]
         public void Setup()
         {
             _childRepository = new Mock<IChildRepository<BookRootComment, BookChildComment>>();
-            _bookChildCommentService = new BookChildCommentService(_childRepository.Object);
+            _rootRepository = new Mock<IBookRootCommentService>();
+            _mapper = new Mock<IMapper>();
+            _bookChildCommentService = new BookChildCommentService(_childRepository.Object, _rootRepository.Object, _mapper.Object);
         }
 
         #region Update
@@ -62,6 +67,10 @@ namespace ApplicationTest.Services.Comment.Book
             {
                 Ids = new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" },
             };
+
+            _rootRepository.Setup(m => m.GetById(It.IsAny<string>()))
+                .ReturnsAsync(new RootDto() {Comments = new List<ChildDto>()});
+
             _childRepository
                 .Setup(s => s.PullAsync(
                     "5e9c9ee859231a63bc853bf0",
