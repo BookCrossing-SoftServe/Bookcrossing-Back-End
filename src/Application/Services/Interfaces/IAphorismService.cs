@@ -6,10 +6,9 @@ namespace Application.Services.Interfaces
     public interface IAphorismService
     {
         /// <summary>
-        /// Retrieve aphorism by ID
+        /// Get next aphorism
         /// </summary>
-        /// <param name="aphorismId">Aphorism ID</param>
-        /// <returns>returns Aphorism DTO</returns>
-        Task<AphorismDto> GetByIdAsync(int aphorismId);
+        /// <returns>Returns Aphorism DTO</returns>
+        Task<AphorismDto> GetNextAsync();
     }
 }

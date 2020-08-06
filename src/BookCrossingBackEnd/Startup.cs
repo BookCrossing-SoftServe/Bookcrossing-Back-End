@@ -28,9 +28,11 @@ using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
 using Application.Dto.OuterSource;
 using Hangfire;
+using Hangfire.MemoryStorage;
 using BookCrossingBackEnd.ServiceExtension;
 using Infrastructure.RDBMS;
 using Microsoft.Data.SqlClient;
+using Application.Dto;
 
 namespace BookCrossingBackEnd
 {
@@ -86,11 +88,19 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
             });
-           
+
+            services.AddHangfire(config =>
+            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseDefaultTypeSerializer()
+            .UseMemoryStorage()
+            );
+
+            services.AddScoped<IAphorismService, AphorismService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure( IApplicationBuilder app, IRecurringJobManager recurringJobManager,  IServiceProvider serviceProvider)
         {
             if (Environment.IsDevelopment())
             {
@@ -127,7 +137,6 @@ namespace BookCrossingBackEnd
             });
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
@@ -142,6 +151,13 @@ namespace BookCrossingBackEnd
                 WorkerCount = 1
             });
 
+            recurringJobManager.AddOrUpdate(
+                "Run every day",
+                () => serviceProvider.GetService<IAphorismService>().GetNextAsync(),
+                "59 23 * * *",
+                TimeZoneInfo.Local
+            );
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -153,8 +169,6 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
-
-
         }
 
     }

@@ -7,5 +7,7 @@
         public string Phrase { get; set; }
 
         public string PhraseAuthor { get; set; }
+
+        public bool IsCurrent { get; set; }
     }
 }
