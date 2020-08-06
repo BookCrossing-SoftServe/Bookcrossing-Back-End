@@ -202,7 +202,14 @@
         "edit-button": "Update",
         "add-title": "Add Language",
         "add-button": "Add"
-      }
+      },
+      "users": {
+        "users": "Users",
+        "found-number": "Number of found users: {{value}}",
+        "first-name": "First name",
+        "last-name": "Last name",
+        "register-date": "Register date" 
+      } 
     }
   }
 }
