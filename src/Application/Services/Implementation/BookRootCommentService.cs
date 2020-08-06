@@ -1,11 +1,11 @@
-﻿using Application.Dto.Comment.Book;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Application.Dto.Comment.Book;
 using Application.Services.Interfaces;
-using AutoMapper;
 using Domain.NoSQL;
 using Domain.NoSQL.Entities;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 
@@ -61,11 +61,23 @@ namespace Application.Services.Implementation
         {
             var comment = await _rootCommentRepository.FindByIdAsync(id);
             var book = _bookRepository.FindByIdAsync(comment.BookId).Result;
-            var deleteResult = await _rootCommentRepository.DeleteByIdAsync(id);
-            book.Rating = await _rootCommentRepository.GetAvgRatingAsync(book.Id);
-            await _bookRepository.Update(book, new List<string>() { "Rating" });
+            int deletedCount = 0;
+            if (comment.Comments.Any(c => c.IsDeleted == false))
+            {
+                comment.IsDeleted = true;
+                var updateResult = await _rootCommentRepository.UpdateByIdAsync(id, comment);
+                deletedCount = Convert.ToInt32(updateResult.ModifiedCount);
+            }
+            else
+            {
+                var deleteResult = await _rootCommentRepository.DeleteByIdAsync(id);
+                deletedCount = Convert.ToInt32(deleteResult.DeletedCount);
+                book.Rating = await _rootCommentRepository.GetAvgRatingAsync(book.Id);
+                await _bookRepository.Update(book, new List<string>() { "Rating" });
+            }
+
             await _bookRepository.SaveChangesAsync();
-            return Convert.ToInt32(deleteResult.DeletedCount);
+            return deletedCount;
         }
 
         public async Task<int> Update(RootUpdateDto updateDto)
@@ -78,5 +90,6 @@ namespace Application.Services.Implementation
             await _bookRepository.SaveChangesAsync();
             return Convert.ToInt32(updateResult.ModifiedCount);
         }
+
     }
 }
