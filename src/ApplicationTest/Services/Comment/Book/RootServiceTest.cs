@@ -186,7 +186,9 @@ namespace ApplicationTest.Services.Comment.Book
         #region Update
 
         [Test]
-        public async Task Update_BookRootCommentExists_Returns_1()
+        [TestCase(1, "5e9c9ee859231a63bc853bf0", 1)]
+        [TestCase(0, null, 0)]
+        public async Task UpdateComment_BookRootCommentExistsAndNot_ReturnsNumberOfUpdatedComments(int updateValue, string commentId, int expectedResult)
         {
             RootUpdateDto updateDto = new RootUpdateDto()
             {
@@ -194,7 +196,7 @@ namespace ApplicationTest.Services.Comment.Book
             };
             _mockRootRepository
                 .Setup(s => s.UpdateByIdAsync(updateDto.Id, It.IsAny<BookRootComment>()))
-                .ReturnsAsync(new UpdateResult.Acknowledged(1, 1, "5e9c9ee859231a63bc853bf0"));
+                .ReturnsAsync(new UpdateResult.Acknowledged(updateValue, updateValue, commentId));
             _mockRootRepository.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new BookRootComment());
             _bookRepositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Domain.RDBMS.Entities.Book() { Id = 1232 });
             _mockRootRepository.Setup(x => x.GetAvgRatingAsync(It.IsAny<int>())).ReturnsAsync(1);
@@ -203,28 +205,7 @@ namespace ApplicationTest.Services.Comment.Book
 
             var result = await _bookRootCommentService.Update(updateDto);
 
-            result.Should().Be(1);
-        }
-
-        [Test]
-        public async Task Update_BookRootCommentNotExists_Returns_0()
-        {
-            RootUpdateDto updateDto = new RootUpdateDto()
-            {
-                Id = "5e9c9ee859231a63bc853bf0"
-            };
-            _mockRootRepository
-                .Setup(s => s.UpdateByIdAsync(updateDto.Id, It.IsAny<BookRootComment>()))
-                .ReturnsAsync(new UpdateResult.Acknowledged(0, 0, null));
-            _mockRootRepository.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new BookRootComment());
-            _bookRepositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Domain.RDBMS.Entities.Book() { Id = 1232 });
-            _mockRootRepository.Setup(x => x.GetAvgRatingAsync(It.IsAny<int>())).ReturnsAsync(1);
-            _bookRepositoryMock.Setup(x => x.Update(It.IsAny<Domain.RDBMS.Entities.Book>(), new List<string>())).Returns(Task.CompletedTask);
-            _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-
-            var result = await _bookRootCommentService.Update(updateDto);
-
-            result.Should().Be(0);
+            result.Should().Be(expectedResult);
         }
 
         #endregion
@@ -232,15 +213,17 @@ namespace ApplicationTest.Services.Comment.Book
         #region Remove
 
         [Test]
-        public async Task Remove_BookRootCommentExists_Returns_1()
+        [TestCase(1, "5e9c9ee859231a63bc853bf0", 1)]
+        [TestCase(0, null, 0)]
+        public async Task RemoveComment_BookRootCommentExistsAndNot_ReturnsNumberOfCommentsRemoved(int updateValue,string commentId, int expectedResult)
         {
             RootDeleteDto deleteDto = new RootDeleteDto()
             {
-                Id = "5e9c9ee859231a63bc853bf0"
+                Id = commentId
             };
             _mockRootRepository
                 .Setup(s => s.DeleteByIdAsync(deleteDto.Id))
-                .ReturnsAsync(new DeleteResult.Acknowledged(1));
+                .ReturnsAsync(new DeleteResult.Acknowledged(updateValue));
             _mockRootRepository.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new BookRootComment());
             _bookRepositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Domain.RDBMS.Entities.Book() { Id = 1232 });
             _mockRootRepository.Setup(x => x.GetAvgRatingAsync(It.IsAny<int>())).ReturnsAsync(1);
@@ -249,28 +232,7 @@ namespace ApplicationTest.Services.Comment.Book
 
             var result = await _bookRootCommentService.Remove(deleteDto.Id);
 
-            result.Should().Be(1);
-        }
-
-        [Test]
-        public async Task Remove_BookRootCommentNotExists_Returns_0()
-        {
-            RootDeleteDto deleteDto = new RootDeleteDto()
-            {
-                Id = "5e9c9ee859231a63bc853bf0"
-            };
-            _mockRootRepository
-                .Setup(s => s.DeleteByIdAsync(deleteDto.Id))
-                .ReturnsAsync(new DeleteResult.Acknowledged(0));
-            _mockRootRepository.Setup(x => x.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(new BookRootComment());
-            _bookRepositoryMock.Setup(x => x.FindByIdAsync(It.IsAny<int>())).ReturnsAsync(new Domain.RDBMS.Entities.Book() { Id = 1232 });
-            _mockRootRepository.Setup(x => x.GetAvgRatingAsync(It.IsAny<int>())).ReturnsAsync(1);
-            _bookRepositoryMock.Setup(x => x.Update(It.IsAny<Domain.RDBMS.Entities.Book>(), new List<string>())).Returns(Task.CompletedTask);
-            _bookRepositoryMock.Setup(x => x.SaveChangesAsync()).ReturnsAsync(1);
-
-            var result = await _bookRootCommentService.Remove(deleteDto.Id);
-
-            result.Should().Be(0);
+            result.Should().Be(expectedResult);
         }
 
         #endregion
@@ -385,7 +347,7 @@ namespace ApplicationTest.Services.Comment.Book
         #region GetAll
 
         [Test]
-        public async Task GetAll_BookRootCommentExists_Returns_BookRootCommentDtosWithRequestedBookId()
+        public async Task GetAllBooks_BookRootCommentExists_Returns_BookRootCommentDtosWithRequestedBookId()
         {
             var expectedEntities = GetTestCommentsEntities();
             var expectedDtos = GetTestCommentsDtos();

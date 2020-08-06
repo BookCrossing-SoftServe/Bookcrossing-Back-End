@@ -7,6 +7,9 @@
 
   <ItemGroup>
     <None Remove="Controllers\AController.cs~RF3109555.TMP" />
+    <None Remove="Settings.StyleCop" />
+    <None Remove="StyleCop.Cache" />
+    <None Remove="Templates\WishBecameAvailable.html" />
     <None Remove="Validators\BookCommentInsertValidator.cs~RF310e123.TMP" />
   </ItemGroup>
 
@@ -14,39 +17,6 @@
     <Content Include="Templates\*">
       <CopyToPublishDirectory>always</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.cs" />
-    <Compile Remove="Migrations\20200516152132_FixDatabaseTablesUserAndLocation.Designer.cs" />
-    <Compile Remove="Migrations\20200516153320_FixDatabase1.cs" />
-    <Compile Remove="Migrations\20200516153320_FixDatabase1.Designer.cs" />
-    <Compile Remove="Migrations\20200516153612_FixDatabase1.cs" />
-    <Compile Remove="Migrations\20200516153612_FixDatabase1.Designer.cs" />
-    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516154815_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516155004_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516155319_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.cs" />
-    <Compile Remove="Migrations\20200516155830_FixDatabaseLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524184607_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524184607_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524185009_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524185009_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524185137_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.cs" />
-    <Compile Remove="Migrations\20200524190123_AddIsActiveColumnToLocations.Designer.cs" />
-    <Compile Remove="Migrations\20200622115640_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622115640_AddLanguageField.Designer.cs" />
-    <Compile Remove="Migrations\20200622124219_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622124219_AddLanguageField.Designer.cs" />
-    <Compile Remove="Migrations\20200622125715_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622125715_AddLanguageField.Designer.cs" />
-    <Compile Remove="Migrations\20200622130549_AddLanguageField.cs" />
-    <Compile Remove="Migrations\20200622130549_AddLanguageField.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,6 +52,8 @@
   <ItemGroup>
     <Folder Include="wwwroot\assets\i18n\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 
 </Project>

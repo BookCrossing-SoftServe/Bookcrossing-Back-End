@@ -63,5 +63,7 @@ namespace Application.Services.Interfaces
         /// <param name="email">User email</param>
         /// <returns></returns>
         Task SendForPasswordResetAsync(string userName, string confirmNumber, string email);
+
+        Task SendForWishBecameAvailable(string userName, int bookId, string bookName, string email);
     }
 }

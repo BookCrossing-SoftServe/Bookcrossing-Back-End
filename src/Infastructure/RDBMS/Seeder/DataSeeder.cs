@@ -19,6 +19,19 @@ namespace Infrastructure.RDBMS.Seeder
             Seed(builder.Entity<Book>());
             Seed(builder.Entity<BookGenre>());
             Seed(builder.Entity<BookAuthor>());
+            Seed(builder.Entity<Aphorism>());
+        }
+
+        private static void Seed(EntityTypeBuilder<Aphorism> builder)
+        {
+            builder.HasData(
+                new Aphorism
+                {  
+                    Id=1,
+                    Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
+                    PhraseAuthor = "Taras Shevchenko"
+                }
+            );
         }
 
         private static void Seed(EntityTypeBuilder<Author> builder)
@@ -103,7 +116,7 @@ namespace Infrastructure.RDBMS.Seeder
             builder.HasData(
                 new User
                 {
-                    Id = 1,
+                    Id = 2,
                     FirstName = "Admin",
                     MiddleName = "Adminovski",
                     LastName = "Adminovich",
@@ -113,10 +126,10 @@ namespace Infrastructure.RDBMS.Seeder
                 },
                 new User
                 {
-                    Id = 2,
-                    FirstName = "Toster",
+                    Id = 1,
+                    FirstName = "Tester",
                     MiddleName = "Test",
-                    LastName = "Tosterovich",
+                    LastName = "Testerovich",
                     Email = "test@gmail.com",
                     Password = "test",
                     RoleId = 1,

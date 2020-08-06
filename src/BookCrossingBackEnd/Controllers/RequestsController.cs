@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookCrossingBackEnd.Controllers
@@ -19,19 +20,22 @@ namespace BookCrossingBackEnd.Controllers
             _userResolverService = userResolverService;
         }
 
+        [Authorize]
         [Route("{bookId:min(1)}")]
         [HttpPost]
         public async Task<ActionResult<RequestDto>> Make([FromRoute] int bookId)
         {
             var userId = _userResolverService.GetUserId();
             var request = await _requestService.MakeAsync(userId, bookId);
-
             if (request == null)
             {
                 return NotFound();
             }
+
             return Ok(request);
         }
+
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<PaginationDto<RequestDto>>> GetByUser([FromQuery] BookQueryParams query)
         {
@@ -41,7 +45,8 @@ namespace BookCrossingBackEnd.Controllers
             {
                 return NotFound();
             }
-            return Ok(requests);
+
+            return requests;
         }
 
 
@@ -67,6 +72,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok(requests);
         }
 
+        [Authorize]
         [Route("{requestId:min(1)}")]
         [HttpPut]
         public async Task<IActionResult> ApproveReceive([FromRoute] int requestId)
@@ -79,6 +85,7 @@ namespace BookCrossingBackEnd.Controllers
             return Ok();
         }
 
+        [Authorize]
         [Route("{requestId:min(1)}")]
         [HttpDelete]
         public async Task<IActionResult> Remove([FromRoute] int requestId)

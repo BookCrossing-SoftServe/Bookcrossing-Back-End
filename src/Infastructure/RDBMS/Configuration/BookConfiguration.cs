@@ -22,7 +22,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasColumnName("name")
-                .HasMaxLength(100);
+                .HasMaxLength(150);
 
             builder.Property(e => e.Rating)
                 .HasColumnName("rating")
@@ -30,17 +30,20 @@ namespace Infrastructure.RDBMS.Configuration
 
             builder.Property(e => e.Publisher)
                 .HasColumnName("publisher")
-                .HasMaxLength(100);
+                .HasMaxLength(150);
 
-            builder.Property(e => e.UserId).HasColumnName("user_id");
+            builder.Property(e => e.UserId)
+                .IsRequired(false)
+                .HasColumnName("user_id");
 
             builder.HasOne(d => d.User)
                 .WithMany(p => p.Book)
-                .HasForeignKey(d => d.UserId);
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.Property(e => e.Notice)
                 .HasColumnName("notice")
-                .HasMaxLength(255);
+                .HasMaxLength(250);
 
             builder.Property(a => a.ImagePath)
                 .HasColumnName("imagepath")

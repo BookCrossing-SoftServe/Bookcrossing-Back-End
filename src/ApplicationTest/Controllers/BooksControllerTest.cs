@@ -1,14 +1,14 @@
-﻿using Application.Dto;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Application.Dto;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Dto.QueryParams;
+using NUnit.Framework.Internal;
 
 namespace ApplicationTest.Controllers
 {
@@ -26,33 +26,22 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task GetAllBooksAsync_Returns_OkObjectResultWithRequestedCount()
+        public async Task GetAllBooksAsync_BooksExist_ReturnsOkObjectResultWithRequestedCount()
         {
-            var testBooks = new List<BookGetDto>()
+            _bookService.Setup(m => m.GetAllAsync(It.IsAny<BookQueryParams>()))
+                .ReturnsAsync(new PaginationDto<BookGetDto>
                 {
-                    new BookGetDto(),
-                    new BookGetDto()
-                };
-            var testPagination = new Application.Dto.PaginationDto<BookGetDto>() { Page = testBooks };
-            _bookService.Setup(s => s.GetAllAsync(It.IsAny<BookQueryParams>())).ReturnsAsync(testPagination);
-            var query = new BookQueryParams() { Page = 1, PageSize = 2 };
+                    Page = new List<BookGetDto>(),
+                    TotalCount = 1
+                });
 
-            var getAllBooksResult = await _booksController.GetAllBooksAsync(query);
+            var result = await _booksController.GetAllBooksAsync(It.IsAny<BookQueryParams>());
 
-            var okResult = getAllBooksResult.Result as OkObjectResult;
-            okResult.Should().BeOfType<OkObjectResult>();
-            var books = okResult.Value as PaginationDto<BookGetDto>;
-            books.Page.Should().HaveCount(testBooks.Count);
+            result.Should().NotBeNull();
+            result.Value.Should().BeOfType<PaginationDto<BookGetDto>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
         }
 
-        private List<BookPutDto> GetTestBooks()
-        {
-            return new List<BookPutDto>
-            {
-                new BookPutDto(),
-                new BookPutDto()
-            };
-        }
 
         [Test]
         public async Task GetBookAsync_BookExists_Returns_OkObjectResultWithRequestedId()
@@ -96,7 +85,20 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task PutBookAsync_BookDoesNotExist_Return_NotFound()
+        public async Task PutBookAsync_IdNotEqualToBookDtoId_ReturnsBadRequest()
+        {
+
+            var testBook = GetTestBook();
+            var id = 3;
+            _bookService.Setup(m => m.UpdateAsync(It.IsAny<BookPutDto>())).ReturnsAsync(true);
+
+            var putBookResult = await _booksController.PutBookAsync(id, testBook);
+
+            putBookResult.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Test]
+        public async Task PutBookAsync_BookDoesNotExist_Return_BadRequest()
         {
             var testBook = GetTestBook();
             _bookService.Setup(m => m.UpdateAsync(It.IsAny<BookPutDto>())).ReturnsAsync(false);
@@ -127,7 +129,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task PostBookAsync_Returns_CreatedAtActionResult()
+        public async Task PostBookAsync_Success_ReturnsCreatedAtActionResult()
         {
             var testBook = new BookGetDto() { Id = 1};
             _bookService.Setup(m => m.AddAsync(It.IsAny<BookPostDto>())).ReturnsAsync(testBook);
@@ -138,6 +140,98 @@ namespace ApplicationTest.Controllers
             result.Should().BeOfType<BookGetDto>();
             createdAtActionResult.Result.Should().BeOfType<CreatedAtActionResult>();
             result.Should().BeEquivalentTo(testBook, options => options.Excluding(a => a.Id));
+        }
+
+        [Test]
+        public async Task ActivateBookAsync_Fail_ReturnsBadRequest()
+        {
+            _bookService.Setup(m => m.ActivateAsync(It.IsAny<int>())).ReturnsAsync(false);
+
+            var result = await _booksController.ActivateBookAsync(It.IsAny<int>());
+
+            result.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Test]
+        public async Task ActivateBookAsync_Success_ReturnsNoContent()
+        {
+            _bookService.Setup(m => m.ActivateAsync(It.IsAny<int>())).ReturnsAsync(true);
+
+            var result = await _booksController.ActivateBookAsync(It.IsAny<int>());
+
+            result.Should().BeOfType<NoContentResult>();
+        }
+
+        [Test]
+        public async Task DeactivateBookAsync_Fail_ReturnsBadRequest()
+        {
+            _bookService.Setup(m => m.DeactivateAsync(It.IsAny<int>())).ReturnsAsync(false);
+
+            var result = await _booksController.DeactivateBookAsync(It.IsAny<int>());
+
+            result.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Test]
+        public async Task DeactivateBookAsync_Success_ReturnsNoContent()
+        {
+            _bookService.Setup(m => m.DeactivateAsync(It.IsAny<int>())).ReturnsAsync(true);
+
+            var result = await _booksController.DeactivateBookAsync(It.IsAny<int>());
+
+            result.Should().BeOfType<NoContentResult>();
+        }
+
+
+        [Test]
+        public async Task GetRegisteredBooksAsync_AnyBookQueryParams_ReturnsPaginatedDtoListOfBookGetDto()
+        {
+            _bookService.Setup(m => m.GetRegistered(It.IsAny<BookQueryParams>()))
+                .ReturnsAsync(new PaginationDto<BookGetDto>
+                {
+                    Page = new List<BookGetDto>(),
+                    TotalCount = 1
+                });
+
+            var result = await _booksController.GetRegisteredBooksAsync(It.IsAny<BookQueryParams>());
+
+            result.Should().NotBeNull();
+            result.Value.Should().BeOfType<PaginationDto<BookGetDto>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
+        }
+
+        [Test]
+        public async Task GetCurrentOwnedBooksAsync_AnyBookQueryParams_ReturnsPaginatedDtoListOfBookGetDto()
+        {
+            _bookService.Setup(m => m.GetCurrentOwned(It.IsAny<BookQueryParams>()))
+                .ReturnsAsync(new PaginationDto<BookGetDto>
+                {
+                    Page = new List<BookGetDto>(),
+                    TotalCount = 1
+                });
+
+            var result = await _booksController.GetCurrentOwnedBooksAsync(It.IsAny<BookQueryParams>());
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<PaginationDto<BookGetDto>>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
+        }
+
+        [Test]
+        public async Task GetReadBooksAsync_AnyBookQueryParams_ReturnsPaginatedDtoListOfBookGetDto()
+        {
+            _bookService.Setup(m => m.GetReadBooksAsync(It.IsAny<BookQueryParams>()))
+                .ReturnsAsync(new PaginationDto<BookGetDto>
+                {
+                    Page = new List<BookGetDto>(),
+                    TotalCount = 1
+                });
+
+            var result = await _booksController.GetReadBooksAsync(It.IsAny<BookQueryParams>());
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<PaginationDto<BookGetDto>>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
         }
     }
 }

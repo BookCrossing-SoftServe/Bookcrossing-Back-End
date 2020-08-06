@@ -26,8 +26,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
+using Application.Dto.OuterSource;
 using Hangfire;
 using BookCrossingBackEnd.ServiceExtension;
+using Infrastructure.RDBMS;
+using Microsoft.Data.SqlClient;
 
 namespace BookCrossingBackEnd
 {
@@ -49,9 +52,9 @@ namespace BookCrossingBackEnd
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext(Configuration, Environment);
 
+            services.AddGoodreadsSource(Configuration);
 
             services.AddMongoSettings(Configuration, Environment);
 
@@ -83,7 +86,7 @@ namespace BookCrossingBackEnd
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
             });
-
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,7 +94,25 @@ namespace BookCrossingBackEnd
         {
             if (Environment.IsDevelopment())
             {
+                _logger.LogInformation("Configuring for Development environment");
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                _logger.LogInformation("Configuring for Production environment");
+            }
+
+            try
+            {
+                using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+                {
+                    var context = serviceScope.ServiceProvider.GetRequiredService<BookCrossingContext>();
+                    context.Database.Migrate();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex.ToString());
             }
 
             app.UseStaticFiles(new StaticFileOptions()
@@ -133,15 +154,6 @@ namespace BookCrossingBackEnd
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SoftServe BookCrossing");
             });
 
-            if (Environment.IsDevelopment())
-            {
-                _logger.LogInformation("Configuring for Development environment");
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                _logger.LogInformation("Configuring for Production environment");
-            }
 
         }
 

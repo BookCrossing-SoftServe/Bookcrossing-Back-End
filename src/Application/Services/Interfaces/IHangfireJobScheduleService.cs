@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Application.Dto.Email;
 
 namespace Application.Services.Interfaces
@@ -11,12 +12,12 @@ namespace Application.Services.Interfaces
         /// Sends email that asks user whether him get book or not in 9th day and make book available in 10th day after request 
         /// </summary>
         /// <param name="message">email mesage</param>
-        void ScheduleRequestJob(RequestMessage message);
+        Task ScheduleRequestJob(RequestMessage message);
 
         /// <summary>
         /// Delete schedule from db for ScheduleRequestJob() method
         /// </summary>
         /// <param name="requestId">requestId</param>
-        void DeleteRequestScheduleJob(int requestId);
+        Task DeleteRequestScheduleJob(int requestId);
     }
 }

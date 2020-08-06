@@ -12,6 +12,8 @@ src/BookCrossingBackEnd/appsettings.json
 *.sln.docstates
 
 appsettings.json
+src/BookCrossingBackEnd.v3.ncrunchsolution
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -346,3 +348,4 @@ healthchecksdb
 
 #book images
 book_images/
+*.DotSettings

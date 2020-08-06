@@ -40,5 +40,6 @@ namespace Application.Services.Interfaces
         /// <returns></returns>
         Task ResetPassword(ResetPasswordDto newPassword);
 
+        Task<bool> ForbidEmailNotification(ForbidEmailDto email);
     }
 }

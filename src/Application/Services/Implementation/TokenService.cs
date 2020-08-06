@@ -1,20 +1,20 @@
-﻿using Application.Dto;
-using Application.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Dto;
+using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using FluentValidation.Results;
-using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services.Implementation
 {
@@ -24,12 +24,15 @@ namespace Application.Services.Implementation
         private readonly IMapper _mapper;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<RefreshToken> _refreshTokenRepository;
+        private readonly PasswordHasher<User> _passwordHasher;
+
         public TokenService(IConfiguration configuration, IMapper mapper, IRepository<User> userRepository, IRepository<RefreshToken> refreshTokenRepository)
         {
-            this._configuration = configuration;
-            this._mapper = mapper;
-            this._userRepository = userRepository;
-            this._refreshTokenRepository = refreshTokenRepository;
+            _configuration = configuration;
+            _mapper = mapper;
+            _userRepository = userRepository;
+            _refreshTokenRepository = refreshTokenRepository;
+            _passwordHasher = new PasswordHasher<User>();
         }
 
         public async Task<RefreshToken> VerifyRefreshToken(string token)
@@ -44,9 +47,10 @@ namespace Application.Services.Implementation
         {
             var user = await _userRepository.GetAll()
                 .Include(r => r.Role)
-                .FirstOrDefaultAsync(p => p.Email == loginModel.Email && p.Password == loginModel.Password);
-
-            if (user == null) throw new InvalidCredentialException();
+                .FirstOrDefaultAsync(p => p.Email == loginModel.Email);
+            if (user == null ||
+                    _passwordHasher.VerifyHashedPassword(user, user.Password, loginModel.Password) == PasswordVerificationResult.Failed)
+                throw new InvalidCredentialException();
 
             return user;
         }

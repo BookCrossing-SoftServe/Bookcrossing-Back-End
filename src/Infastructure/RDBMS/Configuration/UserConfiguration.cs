@@ -35,7 +35,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.Password)
                 .IsRequired()
                 .HasColumnName("password")
-                .HasMaxLength(32);
+                .HasMaxLength(100);
 
             builder.Property(e => e.BirthDate)
                 .HasColumnName("birth_date")
@@ -49,6 +49,11 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(e => e.RoleId).HasColumnName("role_id").HasDefaultValue(1);
 
             builder.Property(e => e.UserRoomId).HasColumnName("user_room_id");
+
+            builder.Property(e => e.IsEmailAllowed)
+               .IsRequired().HasDefaultValue(1)
+               .HasColumnName("email_allowed")
+               .HasColumnType("bit"); ;
 
             builder.HasOne(d => d.Role)
                 .WithMany(p => p.User)

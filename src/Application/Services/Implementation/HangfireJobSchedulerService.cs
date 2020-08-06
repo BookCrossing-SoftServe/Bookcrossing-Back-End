@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Application.Dto.Email;
 using Application.Services.Interfaces;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using Hangfire;
-using MimeKit;
 
 namespace Application.Services.Implementation
 {
@@ -17,19 +16,19 @@ namespace Application.Services.Implementation
         {
             _scheduleRepository = scheduleRepository;
         }
-        public void ScheduleRequestJob(RequestMessage message)
+        public async Task ScheduleRequestJob(RequestMessage message)
         {
             var jobId = BackgroundJob.Schedule<EmailSenderService>(x => x.SendReceiveConfirmationAsync(message.UserName, message.BookName, 
                     message.BookId, message.RequestId, message.UserAddress.ToString()),
                 TimeSpan.FromSeconds(15));
             _scheduleRepository.Add(new ScheduleJob{ ScheduleId = jobId, RequestId = message.RequestId});
-            _scheduleRepository.SaveChangesAsync();
+            await _scheduleRepository.SaveChangesAsync();
             var secondJobId = BackgroundJob.Schedule<RequestService>(x => x.RemoveAsync(message.RequestId),
                 TimeSpan.FromSeconds(30));
             _scheduleRepository.Add(new ScheduleJob { ScheduleId = secondJobId, RequestId = message.RequestId });
-            _scheduleRepository.SaveChangesAsync();
+            await _scheduleRepository.SaveChangesAsync();
         }
-        public void DeleteRequestScheduleJob(int requestId)
+        public async Task DeleteRequestScheduleJob(int requestId)
         {
             var records = _scheduleRepository.GetAll().Where(x => x.RequestId == requestId).ToList();
             foreach (var jobId in records)
@@ -37,7 +36,7 @@ namespace Application.Services.Implementation
                 BackgroundJob.Delete(jobId.ScheduleId);
             }
             _scheduleRepository.RemoveRange(records);
-            _scheduleRepository.SaveChangesAsync();
+            await _scheduleRepository.SaveChangesAsync();
         }
     }
 }

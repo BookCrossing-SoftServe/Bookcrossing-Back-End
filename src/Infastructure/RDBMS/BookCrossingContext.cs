@@ -9,7 +9,6 @@ namespace Infrastructure.RDBMS
     {
         public BookCrossingContext(DbContextOptions<BookCrossingContext> options) : base(options)
         {
-            Database.EnsureCreated();
         }
 
 
@@ -27,6 +26,7 @@ namespace Infrastructure.RDBMS
         public DbSet<ResetPassword> ResetPassword { get; set; }
         public DbSet<ScheduleJob> ScheduleJob { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
+        public DbSet<Aphorism> Aphorisms { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,7 +51,9 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new ResetPasswordConfiguration());
             modelBuilder.ApplyConfiguration(new ScheduleJobConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageConfiguration());
-            
+            modelBuilder.ApplyConfiguration(new WishConfiguration());
+            modelBuilder.ApplyConfiguration(new AphorismConfiguration());
+
             DataSeeder.Seed(modelBuilder);
         }
     }

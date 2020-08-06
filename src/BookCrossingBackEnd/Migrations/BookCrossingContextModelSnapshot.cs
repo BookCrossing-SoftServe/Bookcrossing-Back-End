@@ -19,6 +19,36 @@ namespace BookCrossingBackEnd.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Domain.RDBMS.Entities.Aphorism", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Phrase")
+                        .HasColumnName("phrase")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhraseAuthor")
+                        .IsRequired()
+                        .HasColumnName("phraseAuthor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Aphorism");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
+                            PhraseAuthor = "Taras Shevchenko"
+                        });
+                });
+
             modelBuilder.Entity("Domain.RDBMS.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -81,18 +111,18 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
 
                     b.Property<string>("Notice")
                         .HasColumnName("notice")
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
+                        .HasColumnType("nvarchar(250)")
+                        .HasMaxLength(250);
 
                     b.Property<string>("Publisher")
                         .HasColumnName("publisher")
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(150)")
+                        .HasMaxLength(150);
 
                     b.Property<double>("Rating")
                         .ValueGeneratedOnAdd()
@@ -106,7 +136,7 @@ namespace BookCrossingBackEnd.Migrations
                         .HasMaxLength(50)
                         .HasDefaultValue("Available");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnName("user_id")
                         .HasColumnType("int");
 
@@ -122,7 +152,8 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 7, 7, 23, 12, 17, 255, DateTimeKind.Local).AddTicks(7165),
+
+                            DateAdded = new DateTime(2020, 8, 4, 20, 43, 50, 847, DateTimeKind.Local).AddTicks(3051),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,
@@ -307,7 +338,7 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnName("book_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("OwnerId")
+                    b.Property<int?>("OwnerId")
                         .HasColumnName("owner_id")
                         .HasColumnType("int");
 
@@ -434,6 +465,12 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasMaxLength(20);
 
+                    b.Property<bool>("IsEmailAllowed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("email_allowed")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnName("lastname")
@@ -448,8 +485,8 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnName("password")
-                        .HasColumnType("nvarchar(32)")
-                        .HasMaxLength(32);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
@@ -481,10 +518,11 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = 2,
                             BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@gmail.com",
                             FirstName = "Admin",
+                            IsEmailAllowed = false,
                             LastName = "Adminovich",
                             MiddleName = "Adminovski",
                             Password = "admin",
@@ -493,11 +531,12 @@ namespace BookCrossingBackEnd.Migrations
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 1,
                             BirthDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@gmail.com",
-                            FirstName = "Toster",
-                            LastName = "Tosterovich",
+                            FirstName = "Tester",
+                            IsEmailAllowed = false,
+                            LastName = "Testerovich",
                             MiddleName = "Test",
                             Password = "test",
                             RegisteredDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -538,6 +577,23 @@ namespace BookCrossingBackEnd.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.RDBMS.Entities.Wish", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnName("user_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnName("book_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "BookId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Wish");
+                });
+
             modelBuilder.Entity("Domain.RDBMS.Entities.Book", b =>
                 {
                     b.HasOne("Domain.RDBMS.Entities.Language", "Language")
@@ -549,8 +605,7 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasOne("Domain.RDBMS.Entities.User", "User")
                         .WithMany("Book")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Domain.RDBMS.Entities.BookAuthor", b =>
@@ -601,8 +656,7 @@ namespace BookCrossingBackEnd.Migrations
 
                     b.HasOne("Domain.RDBMS.Entities.User", "Owner")
                         .WithMany("RequestOwner")
-                        .HasForeignKey("OwnerId")
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("Domain.RDBMS.Entities.User", "User")
                         .WithMany("RequestUser")
@@ -627,6 +681,21 @@ namespace BookCrossingBackEnd.Migrations
                     b.HasOne("Domain.RDBMS.Entities.Location", "Location")
                         .WithMany("UserRoom")
                         .HasForeignKey("LocationId")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.RDBMS.Entities.Wish", b =>
+                {
+                    b.HasOne("Domain.RDBMS.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.RDBMS.Entities.User", "User")
+                        .WithMany("Wish")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

@@ -1,16 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Linq.Expressions;
-using Application.Dto;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Security.Authentication;
+using System.Security.Cryptography;
+using Application.Dto;
 using Application.Dto.Password;
 using Application.Services.Interfaces;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Infrastructure.RDBMS;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
 {
@@ -18,18 +23,24 @@ namespace Application.Services.Implementation
     {
 
         private readonly IRepository<User> _userRepository;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
         private readonly IRepository<UserRoom> _userRoomRepository;
+        private readonly PasswordHasher<User> _passwordHasher;
+        private readonly BookCrossingContext _context; 
 
-        public UsersService(IRepository<User> userRepository,IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository)
+        public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository, IBookService bookService, BookCrossingContext context)
         {
-            this._userRepository = userRepository;
-            this._mapper = mapper;
+            _userRepository = userRepository;
+            _mapper = mapper;
             _emailSenderService = emailSenderService;
             _resetPasswordRepository = resetPasswordRepository;
             _userRoomRepository = userRoomRepository;
+            _bookService = bookService;
+            _context = context;
+            _passwordHasher = new PasswordHasher<User>();
         }
         ///<inheritdoc/>
         public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)
@@ -55,13 +66,13 @@ namespace Application.Services.Implementation
             UserRoom newRoomId = _userRoomRepository.GetAll().FirstOrDefault(x => x.Location.Id == userUpdateDto.UserLocation.Location.Id
                                                 && x.RoomNumber == userUpdateDto.UserLocation.RoomNumber);
 
-            if (newRoomId==null)
+            if (newRoomId == null)
             {
                 newRoomId = new UserRoom() { LocationId = userUpdateDto.UserLocation.Location.Id, RoomNumber = userUpdateDto.UserLocation.RoomNumber };
                 _userRoomRepository.Add(newRoomId);
                 await _userRoomRepository.SaveChangesAsync();
             }
-            
+
             var newUser = new UpdatedUserDto()
             {
                 Id = userUpdateDto.Id,
@@ -69,13 +80,14 @@ namespace Application.Services.Implementation
                 LastName = userUpdateDto.LastName,
                 BirthDate = userUpdateDto.BirthDate,
                 UserRoomId = newRoomId.Id,
+                IsEmailAllowed = userUpdateDto.IsEmailAllowed,
                 FieldMasks = userUpdateDto.FieldMasks
             };
 
             var user = _mapper.Map<User>(newUser);
             await _userRepository.Update(user, newUser.FieldMasks);
             var affectedRows = await _userRepository.SaveChangesAsync();
-            if (affectedRows==0)
+            if (affectedRows == 0)
             {
                 throw new DbUpdateException();
             }
@@ -86,8 +98,11 @@ namespace Application.Services.Implementation
             if (await _userRepository.FindByCondition(u => u.Email == userRegisterDto.Email) == null)
             {
                 var user = _mapper.Map<User>(userRegisterDto);
+                user.Password = _passwordHasher.HashPassword(user, user.Password);
+                user.FirstName = Regex.Replace(user.FirstName, "[ ]+", " ");
+                user.LastName = Regex.Replace(user.LastName, "[ ]+", " ");
                 _userRepository.Add(user);
-                await _userRepository.SaveChangesAsync();
+                await _userRepository.SaveChangesAsync();  
                 return _mapper.Map<RegisterDto>(user);
             }
             else
@@ -96,13 +111,28 @@ namespace Application.Services.Implementation
 
         public async Task RemoveUser(int userId)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             var user = await _userRepository.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
+            }
+
+            if (user.Book != null)
+            {
+                foreach (var book in user.Book)
+                {
+                    await _bookService.DeactivateAsync(book.Id);
+                }
+            }
+
             _userRepository.Remove(user);
-            var afftectedRows = await _userRepository.SaveChangesAsync();
-            if (afftectedRows==0)
+            var affectedRows = await _userRepository.SaveChangesAsync();
+            if (affectedRows == 0)
             {
                 throw new DbUpdateException();
             }
+            await transaction.CommitAsync();
         }
         /// <inheritdoc />
         public async Task SendPasswordResetConfirmation(string email)
@@ -115,8 +145,7 @@ namespace Application.Services.Implementation
             };
             _resetPasswordRepository.Add(resetPassword);
             await _resetPasswordRepository.SaveChangesAsync();
-             await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
-
+            await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
         }
         /// <inheritdoc />
         public async Task ResetPassword(ResetPasswordDto newPassword)
@@ -127,10 +156,23 @@ namespace Application.Services.Implementation
                 _resetPasswordRepository.FindByCondition(c => c.ConfirmationNumber == newPassword.ConfirmationNumber).Result;
             if (resetPassword != null && resetPassword.ConfirmationNumber == newPassword.ConfirmationNumber && resetPassword.ResetDate <= DateTime.Now.AddMinutes(EXPIRATION_TIME))
             {
-                user.Password = newPassword.Password;
+                user.Password = _passwordHasher.HashPassword(user, newPassword.Password);
                 await _userRepository.SaveChangesAsync();
             }
             await _userRepository.SaveChangesAsync();
         }
+
+        public async Task<bool> ForbidEmailNotification(ForbidEmailDto email)
+        {
+            var user = await _userRepository.FindByCondition(u => u.Email == email.Email);
+            if (user != null && string.Join(null, SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(user.Email)).Select(x => x.ToString("x2"))) == email.Code)
+            {
+                user.IsEmailAllowed = false;
+                await _userRepository.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
     }
 }

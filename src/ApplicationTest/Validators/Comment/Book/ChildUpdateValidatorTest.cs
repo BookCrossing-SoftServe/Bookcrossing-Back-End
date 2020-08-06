@@ -60,12 +60,6 @@ namespace ApplicationTest.Validators.Comment.Book
         }
 
         [Test]
-        public void Ids_CountLessThen2Elements_ThrowsException()
-        {
-            _validator.ShouldHaveValidationErrorFor(dto => dto.Ids, new List<string>() { "5e9c9ee859231a63bc853bf0" });
-        }
-
-        [Test]
         public void Ids_CountGreaterThen2Elements_ShouldNotThrowsException()
         {
             _validator.ShouldNotHaveValidationErrorFor(dto => dto.Ids, new List<string>() { "5e9c9ee859231a63bc853bf0", "5e9c9ee859231a63bc853bf1" });

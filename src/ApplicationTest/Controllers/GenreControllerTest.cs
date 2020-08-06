@@ -1,4 +1,8 @@
-﻿using Application.Dto;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Application.Dto;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
 using FluentAssertions;
@@ -6,9 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ApplicationTest.Controllers
 {
@@ -28,7 +29,7 @@ namespace ApplicationTest.Controllers
         }
 
         [Test]
-        public async Task GetAllGenresAsync_Returns_OkObjectResultWithRequestedCount()
+        public async Task GetAllGenresAsync_Success_ReturnsOkObjectResultWithRequestedCount()
         {
             var testGenres = GetTestGenres();
             _genreService.Setup(s => s.GetAll()).ReturnsAsync(testGenres);
@@ -39,6 +40,25 @@ namespace ApplicationTest.Controllers
             okResult.Should().BeOfType<OkObjectResult>();
             var genres = okResult.Value as List<GenreDto>;
             genres.Count().Should().Be(testGenres.Count);
+        }
+
+        [Test]
+        public async Task GetAllGenres_AnyFullPaginationQueryParams_ReturnsPaginatedDtoListOfGenreGetDto()
+        {
+            var testGenres = GetTestGenres();
+            
+            _genreService.Setup(s => s.GetAll(It.IsAny<FullPaginationQueryParams>()))
+                .ReturnsAsync(new PaginationDto<GenreDto>()
+                {
+                    Page = testGenres,
+                    TotalCount = 1
+                });
+
+            var result = await _genreController.GetAllGenres(It.IsAny<FullPaginationQueryParams>());
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<PaginationDto<GenreDto>>>();
+            result.Value.Page.Should().NotBeNull().And.NotContainNulls();
         }
 
         List<GenreDto> GetTestGenres()
