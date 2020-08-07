@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Security.Cryptography;
 using Application.Dto;
 using Application.Dto.Password;
+using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.RDBMS;
@@ -28,10 +29,13 @@ namespace Application.Services.Implementation
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
         private readonly IRepository<UserRoom> _userRoomRepository;
+        private readonly IPaginationService _paginationService;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly BookCrossingContext _context; 
 
-        public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository, IBookService bookService, BookCrossingContext context)
+        public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, 
+            IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository, IBookService bookService, 
+            BookCrossingContext context, IPaginationService paginationService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -41,6 +45,7 @@ namespace Application.Services.Implementation
             _bookService = bookService;
             _context = context;
             _passwordHasher = new PasswordHasher<User>();
+            _paginationService = paginationService;
         }
         ///<inheritdoc/>
         public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)
@@ -56,9 +61,18 @@ namespace Application.Services.Implementation
             }
             return _mapper.Map<UserDto>(user);
         }
+
         public async Task<List<UserDto>> GetAllUsers()
         {
             return _mapper.Map<List<UserDto>>(await _userRepository.GetAll().Include(p => p.UserRoom).ToListAsync());
+        }
+
+        public async Task<PaginationDto<UserDto>> GetAllUsers(FullPaginationQueryParams parameters)
+        {
+            var userList = _userRepository.GetAll().Include(p => p.UserRoom);
+            var paginatedListOfUsers = await _paginationService.GetPageAsync<UserDto, User>(userList, parameters);
+            paginatedListOfUsers.Page.ForEach(async user => user.numberOfBooksOwned = await _bookService.GetCurrentOwnedByIdCount(user.Id));
+            return paginatedListOfUsers;
         }
 
         public async Task UpdateUser(UserUpdateDto userUpdateDto)
