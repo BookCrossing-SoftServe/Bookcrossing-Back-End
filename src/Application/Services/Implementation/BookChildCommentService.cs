@@ -72,11 +72,12 @@ namespace Application.Services.Implementation
                     path,
                     "Comments");
                 rootComment = await _bookRootCommentService.GetById(rootId);
-                if (!HasNotDeletedComments(rootComment.Comments))
+                if (!HasNotDeletedComments(rootComment.Comments) && rootComment.IsDeleted)
                 {
                     await _bookRootCommentService.Remove(rootId);
                 }
-                else
+
+                if (rootComment.Comments.Any())
                 {
                     await ClearCommentTree(rootComment, ids.Skip(1).SkipLast(1), 0);
                 }
