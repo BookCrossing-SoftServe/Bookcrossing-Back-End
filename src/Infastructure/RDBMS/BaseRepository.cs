@@ -21,39 +21,47 @@ namespace Infrastructure.RDBMS
             Context = context;
             Entities = context.Set<TEntity>();
         }
+
         public virtual IQueryable<TEntity> GetAll()
         {
             return Entities.AsQueryable();
         }
+
         public virtual async Task<TEntity> FindByIdAsync(params object[] keys)
         {
             return await Entities.FindAsync(keys);
         }
+
         public virtual async Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate)
         {
-
             return await Entities.FirstOrDefaultAsync(predicate);
         }
+
         public virtual void Add(TEntity entity)
         {
             Entities.Add(entity);
         }
+
         public virtual void AddRange(IEnumerable<TEntity> entity)
         {
             Entities.AddRange(entity);
         }
+
         public virtual void Remove(TEntity entity)
         {
             Entities.Remove(entity);
         }
+
         public virtual void RemoveRange(IEnumerable<TEntity> entity)
         {
             Entities.RemoveRange(entity);
         }
+
         public virtual void Update(TEntity entity)
         {
             Entities.Update(entity);
         }
+
         public virtual async Task Update(TEntity entity, IEnumerable<string> fieldMasks)
         {
             var newEntry = Context.Entry(entity);
@@ -121,7 +129,5 @@ namespace Infrastructure.RDBMS
             GC.SuppressFinalize(this);
         }
         #endregion
-
-
     }
 }
