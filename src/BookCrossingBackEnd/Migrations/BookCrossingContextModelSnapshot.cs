@@ -50,6 +50,279 @@ namespace BookCrossingBackEnd.Migrations
                             IsCurrent = false,
                             Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
                             PhraseAuthor = "Taras Shevchenko"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsCurrent = false,
+                            Phrase = "Без книг порожнє людське життя",
+                            PhraseAuthor = "Д. Бідний"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsCurrent = false,
+                            Phrase = "Strange thoughts brew in your heart when you spend too much time with old books",
+                            PhraseAuthor = "Aravind Adiga"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsCurrent = false,
+                            Phrase = "Читання – це звичка, до якої не звикають, а хворіють на неї",
+                            PhraseAuthor = "Д. Лихачов"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsCurrent = false,
+                            Phrase = "Access to knowledge is the superb, the supreme act of truly great civilizations. Of all the institutions that purport to do this, free libraries stand virtually alone in accomplishing this mission",
+                            PhraseAuthor = "Toni Morrison"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsCurrent = false,
+                            Phrase = "…Учітесь, читайте, і чужому научайтесь, й свого не цурайтесь.",
+                            PhraseAuthor = "Т. Шевченко"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IsCurrent = false,
+                            Phrase = "The man who does not read good books has no advantage over the man who cannot read them.",
+                            PhraseAuthor = "Mark Twain"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IsCurrent = false,
+                            Phrase = "Книга… залишається німою не тільки для того, хто не вміє читати, а й для того, хто… не уміє витягти з мертвої букви живої думки",
+                            PhraseAuthor = "К. Ушинський"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            IsCurrent = false,
+                            Phrase = "The First Book: Go ahead, it won't bite. Well... maybe a little. More a nip, like. A tingle. It's pleasurable, really. You see, it keeps on opening. You may fall in. Sure, it's hard to get started; remember learning to use knife and fork? Dig in: you'll never reach bottom. It's not like it's the end of the world -- just the world as you think you know it.",
+                            PhraseAuthor = "Rita Dove"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IsCurrent = false,
+                            Phrase = "Книги - це ріки, що наповнюють моря",
+                            PhraseAuthor = "Я. Мудрий"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            IsCurrent = false,
+                            Phrase = "Reading is to the mind what exercise is to the body",
+                            PhraseAuthor = "Joseph Addison"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            IsCurrent = false,
+                            Phrase = "Кожна книга – крадіжка у власного життя. Чим більше читаєш, тим менше вмієш і хочеш жити сам",
+                            PhraseAuthor = "М. Цвєтаєва"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            IsCurrent = false,
+                            Phrase = "The greatest gift is a passion for reading. It is cheap, it consoles, it distracts, it excites, it gives you the knowledge of the world and experience of a wide kind. It is a moral illumination. ",
+                            PhraseAuthor = "Elizabeth Hardwick"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            IsCurrent = false,
+                            Phrase = "Книги – люди в палітурках",
+                            PhraseAuthor = "А. Макаренко"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            IsCurrent = false,
+                            Phrase = "The book is good which puts me in a working mind",
+                            PhraseAuthor = "Ralph Waldo Emerson"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            IsCurrent = false,
+                            Phrase = "Є у мене товариші вірні – книжки добрії",
+                            PhraseAuthor = "М. Грушевський"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            IsCurrent = false,
+                            Phrase = "Writing a book of poetry is like dropping a rose petal down the Grand Canyon and waiting for the echo",
+                            PhraseAuthor = "Don Marquis"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            IsCurrent = false,
+                            Phrase = "Хто полюбить книгу, той далеко піде у своєму розвитку. Книга рятує душу від здерев’яніння",
+                            PhraseAuthor = "Т. Шевченко"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            IsCurrent = false,
+                            Phrase = "From the moment I picked your book up until I laid it down I was convulsed with laughter. Some day I intend reading it.",
+                            PhraseAuthor = "Groucho Marx"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            IsCurrent = false,
+                            Phrase = "…Дивною і ненатуральною здається людина, яка існує без книги",
+                            PhraseAuthor = "Т. Шевченко"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            IsCurrent = false,
+                            Phrase = "Literature is my Utopia. Here I am not disenfranchised. No barrier of the senses shuts me out from the sweet, gracious discourses of my book friends. They talk to me without embarrassment or awkwardness.",
+                            PhraseAuthor = "Helen Keller"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            IsCurrent = false,
+                            Phrase = "Кімната без книг – все одно, що людина без душі.",
+                            PhraseAuthor = "О. Довженко"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            IsCurrent = false,
+                            Phrase = "The mere brute pleasure of reading -- the sort of pleasure a cow must have in grazing.",
+                            PhraseAuthor = "G. K. Chesterton"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            IsCurrent = false,
+                            Phrase = "Є злочини гірші, ніж спалювати книги. Наприклад - не читати їх.",
+                            PhraseAuthor = "Р. Бербері"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            IsCurrent = false,
+                            Phrase = "I am a part of all I have read.",
+                            PhraseAuthor = "John Kieran"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            IsCurrent = false,
+                            Phrase = "Людину можна пізнати по тих книгах, які вона читає",
+                            PhraseAuthor = "С. Самолов"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            IsCurrent = false,
+                            Phrase = "The books that the world calls immoral are the books that show the world its own shame.",
+                            PhraseAuthor = "Oscar Wilde"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            IsCurrent = false,
+                            Phrase = "У книгах ми жадібно читаємо про те, на що не звертаємо уваги в житті.",
+                            PhraseAuthor = "Е. Кроткий"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            IsCurrent = false,
+                            Phrase = "Perhaps there is some sort of secret homing instinct in books that brings them to their perfect readers.",
+                            PhraseAuthor = "Mary Ann Shaffer and Annie Barrows"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            IsCurrent = false,
+                            Phrase = "Три найсмачніші запахи? Запах гарячої кави, свіжої випічки і сторінок нової книги",
+                            PhraseAuthor = "Н. Ясмінська"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            IsCurrent = false,
+                            Phrase = "Writing is so difficult that I often feel that writers, having had their hell on earth, will escape punishment in the hereafter.",
+                            PhraseAuthor = "Jessamyn West"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            IsCurrent = false,
+                            Phrase = "Книги – морська глибина: Хто в них пірне аж до дна, той, хоч і труду мав досить дивнії перлини виносить.",
+                            PhraseAuthor = "-	І. Франко"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            IsCurrent = false,
+                            Phrase = "It is books that are a key to the wide world; if you can't do anything else, read all that you can. ",
+                            PhraseAuthor = "Jane Hamilton"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            IsCurrent = false,
+                            Phrase = "Руйнуються царства, а книги живуть!",
+                            PhraseAuthor = "M. Грибачов"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            IsCurrent = false,
+                            Phrase = "I wrote my first novel because I wanted to read it. ",
+                            PhraseAuthor = "Toni Morrison"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            IsCurrent = false,
+                            Phrase = "Книга - велика річ, поки людина вміє нею користуватися",
+                            PhraseAuthor = "O. Блок"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            IsCurrent = false,
+                            Phrase = "Everything in the world exists in order to end up as a book. ",
+                            PhraseAuthor = "Stéphane Mallarmé"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            IsCurrent = false,
+                            Phrase = "Читання може бути трояке: перше - читати і не розуміти; друге - читати і розуміти; третє - читати і розуміти навіть те, чого не написано. ",
+                            PhraseAuthor = "-	Я. Княжнін"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            IsCurrent = false,
+                            Phrase = "He felt about books as doctors feel about medicines, or managers about plays -- cynical but hopeful.",
+                            PhraseAuthor = "-	Dame Rose Macauley"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            IsCurrent = false,
+                            Phrase = "Моя відрада - уявний політ над книгами зі сторінки на сторінку",
+                            PhraseAuthor = "М. Рубакін"
                         });
                 });
 
@@ -156,7 +429,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 8, 6, 21, 44, 15, 885, DateTimeKind.Local).AddTicks(8127),
+                            DateAdded = new DateTime(2020, 8, 10, 19, 30, 50, 33, DateTimeKind.Local).AddTicks(9661),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,
