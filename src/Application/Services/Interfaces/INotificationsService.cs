@@ -7,9 +7,9 @@ namespace Application.Services.Interfaces
 {
     public interface INotificationsService
     {
-        IEnumerable<NotificationDto> GetNotificationsForCurrentUserAsync();
+        IEnumerable<NotificationDto> GetNotificationsForCurrentUser();
 
-        Task MarkNotificationAsRead(int id);
+        Task MarkNotificationAsReadAsync(int id);
 
         Task RemoveNotificationAsync(int id);
     }

@@ -24,7 +24,7 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public IEnumerable<NotificationDto> GetNotificationsForCurrentUserAsync()
+        public IEnumerable<NotificationDto> GetNotificationsForCurrentUser()
         {
             var currentUserId = _userResolverService.GetUserId();
 
@@ -34,7 +34,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<IEnumerable<NotificationDto>>(notifications);
         }
 
-        public async Task MarkNotificationAsRead(int id)
+        public async Task MarkNotificationAsReadAsync(int id)
         {
             var currentUserId = _userResolverService.GetUserId();
             var notification = await _notificationsRepository.FindByIdAsync(id);
