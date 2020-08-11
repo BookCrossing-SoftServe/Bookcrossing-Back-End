@@ -27,7 +27,7 @@ namespace Application.Services.Implementation
             _emailConfig = emailConfig;
             _env = env;
             _smtpClient = smtpClient;
-            _unsubscribeUrl = "https://book-crossing-dev.herokuapp.com/email/?email=";
+            _unsubscribeUrl = "https://book-crossing-web.azurewebsites.net/email/?email=";
             _templatesFolderName = "Templates";
         }
         /// <inheritdoc />
@@ -145,7 +145,7 @@ namespace Application.Services.Implementation
         {
             var body = await GetMessageTemplateFromFile("WishBecameAvailable.html");
 
-            var bookUrl = $"https://book-crossing-dev.herokuapp.com/book/{bookId}";
+            var bookUrl = $"https://book-crossing-web.azurewebsites.net/book/{bookId}";
 
             body = body.Replace("{USER.NAME}", userName);
             body = body.Replace("{BOOK.ID}", bookId.ToString());
