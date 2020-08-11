@@ -31,7 +31,7 @@ namespace Application.Services.Implementation
             return _mapper.Map<AphorismDto>(newAphorism);
         }
 
-        public async Task GetNextAsync()
+        public async Task MoveToNextAsync()
         {
             var oldAphorism = await _aphorismRepository.FindByCondition(ar => ar.IsCurrent);
             Aphorism newAphorism = null;

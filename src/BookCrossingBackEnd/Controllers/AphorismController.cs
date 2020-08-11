@@ -20,7 +20,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetNextAphorism()
+        public async Task<IActionResult> GetAphorismAsync()
         { 
             return Ok(await _aphorismService.GetAphorismAsync());
         }
