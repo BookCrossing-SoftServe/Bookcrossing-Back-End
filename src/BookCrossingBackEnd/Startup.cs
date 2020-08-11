@@ -1,38 +1,25 @@
 using System;
 using System.IO;
-using System.Text;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using AutoMapper;
-using BookCrossingBackEnd.Filters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using BookCrossingBackEnd.Validators;
-using Domain;
-using FluentValidation.AspNetCore;
-using RequestService = Application.Services.Implementation.RequestService;
-using Infrastructure.NoSQL;
-using Domain.NoSQL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
 using Application;
-using Application.Dto.OuterSource;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using BookCrossingBackEnd.ServiceExtension;
 using Infrastructure.RDBMS;
 using Microsoft.Data.SqlClient;
-using Application.Dto;
+using System.Linq;
+using Hangfire.Dashboard;
 
 namespace BookCrossingBackEnd
 {
@@ -141,11 +128,10 @@ namespace BookCrossingBackEnd
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHangfireDashboard();
-            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            //{
-            //    Authorization = new[] { new HangfireAuthorizationFilter() },
-            //});
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = Enumerable.Empty<IDashboardAuthorizationFilter>()
+            });
             app.UseHangfireServer(new BackgroundJobServerOptions
             {
                 WorkerCount = 1
@@ -153,7 +139,7 @@ namespace BookCrossingBackEnd
 
             recurringJobManager.AddOrUpdate(
                 "Run every day",
-                () => serviceProvider.GetService<IAphorismService>().GetNextAsync(),
+                () => serviceProvider.GetService<IAphorismService>().MoveToNextAsync(),
                 "59 23 * * *",
                 TimeZoneInfo.Local
             );
