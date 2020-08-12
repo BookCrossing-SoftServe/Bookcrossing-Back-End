@@ -25,11 +25,13 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task NotifyAsync(User user, string message)
+        public async Task NotifyAsync(User user, string message, int? bookId, NotificationAction action)
         {
             var newNotification = new Notification{
                 UserId = user.Id,
-                Message = message
+                Message = message,
+                BookId = bookId,
+                Action = action
             };
 
             _notificationsRepository.Add(newNotification);
@@ -41,7 +43,8 @@ namespace Application.Services.Implementation
             var currentUserId = _userResolverService.GetUserId();
 
             var notifications = _notificationsRepository.GetAll()
-                .Where(notification => notification.UserId == currentUserId);
+                .Where(notification => notification.UserId == currentUserId)
+                .OrderByDescending(notification => notification.CreatedAt);
 
             return _mapper.Map<IEnumerable<NotificationDto>>(await notifications.ToListAsync());
         }

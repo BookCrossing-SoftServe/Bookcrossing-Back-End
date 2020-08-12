@@ -22,9 +22,16 @@ namespace Infrastructure.RDBMS.Configuration
             builder.Property(notification => notification.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
+            builder.Property(notification => notification.Action)
+                .HasConversion<int>();
+
             builder.HasOne<User>()
                 .WithMany()
                 .HasForeignKey(notification => notification.UserId);
+
+            builder.HasOne<Book>()
+                .WithMany()
+                .HasForeignKey(notification => notification.BookId);
         }
     }
 }

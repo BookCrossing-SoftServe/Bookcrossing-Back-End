@@ -101,7 +101,11 @@ namespace Application.Services.Implementation
 
             foreach (var wish in wishesQuery)
             {
-                await _notificationsService.NotifyAsync(wish.User, $"Book '{wish.Book.Name}' became available.");
+                await _notificationsService.NotifyAsync(
+                    wish.User, 
+                    $"Book '{wish.Book.Name}' became available.", 
+                    wish.BookId, 
+                    NotificationAction.Request);
                 await _emailSenderService.SendForWishBecameAvailable(
                     $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
                     wish.BookId, 

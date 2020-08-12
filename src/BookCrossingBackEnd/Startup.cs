@@ -4,6 +4,7 @@ using System.Linq;
 using Application;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
+using Application.SignalRHubs;
 using BookCrossingBackEnd.ServiceExtension;
 using Hangfire;
 using Hangfire.Dashboard;

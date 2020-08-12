@@ -34,6 +34,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<UserRoom> _userLocationRepository;
         private readonly IRootRepository<BookRootComment> _rootCommentRepository;
         private readonly IWishListService _wishListService;
+        private readonly INotificationsService _notificationsService;
 
         public RequestService(
             IRepository<Request> requestRepository, 
@@ -99,6 +100,11 @@ namespace Application.Services.Implementation
                     OwnerAddress = new MailboxAddress($"{book.User.Email}"),
                     UserName = user.FirstName + " " + user.LastName
                 };
+                await _notificationsService.NotifyAsync(
+                    book.User, 
+                    $"Book '{book.Name}' was requested.", 
+                    book.Id,
+                    NotificationAction.Open);
                 await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
             }
 
