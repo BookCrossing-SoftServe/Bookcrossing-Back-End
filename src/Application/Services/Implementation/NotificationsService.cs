@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
+using Application.SignalR.Hubs;
 using AutoMapper;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Implementation
@@ -17,12 +19,18 @@ namespace Application.Services.Implementation
         private readonly IRepository<Notification> _notificationsRepository;
         private readonly IUserResolverService _userResolverService;
         private readonly IMapper _mapper;
+        private readonly IHubContext<NotificationsHub> _notificationHubContext;
 
-        public NotificationsService(IRepository<Notification> notificationsRepository, IUserResolverService userResolverService, IMapper mapper)
+        public NotificationsService(
+            IRepository<Notification> notificationsRepository, 
+            IUserResolverService userResolverService, 
+            IMapper mapper, 
+            IHubContext<NotificationsHub> notificationHubContext)
         {
             _notificationsRepository = notificationsRepository;
             _userResolverService = userResolverService;
             _mapper = mapper;
+            _notificationHubContext = notificationHubContext;
         }
 
         public async Task NotifyAsync(User user, string message, int? bookId, NotificationAction action)
@@ -36,6 +44,10 @@ namespace Application.Services.Implementation
 
             _notificationsRepository.Add(newNotification);
             await _notificationsRepository.SaveChangesAsync();
+            await _notificationHubContext.Clients.User(user.Email)
+                .SendAsync(
+                    "Notify", 
+                    _mapper.Map<NotificationDto>(newNotification));
         }
 
         public async Task<IEnumerable<NotificationDto>> GetAllForCurrentUserAsync()

@@ -4,7 +4,7 @@ using System.Linq;
 using Application;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using Application.SignalRHubs;
+using Application.SignalR.Hubs;
 using BookCrossingBackEnd.ServiceExtension;
 using Hangfire;
 using Hangfire.Dashboard;
@@ -109,8 +109,6 @@ namespace BookCrossingBackEnd
             .UseDefaultTypeSerializer()
             .UseMemoryStorage()
             );
-
-            services.AddSignalR();
 
             services.AddScoped<IAphorismService, AphorismService>();
         }

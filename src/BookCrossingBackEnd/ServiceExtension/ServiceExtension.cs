@@ -6,6 +6,7 @@ using Application.Dto.OuterSource;
 using Application.MapperProfilers;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
+using Application.SignalR.UserIdProviders;
 using AutoMapper;
 using BookCrossingBackEnd.Validators;
 using Domain.NoSQL;
@@ -14,6 +15,7 @@ using Hangfire;
 using Infrastructure.NoSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +48,14 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<IAphorismService, AphorismService>();
+        }
+
+        public static void AddNotifications(this IServiceCollection services)
+        {
             services.AddScoped<INotificationsService, NotificationsService>();
+
+            services.AddSignalR();
+            services.AddScoped<IUserIdProvider, UserEmailProvider>()
         }
 
         public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)
