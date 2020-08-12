@@ -1,11 +1,12 @@
 using System;
 using System.IO;
+using System.Linq;
 using Application;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using Application.SignalRHubs;
 using BookCrossingBackEnd.ServiceExtension;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.MemoryStorage;
 using Infrastructure.RDBMS;
 using Microsoft.AspNetCore.Builder;
@@ -155,11 +156,10 @@ namespace BookCrossingBackEnd
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHangfireDashboard();
-            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            //{
-            //    Authorization = new[] { new HangfireAuthorizationFilter() },
-            //});
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = Enumerable.Empty<IDashboardAuthorizationFilter>()
+            });
             app.UseHangfireServer(new BackgroundJobServerOptions
             {
                 WorkerCount = 1
@@ -167,7 +167,7 @@ namespace BookCrossingBackEnd
 
             recurringJobManager.AddOrUpdate(
                 "Run every day",
-                () => serviceProvider.GetService<IAphorismService>().GetNextAsync(),
+                () => serviceProvider.GetService<IAphorismService>().MoveToNextAsync(),
                 "59 23 * * *",
                 TimeZoneInfo.Local
             );

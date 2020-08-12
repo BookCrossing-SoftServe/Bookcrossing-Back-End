@@ -9,7 +9,7 @@ namespace Application.Services.Interfaces
         /// Change current aphorism
         /// </summary>
         /// <returns>Return Task</returns>
-        Task GetNextAsync();
+        Task MoveToNextAsync();
 
         /// <summary>
         /// Get current aphorism
