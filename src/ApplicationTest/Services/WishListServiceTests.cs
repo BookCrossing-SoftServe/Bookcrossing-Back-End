@@ -23,6 +23,7 @@ namespace ApplicationTest.Services
         private Mock<IUserResolverService> _userResolverServiceMock;
         private Mock<IPaginationService> _paginationServiceMock;
         private Mock<IEmailSenderService> _emailSenderServiceMock;
+        private Mock<INotificationsService> _notificationServiceMock;
         private WishListService _service;
 
         private User _currentUser;
@@ -38,10 +39,12 @@ namespace ApplicationTest.Services
             _userResolverServiceMock = new Mock<IUserResolverService>();
             _paginationServiceMock = new Mock<IPaginationService>();
             _emailSenderServiceMock = new Mock<IEmailSenderService>();
+            _notificationServiceMock = new Mock<INotificationsService>();
             _service = new WishListService(
                 _userResolverServiceMock.Object,
                 _paginationServiceMock.Object,
                 _emailSenderServiceMock.Object,
+                _notificationServiceMock.Object,
                 _wishRepositoryMock.Object,
                 _bookRepositoryMock.Object);
 

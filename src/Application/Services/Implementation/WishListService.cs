@@ -18,11 +18,13 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IPaginationService _paginationService;
         private readonly IEmailSenderService _emailSenderService;
+        private readonly INotificationsService _notificationsService;
 
         public WishListService(
             IUserResolverService userResolverService,
             IPaginationService paginationService,
             IEmailSenderService emailSenderService,
+            INotificationsService notificationsService,
             IRepository<Wish> wishRepository,
             IRepository<Book> bookRepository)
         {
@@ -30,6 +32,7 @@ namespace Application.Services.Implementation
             _wishRepository = wishRepository;
             _paginationService = paginationService;
             _bookRepository = bookRepository;
+            _notificationsService = notificationsService;
             _emailSenderService = emailSenderService;
         }
 
@@ -98,6 +101,7 @@ namespace Application.Services.Implementation
 
             foreach (var wish in wishesQuery)
             {
+                await _notificationsService.NotifyAsync(wish.User, $"Book '{wish.Book.Name}' became available.");
                 await _emailSenderService.SendForWishBecameAvailable(
                     $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
                     wish.BookId, 

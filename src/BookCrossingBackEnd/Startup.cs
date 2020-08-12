@@ -1,38 +1,24 @@
 using System;
 using System.IO;
-using System.Text;
+using Application;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
-using AutoMapper;
-using BookCrossingBackEnd.Filters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Application.SignalRHubs;
+using BookCrossingBackEnd.ServiceExtension;
+using Hangfire;
+using Hangfire.MemoryStorage;
+using Infrastructure.RDBMS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using BookCrossingBackEnd.Validators;
-using Domain;
-using FluentValidation.AspNetCore;
-using RequestService = Application.Services.Implementation.RequestService;
-using Infrastructure.NoSQL;
-using Domain.NoSQL;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using EmailConfiguration = Application.Dto.Email.EmailConfiguration;
-using Application;
-using Application.Dto.OuterSource;
-using Hangfire;
-using Hangfire.MemoryStorage;
-using BookCrossingBackEnd.ServiceExtension;
-using Infrastructure.RDBMS;
-using Microsoft.Data.SqlClient;
-using Application.Dto;
+using Microsoft.OpenApi.Models;
 
 namespace BookCrossingBackEnd
 {
@@ -87,6 +73,32 @@ namespace BookCrossingBackEnd
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    In = ParameterLocation.Header,
+                    Type= SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
 
             services.AddHangfire(config =>
@@ -95,6 +107,8 @@ namespace BookCrossingBackEnd
             .UseDefaultTypeSerializer()
             .UseMemoryStorage()
             );
+
+            services.AddSignalR();
 
             services.AddScoped<IAphorismService, AphorismService>();
         }
@@ -161,6 +175,7 @@ namespace BookCrossingBackEnd
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationsHub>("/notifications");
             });
 
             app.UseSwagger();

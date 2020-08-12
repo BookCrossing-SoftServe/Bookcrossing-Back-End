@@ -2,15 +2,22 @@
 using System.Text;
 using System.Threading.Tasks;
 using Application.Dto;
+using Domain.RDBMS.Entities;
 
 namespace Application.Services.Interfaces
 {
     public interface INotificationsService
     {
-        IEnumerable<NotificationDto> GetNotificationsForCurrentUser();
+        Task NotifyAsync(User user, string message);
 
-        Task MarkNotificationAsReadAsync(int id);
+        Task<IEnumerable<NotificationDto>> GetAllForCurrentUserAsync();
 
-        Task RemoveNotificationAsync(int id);
+        Task MarkAsReadAsync(int id);
+
+        Task MarkAllAsReadForCurrentUserAsync();
+
+        Task RemoveAsync(int id);
+
+        Task RemoveAllForCurrentUserAsync();
     }
 }

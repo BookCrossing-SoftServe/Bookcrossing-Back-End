@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Dto.Email;
 using Application.Dto.OuterSource;
+using Application.MapperProfilers;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
 using AutoMapper;
@@ -45,6 +46,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<IAphorismService, AphorismService>();
+            services.AddScoped<INotificationsService, NotificationsService>();
         }
 
         public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)
@@ -137,6 +139,7 @@ namespace BookCrossingBackEnd.ServiceExtension
                 mc.AddProfile(new Application.MapperProfilers.BookProfile());
                 mc.AddProfile(new Application.MapperProfilers.LanguageProfile());
                 mc.AddProfile(new Application.MapperProfilers.AphorismProfile());
+                mc.AddProfile(new NotificationProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();

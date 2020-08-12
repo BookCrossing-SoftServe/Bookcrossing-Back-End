@@ -5,56 +5,73 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Implementation;
+using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit.Cryptography;
 
 namespace BookCrossingBackEnd.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationsController : ControllerBase
     {
-        private NotificationsService _notificationsService;
+        private readonly INotificationsService _notificationsService;
 
-        public NotificationsController(NotificationsService notificationsService)
+        public NotificationsController(INotificationsService notificationsService)
         {
             _notificationsService = notificationsService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<NotificationDto>> GetNotifications()
+        public async Task<ActionResult<IEnumerable<NotificationDto>>> GetAll()
         {
-            var notifications = _notificationsService.GetNotificationsForCurrentUser();
-            return notifications.ToList();
+            var notifications = await _notificationsService.GetAllForCurrentUserAsync();
+            return Ok(notifications);
         }
 
-        [HttpPost("read")]
-        public async Task<ActionResult> MarkAsRead([FromBody] int id)
+        [HttpPut("read/{id}")]
+        public async Task<ActionResult> MarkAsRead(int id)
         {
             try
             {
-                await _notificationsService.MarkNotificationAsReadAsync(id);
+                await _notificationsService.MarkAsReadAsync(id);
                 return Ok();
             }
             catch (InvalidOperationException ex)
             {
                 return StatusCode(403, ex.Message);
             }
+        }
+
+        [HttpPut("read/all")]
+        public async Task<ActionResult> MarkAllAsRead()
+        {
+            await _notificationsService.MarkAllAsReadForCurrentUserAsync();
+            return Ok();
         }
 
         [HttpDelete("remove/{id}")]
-        public async Task<ActionResult> RemoveNotification(int id)
+        public async Task<ActionResult> Remove(int id)
         {
             try
             {
-                await _notificationsService.RemoveNotificationAsync(id);
+                await _notificationsService.RemoveAsync(id);
                 return Ok();
             }
             catch (InvalidOperationException ex)
             {
                 return StatusCode(403, ex.Message);
             }
+        }
+
+        [HttpDelete("remove/all")]
+        public async Task<ActionResult> RemoveAll()
+        {
+            await _notificationsService.RemoveAllForCurrentUserAsync();
+            return Ok();
         }
     }
 }
