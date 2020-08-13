@@ -58,7 +58,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Language
         [HttpPost]
-        public async Task<ActionResult<LanguageDto>> PostLanguage([FromBody]LanguageDto languageDto)
+        public async Task<ActionResult<LanguagePostDto>> PostLanguage([FromBody]LanguagePostDto languageDto)
         {
             _logger.LogInformation("Post language {LanguageDto}", languageDto);
             var insertedLanguage = await _languageService.Add(languageDto);
