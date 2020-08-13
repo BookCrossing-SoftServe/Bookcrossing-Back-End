@@ -9,6 +9,7 @@ namespace Application.MapperProfilers
         public LanguageProfile()
         {
             CreateMap<Language, LanguageDto>().ReverseMap();
+            CreateMap<Language, LanguagePostDto>().ReverseMap();
         }
     }
 }
