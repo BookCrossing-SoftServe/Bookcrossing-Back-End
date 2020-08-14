@@ -114,7 +114,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             if (!env.IsProduction())
                 settingsName = "MongoSettings";
             else
-                settingsName = "CosmoDBSettings";
+                settingsName = "MongoSettings";
 
             services.Configure<MongoSettings>(
                 configuration.GetSection(settingsName));
