@@ -283,6 +283,11 @@ namespace Application.Services.Implementation
                     OwnerAddress = new MailboxAddress($"{request.User.Email}")
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
+                await _notificationsService.NotifyAsync(
+                    request.User, 
+                    $"Book {request.Book.Name} was received!",
+                    request.BookId, 
+                    NotificationAction.Open);
             }
 
             await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);

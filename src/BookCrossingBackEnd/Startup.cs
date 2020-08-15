@@ -46,6 +46,8 @@ namespace BookCrossingBackEnd
 
             services.AddGoodreadsSource(Configuration);
 
+            services.AddNotifications();
+
             services.AddMongoSettings(Configuration, Environment);
 
             services.AddEmailService(Configuration, Environment);
@@ -173,8 +175,8 @@ namespace BookCrossingBackEnd
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<NotificationsHub>(NotificationsHub.URL);
                 endpoints.MapControllers();
-                endpoints.MapHub<NotificationsHub>("/notifications");
             });
 
             app.UseSwagger();
