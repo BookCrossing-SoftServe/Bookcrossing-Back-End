@@ -49,7 +49,8 @@ namespace Application.Services.Implementation
             IRepository<BookGenre> bookGenreRepository, 
             IRepository<UserRoom> userLocationRepository, 
             IRootRepository<BookRootComment> rootCommentRepository, 
-            IWishListService wishListService)
+            IWishListService wishListService, 
+            INotificationsService notificationsService)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -64,6 +65,7 @@ namespace Application.Services.Implementation
             _userLocationRepository = userLocationRepository;
             _rootCommentRepository = rootCommentRepository;
             _wishListService = wishListService;
+            _notificationsService = notificationsService;
         }
 
         /// <inheritdoc />
@@ -283,6 +285,11 @@ namespace Application.Services.Implementation
                     OwnerAddress = new MailboxAddress($"{request.User.Email}")
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
+                await _notificationsService.NotifyAsync(
+                    request.User, 
+                    $"Book {request.Book.Name} was received!",
+                    request.BookId, 
+                    NotificationAction.Open);
             }
 
             await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
