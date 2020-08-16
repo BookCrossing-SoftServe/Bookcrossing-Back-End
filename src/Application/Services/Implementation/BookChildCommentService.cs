@@ -98,17 +98,25 @@ namespace Application.Services.Implementation
         {
             string rootId = updateDto.Ids.First();
             string childId = updateDto.Ids.Last();
-
             var rootComment = await _bookRootCommentService.GetById(rootId);
-            var childComment = await FindChild(rootComment.Comments,
-                childId);
-            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
+            if (rootComment == null)
+            {
+                return 0;
+            }
+
+            var childComment = await FindChild(rootComment.Comments, childId);
+            if (childComment == null)
+            {
+                return 0;
+            }
+
+            //var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
 
             List<(string nestedArrayName, string itemId)> path = updateDto.Ids.Skip(1).Select(x => ("Comments", x)).ToList();
 
             var updateResult = await _childCommentRepository.SetAsync(
                 rootId,
-                new BookChildComment() {Text = updateDto.Text, Comments = children},
+                new BookChildComment() {Text = updateDto.Text},
                 path);
 
             return Convert.ToInt32(updateResult.MatchedCount);
