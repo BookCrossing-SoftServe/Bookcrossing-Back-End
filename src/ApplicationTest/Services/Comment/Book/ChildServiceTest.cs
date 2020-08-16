@@ -42,6 +42,17 @@ namespace ApplicationTest.Services.Comment.Book
                 Ids=new List<string>() { "5e9c9ee859231a63bc853bf0" , "5e9c9ee859231a63bc853bf1" },
             };
             List<(string, string)> path = new List<(string, string)>() { ("Comments", "5e9c9ee859231a63bc853bf1") };
+
+            _rootRepository.Setup(m => m.GetById(It.IsAny<string>()))
+                .ReturnsAsync(new RootDto()
+                {
+                    Comments = new List<ChildDto>()
+                    {
+                        new ChildDto() { Id = "5e9c9ee859231a63bc853bf1" },
+                    }
+                });
+
+
             _childRepository
                 .Setup(s => s.SetAsync(
                     "5e9c9ee859231a63bc853bf0", 
