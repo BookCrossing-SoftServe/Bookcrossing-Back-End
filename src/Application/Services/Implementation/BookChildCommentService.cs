@@ -7,6 +7,7 @@ using Application.Services.Interfaces;
 using AutoMapper;
 using Domain.NoSQL;
 using Domain.NoSQL.Entities;
+using MongoDB.Driver;
 
 namespace Application.Services.Implementation
 {
@@ -51,51 +52,66 @@ namespace Application.Services.Implementation
             var rootComment = await _bookRootCommentService.GetById(rootId);
             var childComment = await FindChild(rootComment.Comments, 
                 childId);
-            MongoDB.Driver.UpdateResult updateResult;
             if (childComment != null && childComment.Comments.Any())
             {
-                var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
-
-                List <(string nestedArrayName, string itemId)> path = ids.Skip(1).Select(x => ("Comments", x)).ToList();
-                updateResult = await _childCommentRepository.SetAsync(
-                    rootId,
-                    new BookChildComment() {IsDeleted = true, Text = childComment.Text, Comments = children},
-                    path
-                );
+                return await SetAsDeleted(ids, childComment, rootId);
             }
-            else
+
+            return await Delete(ids, rootId, childId);
+        }
+
+        private async Task<int> SetAsDeleted(IEnumerable<string> ids, ChildDto childComment, string rootId)
+        {
+            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
+            List<(string nestedArrayName, string itemId)> path = ids.Skip(1).Select(x => ("Comments", x)).ToList();
+            UpdateResult updateResult = await _childCommentRepository.SetAsync(
+                rootId,
+                new BookChildComment() {IsDeleted = true, Text = childComment.Text, Comments = children},
+                path
+            );
+            return (int) updateResult.ModifiedCount;
+        }
+
+        private async Task<int> Delete(IEnumerable<string> ids, string rootId, string childId)
+        {
+            List<(string nestedArrayName, string itemId)> path = ids.Skip(1).SkipLast(1).Select(x => ("Comments", x)).ToList();
+            UpdateResult updateResult = await _childCommentRepository.PullAsync(
+                rootId,
+                childId,
+                path,
+                "Comments");
+            RootDto rootComment = await _bookRootCommentService.GetById(rootId);
+            if (!HasActiveComments(rootComment.Comments) && rootComment.IsDeleted)
             {
-                List<(string nestedArrayName, string itemId)> path = ids.Skip(1).SkipLast(1).Select(x => ("Comments", x)).ToList();
-                updateResult = await _childCommentRepository.PullAsync(
-                    rootId,
-                    childId,
-                    path,
-                    "Comments");
-                rootComment = await _bookRootCommentService.GetById(rootId);
-                if (!HasNotDeletedComments(rootComment.Comments) && rootComment.IsDeleted)
-                {
-                    await _bookRootCommentService.Remove(rootId);
-                }
-
-                if (rootComment.Comments.Any())
-                {
-                    await ClearCommentTree(rootComment, ids.Skip(1).SkipLast(1), 0);
-                }
+                await _bookRootCommentService.Remove(rootId);
             }
 
-            return Convert.ToInt32(updateResult.ModifiedCount);
+            if (rootComment.Comments.Any())
+            {
+                await ClearCommentBranch(rootComment, ids.Skip(1).SkipLast(1));
+            }
+
+            return (int) updateResult.ModifiedCount;
         }
 
         public async Task<int> Update(ChildUpdateDto updateDto)
         {
             string rootId = updateDto.Ids.First();
+            string childId = updateDto.Ids.Last();
+
+            var rootComment = await _bookRootCommentService.GetById(rootId);
+            var childComment = await FindChild(rootComment.Comments,
+                childId);
+            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
+
             List<(string nestedArrayName, string itemId)> path = updateDto.Ids.Skip(1).Select(x => ("Comments", x)).ToList();
+
             var updateResult = await _childCommentRepository.SetAsync(
                 rootId,
-                new BookChildComment() { Text = updateDto.Text },
+                new BookChildComment() {Text = updateDto.Text, Comments = children},
                 path);
 
-            return Convert.ToInt32(updateResult.ModifiedCount);
+            return Convert.ToInt32(updateResult.MatchedCount);
         }
 
         private async Task<ChildDto> FindChild(IEnumerable<ChildDto> children, string childId)
@@ -121,28 +137,31 @@ namespace Application.Services.Implementation
             return null;
         }
 
-        public async Task ClearCommentTree(RootDto root, IEnumerable<string> ids, int skip)
+        public async Task ClearCommentBranch(RootDto root, IEnumerable<string> ids)
         {
-            List<(string nestedArrayName, string itemId)> path = ids.Skip(skip).Select(x => ("Comments", x)).ToList();
-            var child = await FindChild(root.Comments, path[0].itemId);
-            if (!HasNotDeletedComments(child.Comments))
+            var path = new List<(string nestedArrayName, string itemId)>();
+            foreach (var id in ids)
             {
-                var rootId = root.Id;
-                var childId = child.Id;
-                var x = ids.SkipLast(ids.Count() - skip).Select(x => ("Comments", x)).ToList();
-                await _childCommentRepository.PullAsync(
-                    rootId,
-                    childId,
-                    x,
-                    "Comments");
+                var child = await FindChild(root.Comments, id);
+                if (child.IsDeleted && !HasActiveComments(child.Comments))
+                {
+                    var rootId = root.Id;
+                    var childId = child.Id;
 
-                return;
+                    await _childCommentRepository.PullAsync(
+                        rootId,
+                        childId,
+                        path,
+                        "Comments");
+
+                    return;
+                }
+
+                path.Add(("Comments", id));
             }
-
-            await ClearCommentTree(root, ids, skip + 1);
         }
 
-        private bool HasNotDeletedComments(IEnumerable<ChildDto> children)
+        private bool HasActiveComments(IEnumerable<ChildDto> children)
         {
             if (!children.Any())
             {
@@ -156,7 +175,7 @@ namespace Application.Services.Implementation
 
             foreach (var child in children)
             {
-                if (HasNotDeletedComments(child.Comments))
+                if (HasActiveComments(child.Comments))
                 {
                     return true;
                 }
