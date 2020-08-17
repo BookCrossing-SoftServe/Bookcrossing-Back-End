@@ -48,7 +48,7 @@ namespace ApplicationTest.Services.Comment.Book
                 {
                     Comments = new List<ChildDto>()
                     {
-                        new ChildDto() { Id = "5e9c9ee859231a63bc853bf1" },
+                        new ChildDto() { Id = "5e9c9ee859231a63bc853bf1", Comments = new List<ChildDto>() },
                     }
                 });
 

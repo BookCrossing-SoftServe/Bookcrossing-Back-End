@@ -110,13 +110,13 @@ namespace Application.Services.Implementation
                 return 0;
             }
 
-            //var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
+            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
 
             List<(string nestedArrayName, string itemId)> path = updateDto.Ids.Skip(1).Select(x => ("Comments", x)).ToList();
 
             var updateResult = await _childCommentRepository.SetAsync(
                 rootId,
-                new BookChildComment() {Text = updateDto.Text},
+                new BookChildComment() {Text = updateDto.Text, Comments = children},
                 path);
 
             return Convert.ToInt32(updateResult.MatchedCount);
