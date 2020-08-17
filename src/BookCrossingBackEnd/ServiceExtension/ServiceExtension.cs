@@ -56,7 +56,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddScoped<INotificationsService, NotificationsService>();
 
             services.AddSignalR();
-            services.AddSingleton<IUserIdProvider, UserEmailProvider>();
+            services.AddSingleton<IUserIdProvider, UserIdProvider>();
         }
 
         public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)

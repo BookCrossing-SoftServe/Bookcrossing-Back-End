@@ -44,7 +44,7 @@ namespace Application.Services.Implementation
 
             _notificationsRepository.Add(newNotification);
             await _notificationsRepository.SaveChangesAsync();
-            await _notificationHubContext.Clients.User(user.Email)
+            await _notificationHubContext.Clients.User(user.Id.ToString())
                 .SendAsync(
                     "Notify", 
                     _mapper.Map<NotificationDto>(newNotification));

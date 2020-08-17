@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Application.SignalR.UserIdProviders
 {
-    public class UserEmailProvider: IUserIdProvider
+    public class UserIdProvider: IUserIdProvider
     {
         public string GetUserId(HubConnectionContext connection)
         {
-            return connection.User.FindFirstValue(JwtRegisteredClaimNames.Email);
+            return (connection.User?.Identity as ClaimsIdentity)?.FindFirst("id")?.Value;
         }
     }
 }

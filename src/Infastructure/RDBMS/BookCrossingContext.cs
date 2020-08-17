@@ -55,6 +55,7 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new LanguageConfiguration());
             modelBuilder.ApplyConfiguration(new WishConfiguration());
             modelBuilder.ApplyConfiguration(new AphorismConfiguration());
+            modelBuilder.ApplyConfiguration(new NotificationConfiguration());
 
             DataSeeder.Seed(modelBuilder);
         }

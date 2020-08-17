@@ -94,12 +94,12 @@ namespace Application.Services.Implementation
 
         public async Task NotifyAboutAvailableBookAsync(int bookId)
         {
-            var wishesQuery = _wishRepository.GetAll()
+            var wishes = await _wishRepository.GetAll()
                 .Where(wish => wish.BookId == bookId && wish.User.IsEmailAllowed)
                 .Include(wish => wish.User)
-                .Include(wish => wish.Book);
+                .Include(wish => wish.Book).ToListAsync();
 
-            foreach (var wish in wishesQuery)
+            foreach (var wish in wishes)
             {
                 await _notificationsService.NotifyAsync(
                     wish.User, 
