@@ -28,8 +28,8 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 1,
-                    Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
-                    PhraseAuthor = "Taras Shevchenko",
+                    Phrase = "A book is not only a friend, it makes friends for you. When you have possessed a book with mind and spirit, you are enriched. But when you pass it on you are enriched threefold.",
+                    PhraseAuthor = "Henry Miller",
                 },
                 new Aphorism
                 {
