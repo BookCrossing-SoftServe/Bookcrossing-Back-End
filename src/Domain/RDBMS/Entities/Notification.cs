@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Domain.RDBMS.Entities
 {
-    public class Notification: IEntityBase
+    public class Notification : IEntityBase
     {
         public int Id { get; set; }
 

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Application.SignalR.UserIdProviders
 {
-    public class UserIdProvider: IUserIdProvider
+    public class UserIdProvider : IUserIdProvider
     {
         public string GetUserId(HubConnectionContext connection)
         {

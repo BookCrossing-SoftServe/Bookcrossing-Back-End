@@ -95,7 +95,7 @@ namespace Application.Services.Implementation
         public async Task NotifyAboutAvailableBookAsync(int bookId)
         {
             var wishes = await _wishRepository.GetAll()
-                .Where(wish => wish.BookId == bookId && wish.User.IsEmailAllowed)
+                .Where(wish => wish.BookId == bookId)
                 .Include(wish => wish.User)
                 .Include(wish => wish.Book).ToListAsync();
 
@@ -106,11 +106,14 @@ namespace Application.Services.Implementation
                     $"The book '{wish.Book.Name}' from your wish list is available now.", 
                     wish.BookId, 
                     NotificationAction.Request);
-                await _emailSenderService.SendForWishBecameAvailable(
-                    $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
-                    wish.BookId, 
-                    wish.Book.Name, 
-                    wish.User.Email);
+                if (wish.User.IsEmailAllowed)
+                {
+                    await _emailSenderService.SendForWishBecameAvailable(
+                        $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
+                        wish.BookId,
+                        wish.Book.Name,
+                        wish.User.Email);
+                }
             }
         }
 

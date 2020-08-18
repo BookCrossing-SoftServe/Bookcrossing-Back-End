@@ -127,7 +127,6 @@ namespace Application.Services.Implementation
             };
             await _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
 
-
             return _mapper.Map<RequestDto>(request);
         }
 

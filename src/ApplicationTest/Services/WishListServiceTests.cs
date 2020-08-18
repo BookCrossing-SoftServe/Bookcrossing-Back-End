@@ -10,6 +10,7 @@ using Application.Services.Interfaces;
 using Domain.RDBMS;
 using Domain.RDBMS.Entities;
 using FluentAssertions;
+using MockQueryable.Moq;
 using Moq;
 using NUnit.Framework;
 
@@ -27,6 +28,7 @@ namespace ApplicationTest.Services
         private WishListService _service;
 
         private User _currentUser;
+        private User _userWithEmailNotAllowed;
         private Book _book;
         private Wish _wish;
         private List<Wish> _wishes;
@@ -172,16 +174,30 @@ namespace ApplicationTest.Services
         [Test]
         public async Task NotifyAboutAvailableBookAsync_ShouldNotifyUserWithBookInWishListAndAllowedEmail()
         {
-            var userFullName = $"{_currentUser.FirstName} {_currentUser.LastName}".Trim();
-            _wishRepositoryMock.Setup(obj => obj.GetAll()).Returns(_wishes.AsQueryable());
+            var currentUserFullName = $"{_currentUser.FirstName} {_currentUser.LastName}".Trim();
+            _wishRepositoryMock.Setup(obj => obj.GetAll()).Returns(_wishes.AsQueryable().BuildMock().Object);
 
             await _service.NotifyAboutAvailableBookAsync(_book.Id);
 
             _emailSenderServiceMock.Verify(obj => obj.SendForWishBecameAvailable(
-                userFullName,
+                currentUserFullName,
                 _book.Id,
                 _book.Name,
                 _currentUser.Email));
+            _notificationServiceMock.Verify(
+                obj => obj.NotifyAsync(
+                    _currentUser, 
+                    $"The book '{_book.Name}' from your wish list is available now.",
+                    _book.Id, 
+                    NotificationAction.Request),
+                Times.Once);
+            _notificationServiceMock.Verify(
+                obj => obj.NotifyAsync(
+                    _userWithEmailNotAllowed,
+                    $"The book '{_book.Name}' from your wish list is available now.",
+                    _book.Id,
+                    NotificationAction.Request),
+                Times.Once);
         }
 
         private void MockData()
@@ -194,7 +210,7 @@ namespace ApplicationTest.Services
                 Email = "user@gmail.com",
                 IsEmailAllowed = true
             };
-            var userWithEmailNotAllowed = new User
+            _userWithEmailNotAllowed = new User
             {
                 Id = 2,
                 FirstName = "Customer",
@@ -226,9 +242,9 @@ namespace ApplicationTest.Services
             _wishes = new List<Wish>
             {
                 _wish,
-                new Wish { BookId = _book.Id, Book = _book, UserId = userWithEmailNotAllowed.Id, User = userWithEmailNotAllowed },
+                new Wish { BookId = _book.Id, Book = _book, UserId = _userWithEmailNotAllowed.Id, User = _userWithEmailNotAllowed },
                 new Wish { BookId = otherBook.Id, Book = otherBook, UserId = _currentUser.Id, User = _currentUser },
-                new Wish { BookId = otherBook.Id, Book = otherBook, UserId = userWithEmailNotAllowed.Id, User = userWithEmailNotAllowed },
+                new Wish { BookId = otherBook.Id, Book = otherBook, UserId = _userWithEmailNotAllowed.Id, User = _userWithEmailNotAllowed },
             };
         }
     }

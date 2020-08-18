@@ -35,7 +35,8 @@ namespace Application.Services.Implementation
 
         public async Task NotifyAsync(User user, string message, int? bookId, NotificationAction action)
         {
-            var newNotification = new Notification{
+            var newNotification = new Notification 
+            {
                 UserId = user.Id,
                 Message = message,
                 BookId = bookId,
@@ -83,12 +84,13 @@ namespace Application.Services.Implementation
         public async Task MarkAllAsReadForCurrentUserAsync()
         {
             var currentUserId = _userResolverService.GetUserId();
-            var notifications =  _notificationsRepository.GetAll()
+            var notifications = _notificationsRepository.GetAll()
                 .Where(notification => notification.UserId == currentUserId);
             foreach (var notification in notifications)
             {
                 notification.IsRead = true;
             }
+
             await _notificationsRepository.SaveChangesAsync();
         }
 
