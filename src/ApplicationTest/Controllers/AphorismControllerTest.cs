@@ -53,6 +53,34 @@ namespace ApplicationTest.Controllers
             return new AphorismDto() { Id = 1, Phrase = "Appreciate every moment", PhraseAuthor = "Ivan Franko" };
         }
 
+        [Test]
+        public async Task DeleteAphorism_AphorismExists_ReturnsOkResult()
+        {
+            _aphorismService.Setup(s => s.RemoveAphorismAsync((It.IsAny<int>()))).ReturnsAsync(true);
 
+            var result = await _aphorismController.DeleteAphorismAsync(It.IsAny<int>());
+
+            result.Should().BeOfType<OkResult>();
+        }
+
+        [Test]
+        public async Task DeleteAphorism_AphorismDoesNotExist_ReturnsNotFoundResult()
+        {
+            _aphorismService.Setup(s => s.RemoveAphorismAsync(It.IsAny<int>())).ReturnsAsync(false);
+
+            var result = await _aphorismController.DeleteAphorismAsync(It.IsAny<int>());
+
+            result.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Test]
+        public async Task PutAphorism_AphorismDoesNotExist_ReturnNotFound()
+        {
+            _aphorismService.Setup(s => s.UpdateAphorismAsync(It.IsAny<AphorismDto>())).ReturnsAsync(false);
+
+            var result = await _aphorismController.PutAphorismAsync(It.IsAny<AphorismDto>());
+
+            result.Should().BeOfType<NotFoundResult>();
+        }
     }
 }
