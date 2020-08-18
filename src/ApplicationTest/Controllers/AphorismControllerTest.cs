@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Interfaces;
 using BookCrossingBackEnd.Controllers;
@@ -15,13 +16,17 @@ namespace ApplicationTest.Controllers
     {
         private Mock<IAphorismService> _aphorismService;
         private AphorismController _aphorismController;
-        private Mock<ILogger<AphorismController>> _logger;
 
         [OneTimeSetUp]
         public void Setup()
         {
             _aphorismService = new Mock<IAphorismService>();
-            _aphorismController = new AphorismController(_aphorismService.Object, _logger.Object);
+            _aphorismController = new AphorismController(_aphorismService.Object);
+        }
+
+        private AphorismDto GetTestAphorism()
+        {
+            return new AphorismDto() { Id = 1, Phrase = "Appreciate every moment", PhraseAuthor = "Ivan Franko" };
         }
 
         [Test]
@@ -46,11 +51,6 @@ namespace ApplicationTest.Controllers
             okResult.Should().BeOfType<OkObjectResult>();
             var resultAphorism = okResult.Value as AphorismDto;
             resultAphorism.Id.Should().Be(testAphorism.Id);
-        }
-
-        private AphorismDto GetTestAphorism()
-        {
-            return new AphorismDto() { Id = 1, Phrase = "Appreciate every moment", PhraseAuthor = "Ivan Franko" };
         }
 
         [Test]

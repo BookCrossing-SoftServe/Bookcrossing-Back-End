@@ -12,12 +12,10 @@ namespace BookCrossingBackEnd.Controllers
     public class AphorismController : ControllerBase
     {
         private readonly IAphorismService _aphorismService;
-        private readonly ILogger _logger;
 
-        public AphorismController(IAphorismService aphorismService, ILogger<AphorismController> logger)
+        public AphorismController(IAphorismService aphorismService)
         {
             _aphorismService = aphorismService;
-            _logger = logger;
         }
 
         [HttpGet("{current}")]
