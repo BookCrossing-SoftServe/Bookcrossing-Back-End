@@ -28,31 +28,31 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 1,
-                    Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
-                    PhraseAuthor = "Taras Shevchenko",
+                    Phrase = "A book is not only a friend, it makes friends for you. When you have possessed a book with mind and spirit, you are enriched. But when you pass it on you are enriched threefold.",
+                    PhraseAuthor = "Henry Miller",
                 },
                 new Aphorism
                 {
                     Id = 2,
-                    Phrase = "Без книг порожнє людське життя",
+                    Phrase = "Без книг порожнє людське життя.",
                     PhraseAuthor = "Д. Бідний",
                 },
                 new Aphorism
                 {
                     Id = 3,
-                    Phrase = "Strange thoughts brew in your heart when you spend too much time with old books",
+                    Phrase = "Strange thoughts brew in your heart when you spend too much time with old books.",
                     PhraseAuthor = "Aravind Adiga",
                 },
                 new Aphorism
                 {
                     Id = 4,
-                    Phrase = "Читання – це звичка, до якої не звикають, а хворіють на неї",
+                    Phrase = "Читання – це звичка, до якої не звикають, а хворіють на неї.",
                     PhraseAuthor = "Д. Лихачов",
                 },
                 new Aphorism
                 {
                     Id = 5,
-                    Phrase = "Access to knowledge is the superb, the supreme act of truly great civilizations. Of all the institutions that purport to do this, free libraries stand virtually alone in accomplishing this mission",
+                    Phrase = "Access to knowledge is the superb, the supreme act of truly great civilizations. Of all the institutions that purport to do this, free libraries stand virtually alone in accomplishing this mission.",
                     PhraseAuthor = "Toni Morrison",
                 },
                 new Aphorism
@@ -70,67 +70,67 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 8,
-                    Phrase = "Книга… залишається німою не тільки для того, хто не вміє читати, а й для того, хто… не уміє витягти з мертвої букви живої думки",
+                    Phrase = "Книга… залишається німою не тільки для того, хто не вміє читати, а й для того, хто… не уміє витягти з мертвої букви живої думки.",
                     PhraseAuthor = "К. Ушинський",
                 },
                 new Aphorism
                 {
                     Id = 9,
-                    Phrase = "The First Book: Go ahead, it won't bite. Well... maybe a little. More a nip, like. A tingle. It's pleasurable, really. You see, it keeps on opening. You may fall in. Sure, it's hard to get started; remember learning to use knife and fork? Dig in: you'll never reach bottom. It's not like it's the end of the world -- just the world as you think you know it.",
+                    Phrase = "The First Book: Go ahead, it won't bite. Well... maybe a little. More a nip, like. A tingle. It's pleasurable, really. You see, it keeps on opening. You may fall in. Sure, it's hard to get started; remember learning to use knife and fork? Dig in: you'll never reach bottom. It's not like it's the end of the world - just the world as you think you know it.",
                     PhraseAuthor = "Rita Dove",
                 },
                 new Aphorism
                 {
                     Id = 10,
-                    Phrase = "Книги - це ріки, що наповнюють моря",
+                    Phrase = "Книги - це ріки, що наповнюють моря.",
                     PhraseAuthor = "Я. Мудрий",
                 },
                 new Aphorism
                 {
                     Id = 11,
-                    Phrase = "Reading is to the mind what exercise is to the body",
+                    Phrase = "Reading is to the mind what exercise is to the body.",
                     PhraseAuthor = "Joseph Addison",
                 },
                 new Aphorism
                 {
                     Id = 12,
-                    Phrase = "Кожна книга – крадіжка у власного життя. Чим більше читаєш, тим менше вмієш і хочеш жити сам",
+                    Phrase = "Кожна книга – крадіжка у власного життя. Чим більше читаєш, тим менше вмієш і хочеш жити сам.",
                     PhraseAuthor = "М. Цвєтаєва",
                 },
                 new Aphorism
                 {
                     Id = 13,
-                    Phrase = "The greatest gift is a passion for reading. It is cheap, it consoles, it distracts, it excites, it gives you the knowledge of the world and experience of a wide kind. It is a moral illumination. ",
+                    Phrase = "The greatest gift is a passion for reading. It is cheap, it consoles, it distracts, it excites, it gives you the knowledge of the world and experience of a wide kind. It is a moral illumination.",
                     PhraseAuthor = "Elizabeth Hardwick",
                 },
                 new Aphorism
                 {
                     Id = 14,
-                    Phrase = "Книги – люди в палітурках",
+                    Phrase = "Книги – люди в палітурках.",
                     PhraseAuthor = "А. Макаренко",
                 },
                 new Aphorism
                 {
                     Id = 15,
-                    Phrase = "The book is good which puts me in a working mind",
+                    Phrase = "The book is good which puts me in a working mind.",
                     PhraseAuthor = "Ralph Waldo Emerson",
                 },
                 new Aphorism
                 {
                     Id = 16,
-                    Phrase = "Є у мене товариші вірні – книжки добрії",
+                    Phrase = "Є у мене товариші вірні – книжки добрії.",
                     PhraseAuthor = "М. Грушевський",
                 },
                 new Aphorism
                 {
                     Id = 17,
-                    Phrase = "Writing a book of poetry is like dropping a rose petal down the Grand Canyon and waiting for the echo",
+                    Phrase = "Writing a book of poetry is like dropping a rose petal down the Grand Canyon and waiting for the echo.",
                     PhraseAuthor = "Don Marquis",
                 },
                 new Aphorism
                 {
                     Id = 18,
-                    Phrase = "Хто полюбить книгу, той далеко піде у своєму розвитку. Книга рятує душу від здерев’яніння",
+                    Phrase = "Хто полюбить книгу, той далеко піде у своєму розвитку. Книга рятує душу від здерев’яніння.",
                     PhraseAuthor = "Т. Шевченко",
                 },
                 new Aphorism
@@ -142,7 +142,7 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 20,
-                    Phrase = "…Дивною і ненатуральною здається людина, яка існує без книги",
+                    Phrase = "…Дивною і ненатуральною здається людина, яка існує без книги.",
                     PhraseAuthor = "Т. Шевченко",
                 },
                 new Aphorism
@@ -160,7 +160,7 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 23,
-                    Phrase = "The mere brute pleasure of reading -- the sort of pleasure a cow must have in grazing.",
+                    Phrase = "The mere brute pleasure of reading - the sort of pleasure a cow must have in grazing.",
                     PhraseAuthor = "G. K. Chesterton",
                 },
                 new Aphorism
@@ -178,7 +178,7 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 26,
-                    Phrase = "Людину можна пізнати по тих книгах, які вона читає",
+                    Phrase = "Людину можна пізнати по тих книгах, які вона читає.",
                     PhraseAuthor = "С. Самолов",
                 },
                 new Aphorism
@@ -202,7 +202,7 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 30,
-                    Phrase = "Три найсмачніші запахи? Запах гарячої кави, свіжої випічки і сторінок нової книги",
+                    Phrase = "Три найсмачніші запахи? Запах гарячої кави, свіжої випічки і сторінок нової книги.",
                     PhraseAuthor = "Н. Ясмінська",
                 },
                 new Aphorism
@@ -220,7 +220,7 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 33,
-                    Phrase = "It is books that are a key to the wide world; if you can't do anything else, read all that you can. ",
+                    Phrase = "It is books that are a key to the wide world; if you can't do anything else, read all that you can.",
                     PhraseAuthor = "Jane Hamilton",
                 },
                 new Aphorism
@@ -232,37 +232,37 @@ namespace Infrastructure.RDBMS.Seeder
                 new Aphorism
                 {
                     Id = 35,
-                    Phrase = "I wrote my first novel because I wanted to read it. ",
+                    Phrase = "I wrote my first novel because I wanted to read it.",
                     PhraseAuthor = "Toni Morrison",
                 },
                 new Aphorism
                 {
                     Id = 36,
-                    Phrase = "Книга - велика річ, поки людина вміє нею користуватися",
+                    Phrase = "Книга - велика річ, поки людина вміє нею користуватися.",
                     PhraseAuthor = "O. Блок",
                 },
                 new Aphorism
                 {
                     Id = 37,
-                    Phrase = "Everything in the world exists in order to end up as a book. ",
+                    Phrase = "Everything in the world exists in order to end up as a book.",
                     PhraseAuthor = "Stéphane Mallarmé",
                 },
                 new Aphorism
                 {
                     Id = 38,
-                    Phrase = "Читання може бути трояке: перше - читати і не розуміти; друге - читати і розуміти; третє - читати і розуміти навіть те, чого не написано. ",
-                    PhraseAuthor = "-	Я. Княжнін",
+                    Phrase = "Читання може бути трояке: перше - читати і не розуміти; друге - читати і розуміти; третє - читати і розуміти навіть те, чого не написано.",
+                    PhraseAuthor = "Я. Княжнін",
                 },
                 new Aphorism
                 {
                     Id = 39,
                     Phrase = "He felt about books as doctors feel about medicines, or managers about plays -- cynical but hopeful.",
-                    PhraseAuthor = "-	Dame Rose Macauley",
+                    PhraseAuthor = "Dame Rose Macauley",
                 },
                 new Aphorism
                 {
                     Id = 40,
-                    Phrase = "Моя відрада - уявний політ над книгами зі сторінки на сторінку",
+                    Phrase = "Моя відрада - уявний політ над книгами зі сторінки на сторінку.",
                     PhraseAuthor = "М. Рубакін",
                 }
             );
