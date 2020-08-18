@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
@@ -21,12 +21,24 @@ namespace Application.Services.Implementation
             _mapper = mapper;
         }
 
-        public async Task<AphorismDto> GetAphorismAsync()
+        public async Task<AphorismDto> GetCurrentAphorismAsync(bool current)
         {
-            var newAphorism = await _aphorismRepository.FindByCondition(ar => ar.IsCurrent);
-            if (newAphorism == null)
+            Aphorism newAphorism = null;
+            if (current)
             {
-                newAphorism = _aphorismRepository.GetAll().FirstOrDefault();
+                newAphorism = await _aphorismRepository.FindByCondition(ar => ar.IsCurrent);
+                if (newAphorism == null)
+                {
+                    newAphorism = _aphorismRepository.GetAll().FirstOrDefault();
+                }
+            }
+            else
+            {
+                newAphorism = await _aphorismRepository.FindByCondition(ar => !ar.IsCurrent);
+                if (newAphorism == null)
+                {
+                    newAphorism = _aphorismRepository.GetAll().FirstOrDefault();
+                }
             }
             return _mapper.Map<AphorismDto>(newAphorism);
         }
@@ -48,6 +60,44 @@ namespace Application.Services.Implementation
             newAphorism.IsCurrent = true;
             _aphorismRepository.Update(newAphorism);
             await _aphorismRepository.SaveChangesAsync();
+        }
+
+        public async Task<AphorismDto> GetAphorismByIdAsync(int aphorismId)
+        {
+            return _mapper.Map<AphorismDto>(await _aphorismRepository.FindByIdAsync(aphorismId));
+        }
+
+        public async Task<List<AphorismDto>> GetAllAphorismsAsync()
+        {
+            return _mapper.Map<List<AphorismDto>>(await _aphorismRepository.GetAll().ToListAsync());
+        }
+
+        public async Task<AphorismDto> AddAphorismAsync(AphorismDto aphorismDto)
+        {
+            var aphorism = _mapper.Map<Aphorism>(aphorismDto);
+            _aphorismRepository.Add(aphorism);
+            await _aphorismRepository.SaveChangesAsync();
+            return _mapper.Map<AphorismDto>(aphorism);
+        }
+
+        public async Task<bool> RemoveAphorismAsync(int aphorismId)
+        {
+            var aphorism = await _aphorismRepository.FindByIdAsync(aphorismId);
+            if (aphorism == null)
+            {
+                return false;
+            }
+            _aphorismRepository.Remove(aphorism);
+            await _aphorismRepository.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateAphorismAsync(AphorismDto aphorismDto)
+        {
+            var aphorism = _mapper.Map<Aphorism>(aphorismDto);
+            _aphorismRepository.Update(aphorism);
+            var affectedRows = await _aphorismRepository.SaveChangesAsync();
+            return affectedRows > 0;
         }
     }
 }
