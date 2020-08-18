@@ -103,7 +103,7 @@ namespace Application.Services.Implementation
             {
                 await _notificationsService.NotifyAsync(
                     wish.User, 
-                    $"Book '{wish.Book.Name}' became available.", 
+                    $"The book '{wish.Book.Name}' from your wish list is available now.", 
                     wish.BookId, 
                     NotificationAction.Request);
                 await _emailSenderService.SendForWishBecameAvailable(

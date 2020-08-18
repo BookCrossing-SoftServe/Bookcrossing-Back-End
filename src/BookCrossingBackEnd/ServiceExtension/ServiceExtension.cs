@@ -55,7 +55,11 @@ namespace BookCrossingBackEnd.ServiceExtension
         {
             services.AddScoped<INotificationsService, NotificationsService>();
 
-            services.AddSignalR();
+            services.AddSignalR(options =>
+            {
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(100);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(50);
+            });
             services.AddSingleton<IUserIdProvider, UserIdProvider>();
         }
 

@@ -8,8 +8,10 @@ namespace Application.Dto.Email
     {
         public string OwnerName { get; set; }
         public MailboxAddress OwnerAddress { get; set; }
+        public User Owner { get; set; }
         public string UserName { get; set; }
         public MailboxAddress UserAddress { get; set; }
+        public User User { get; set; }
         public int RequestId { get; set; }
         public DateTime RequestDate { get; set; }
         public string BookName { get; set; }

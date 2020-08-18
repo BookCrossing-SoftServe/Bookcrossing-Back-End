@@ -9,6 +9,7 @@ namespace Domain.RDBMS.Entities
     {
         None,
         Open,
-        Request
+        Request,
+        StartReading
     }
 }
