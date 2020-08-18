@@ -1,3 +1,4 @@
+using System;
 using Domain.RDBMS.Entities;
 using Infrastructure.RDBMS.Configuration;
 using Infrastructure.RDBMS.Seeder;
@@ -27,6 +28,7 @@ namespace Infrastructure.RDBMS
         public DbSet<ScheduleJob> ScheduleJob { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
         public DbSet<Aphorism> Aphorisms { get; set; }
+        public DbSet<Notification> Notification { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -53,6 +55,7 @@ namespace Infrastructure.RDBMS
             modelBuilder.ApplyConfiguration(new LanguageConfiguration());
             modelBuilder.ApplyConfiguration(new WishConfiguration());
             modelBuilder.ApplyConfiguration(new AphorismConfiguration());
+            modelBuilder.ApplyConfiguration(new NotificationConfiguration());
 
             DataSeeder.Seed(modelBuilder);
         }

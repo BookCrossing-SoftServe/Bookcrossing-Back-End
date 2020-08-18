@@ -34,21 +34,23 @@ namespace Application.Services.Implementation
         private readonly IRepository<UserRoom> _userLocationRepository;
         private readonly IRootRepository<BookRootComment> _rootCommentRepository;
         private readonly IWishListService _wishListService;
+        private readonly INotificationsService _notificationsService;
 
         public RequestService(
-            IRepository<Request> requestRepository, 
-            IRepository<Book> bookRepository, 
+            IRepository<Request> requestRepository,
+            IRepository<Book> bookRepository,
             IMapper mapper,
-            IEmailSenderService emailSenderService, 
-            IRepository<User> userRepository, 
+            IEmailSenderService emailSenderService,
+            IRepository<User> userRepository,
             IPaginationService paginationService,
-            IRepository<Language> bookLanguageRepository, 
-            IHangfireJobScheduleService hangfireJobScheduleService, 
+            IRepository<Language> bookLanguageRepository,
+            IHangfireJobScheduleService hangfireJobScheduleService,
             IRepository<BookAuthor> bookAuthorRepository,
-            IRepository<BookGenre> bookGenreRepository, 
-            IRepository<UserRoom> userLocationRepository, 
-            IRootRepository<BookRootComment> rootCommentRepository, 
-            IWishListService wishListService)
+            IRepository<BookGenre> bookGenreRepository,
+            IRepository<UserRoom> userLocationRepository,
+            IRootRepository<BookRootComment> rootCommentRepository,
+            IWishListService wishListService,
+            INotificationsService notificationsService)
         {
             _requestRepository = requestRepository;
             _bookRepository = bookRepository;
@@ -63,6 +65,7 @@ namespace Application.Services.Implementation
             _userLocationRepository = userLocationRepository;
             _rootCommentRepository = rootCommentRepository;
             _wishListService = wishListService;
+            _notificationsService = notificationsService;
         }
 
         /// <inheritdoc />
@@ -88,7 +91,7 @@ namespace Application.Services.Implementation
             book.State = BookState.Requested;
             await _bookRepository.SaveChangesAsync();
             var user = _userRepository.FindByIdAsync(userId).Result;
-            if (_userRepository.FindByCondition(u => u.Email == book.User.Email).Result.IsEmailAllowed)
+            if (book.User.IsEmailAllowed)
             {
                 var emailMessageForRequest = new RequestMessage()
                 {
@@ -102,18 +105,27 @@ namespace Application.Services.Implementation
                 await _emailSenderService.SendForRequestAsync(emailMessageForRequest);
             }
 
-            if (_userRepository.FindByCondition(u => u.Email == user.Email).Result.IsEmailAllowed)
+            await _notificationsService.NotifyAsync(
+                book.User,
+                $"Your book '{book.Name}' was requested by {user.FirstName} {user.LastName}",
+                book.Id,
+                NotificationAction.Open);
+            await _notificationsService.NotifyAsync(
+                user,
+                $"The book '{book.Name}' that you`ve requested is available now.",
+                book.Id,
+                NotificationAction.Open);
+
+            var emailMessageForReceiveConfirmation = new RequestMessage()
             {
-                var emailMessageForReceiveConfirmation = new RequestMessage()
-                {
-                    UserName = user.FirstName + " " + user.LastName,
-                    BookName = book.Name,
-                    BookId = book.Id,
-                    RequestId = request.Id,
-                    UserAddress = new MailboxAddress($"{user.Email}"),
-                };
-                await _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
-            }
+                UserName = user.FirstName + " " + user.LastName,
+                BookName = book.Name,
+                BookId = book.Id,
+                RequestId = request.Id,
+                UserAddress = new MailboxAddress($"{user.Email}"),
+                User = user
+            };
+            await _hangfireJobScheduleService.ScheduleRequestJob(emailMessageForReceiveConfirmation);
 
             return _mapper.Map<RequestDto>(request);
         }
@@ -271,15 +283,31 @@ namespace Application.Services.Implementation
             {
                 var emailMessage = new RequestMessage()
                 {
-                    OwnerName = request.User.FirstName + " " + request.User.LastName,
+                    OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                     BookName = request.Book.Name,
                     RequestId = request.Id,
                     OwnerAddress = new MailboxAddress($"{request.User.Email}")
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
+                await _notificationsService.NotifyAsync(
+                    request.User,
+                    $"Book '{request.Book.Name}' was received!",
+                    request.BookId,
+                    NotificationAction.Open);
             }
 
-            await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
+            await _notificationsService.NotifyAsync(
+                request.Owner,
+                $"{request.User.FirstName} {request.User.LastName} has successfully received and started reading '{book.Name}'.",
+                book.Id,
+                NotificationAction.Open);
+            await _notificationsService.NotifyAsync(
+                request.User,
+                $"You became a current owner of the book '{book.Name}'",
+                book.Id,
+                NotificationAction.Open);
+
+                await _hangfireJobScheduleService.DeleteRequestScheduleJob(requestId);
             return affectedRows > 0;
         }
 
@@ -310,6 +338,17 @@ namespace Application.Services.Implementation
                 await _emailSenderService.SendForCanceledRequestAsync(emailMessage);
             }
 
+            await _notificationsService.NotifyAsync(
+                request.Owner,
+                $"Your book '{request.Book.Name}' request was canceled.",
+                request.BookId,
+                NotificationAction.Open);
+            await _notificationsService.NotifyAsync(
+                request.User,
+                $"Your request for book '{request.Book.Name}' was canceled.",
+                request.BookId,
+                NotificationAction.Open);
+
             var book = await _bookRepository.FindByIdAsync(request.BookId);
             book.State = BookState.Available;
             var isBookUpdated = await _bookRepository.SaveChangesAsync() > 0;
@@ -317,7 +356,7 @@ namespace Application.Services.Implementation
             {
                 await _wishListService.NotifyAboutAvailableBookAsync(book.Id);
             }
-            
+
             _requestRepository.Remove(request);
 
             var affectedRows = await _requestRepository.SaveChangesAsync();
