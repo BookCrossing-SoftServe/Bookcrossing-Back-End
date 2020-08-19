@@ -59,7 +59,7 @@ namespace Application.Services.Implementation
             return await Delete(ids, rootId, childId);
         }
 
-        protected virtual async Task<int> SetAsDeleted(IEnumerable<string> ids, ChildDto childComment, string rootId)
+        protected async Task<int> SetAsDeleted(IEnumerable<string> ids, ChildDto childComment, string rootId)
         {
             var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c)).ToList();
             var path = ids.Skip(1).Select(x => ("Comments", x)).ToList();
