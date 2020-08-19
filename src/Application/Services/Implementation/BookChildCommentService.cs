@@ -50,9 +50,8 @@ namespace Application.Services.Implementation
             string rootId = ids.First();
             string childId = ids.Last();
             var rootComment = await _bookRootCommentService.GetById(rootId);
-            var childComment = await FindChild(rootComment.Comments, 
-                childId);
-            if (childComment != null && childComment.Comments.Any())
+            var childComment = await FindChild(rootComment.Comments, childId);
+            if (childComment?.Comments?.Any() == true)
             {
                 return await SetAsDeleted(ids, childComment, rootId);
             }
@@ -60,33 +59,31 @@ namespace Application.Services.Implementation
             return await Delete(ids, rootId, childId);
         }
 
-        private async Task<int> SetAsDeleted(IEnumerable<string> ids, ChildDto childComment, string rootId)
+        protected virtual async Task<int> SetAsDeleted(IEnumerable<string> ids, ChildDto childComment, string rootId)
         {
-            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
-            List<(string nestedArrayName, string itemId)> path = ids.Skip(1).Select(x => ("Comments", x)).ToList();
-            UpdateResult updateResult = await _childCommentRepository.SetAsync(
+            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c)).ToList();
+            var path = ids.Skip(1).Select(x => ("Comments", x)).ToList();
+            return (int)(await _childCommentRepository.SetAsync(
                 rootId,
                 new BookChildComment() {IsDeleted = true, Text = childComment.Text, Comments = children},
                 path
-            );
-            return (int) updateResult.ModifiedCount;
+            )).ModifiedCount;
         }
 
-        private async Task<int> Delete(IEnumerable<string> ids, string rootId, string childId)
+        protected async Task<int> Delete(IEnumerable<string> ids, string rootId, string childId)
         {
-            List<(string nestedArrayName, string itemId)> path = ids.Skip(1).SkipLast(1).Select(x => ("Comments", x)).ToList();
+            var path = ids.Skip(1).SkipLast(1).Select(x => ("Comments", x)).ToList();
             UpdateResult updateResult = await _childCommentRepository.PullAsync(
                 rootId,
                 childId,
                 path,
                 "Comments");
             RootDto rootComment = await _bookRootCommentService.GetById(rootId);
-            if (!HasActiveComments(rootComment.Comments) && rootComment.IsDeleted)
+            if (rootComment.IsDeleted && !HasActiveComments(rootComment.Comments))
             {
                 await _bookRootCommentService.Remove(rootId);
             }
-
-            if (rootComment.Comments.Any())
+            else if (rootComment.Comments.Any())
             {
                 await ClearCommentBranch(rootComment, ids.Skip(1).SkipLast(1));
             }
@@ -110,7 +107,7 @@ namespace Application.Services.Implementation
                 return 0;
             }
 
-            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c));
+            var children = childComment.Comments.Select(c => _mapper.Map<ChildDto, BookChildComment>(c)).ToList();
 
             List<(string nestedArrayName, string itemId)> path = updateDto.Ids.Skip(1).Select(x => ("Comments", x)).ToList();
 
@@ -122,7 +119,7 @@ namespace Application.Services.Implementation
             return Convert.ToInt32(updateResult.MatchedCount);
         }
 
-        private async Task<ChildDto> FindChild(IEnumerable<ChildDto> children, string childId)
+        protected async Task<ChildDto> FindChild(IEnumerable<ChildDto> children, string childId)
         {
             var searchedChild = children.FirstOrDefault(c => c.Id == childId);
             if (searchedChild != null)
@@ -145,7 +142,7 @@ namespace Application.Services.Implementation
             return null;
         }
 
-        public async Task ClearCommentBranch(RootDto root, IEnumerable<string> ids)
+        protected async Task ClearCommentBranch(RootDto root, IEnumerable<string> ids)
         {
             var path = new List<(string nestedArrayName, string itemId)>();
             foreach (var id in ids)
@@ -169,7 +166,7 @@ namespace Application.Services.Implementation
             }
         }
 
-        private bool HasActiveComments(IEnumerable<ChildDto> children)
+        protected bool HasActiveComments(IEnumerable<ChildDto> children)
         {
             if (!children.Any())
             {
