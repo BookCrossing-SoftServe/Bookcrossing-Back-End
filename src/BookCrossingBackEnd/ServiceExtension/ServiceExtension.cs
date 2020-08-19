@@ -140,7 +140,7 @@ namespace BookCrossingBackEnd.ServiceExtension
             string settingsName;
 
             if (!env.IsProduction())
-                settingsName = "MongoSettings";
+                settingsName = "MongoSettingsLocal";
             else
                 settingsName = "MongoSettings";
 
