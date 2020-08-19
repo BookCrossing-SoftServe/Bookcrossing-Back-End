@@ -46,9 +46,25 @@ namespace Application.Services.Implementation
             await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
         /// <inheritdoc />
-        public async Task SendThatBookWasReceivedAsync(RequestMessage requestMessage)
+        public async Task SendThatBookWasReceivedToPreviousOwnerAsync(RequestMessage requestMessage)
         {
             var body = await GetMessageTemplateFromFile("RequestReceived.html");
+
+            body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
+            body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
+            body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
+            body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
+
+            var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
+                $"Your book {requestMessage.BookName} was received!", body);
+
+            await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
+        }
+        /// <inheritdoc />
+        public async Task SendThatBookWasReceivedToNewOwnerAsync(RequestMessage requestMessage)
+        {
+            var body = await GetMessageTemplateFromFile("BookReceived.html");
 
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
@@ -56,7 +72,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },
-                $"Your book {requestMessage.BookName} was received!", body);
+                $"Book {requestMessage.BookName} was received!", body);
 
             await _smtpClient.SendAsync(CreateEmailMessage(message), _emailConfig);
         }
