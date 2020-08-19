@@ -53,6 +53,7 @@ namespace Application.Services.Implementation
             body = body.Replace("{OWNER.NAME}", requestMessage.OwnerName);
             body = body.Replace("{REQUEST.ID}", Convert.ToString(requestMessage.RequestId));
             body = body.Replace("{BOOK.NAME}", requestMessage.BookName);
+            body = body.Replace("{USER.NAME}", requestMessage.UserName);
             body = body.Replace("{UnsubscribeURL}", _unsubscribeUrl + requestMessage.OwnerAddress + "&number=" + CreateSecurityHash(requestMessage.OwnerAddress.ToString()));
 
             var message = new Message(new List<string>() { requestMessage.OwnerAddress.ToString() },

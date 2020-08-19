@@ -286,6 +286,7 @@ namespace Application.Services.Implementation
                     OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                     BookName = request.Book.Name,
                     RequestId = request.Id,
+                    UserName = request.User.FirstName + " " + request.User.LastName,
                     OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
                 };
                 await _emailSenderService.SendThatBookWasReceivedToPreviousOwnerAsync(emailMessage);
