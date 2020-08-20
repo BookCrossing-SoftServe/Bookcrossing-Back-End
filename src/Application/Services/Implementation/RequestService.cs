@@ -286,11 +286,24 @@ namespace Application.Services.Implementation
                     OwnerName = request.Owner.FirstName + " " + request.Owner.LastName,
                     BookName = request.Book.Name,
                     RequestId = request.Id,
+                    UserName = request.User.FirstName + " " + request.User.LastName,
+                    OwnerAddress = new MailboxAddress($"{request.Owner.Email}")
+                };
+                await _emailSenderService.SendThatBookWasReceivedToPreviousOwnerAsync(emailMessage);
+            }
+            if (request.User.IsEmailAllowed)
+            {
+                var emailMessage = new RequestMessage()
+                {
+                    OwnerName = request.User.FirstName + " " + request.User.LastName,
+                    BookName = request.Book.Name,
+                    RequestId = request.Id,
                     OwnerAddress = new MailboxAddress($"{request.User.Email}")
                 };
-                await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
-            }
 
+                await _emailSenderService.SendThatBookWasReceivedToNewOwnerAsync(emailMessage);
+            }
+            
             await _notificationsService.NotifyAsync(
                 request.Owner.Id,
                 $"{request.User.FirstName} {request.User.LastName} has successfully received and started reading '{book.Name}'.",
