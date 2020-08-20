@@ -18,11 +18,13 @@ namespace Application.Services.Implementation
         private readonly IRepository<Book> _bookRepository;
         private readonly IPaginationService _paginationService;
         private readonly IEmailSenderService _emailSenderService;
+        private readonly INotificationsService _notificationsService;
 
         public WishListService(
             IUserResolverService userResolverService,
             IPaginationService paginationService,
             IEmailSenderService emailSenderService,
+            INotificationsService notificationsService,
             IRepository<Wish> wishRepository,
             IRepository<Book> bookRepository)
         {
@@ -30,6 +32,7 @@ namespace Application.Services.Implementation
             _wishRepository = wishRepository;
             _paginationService = paginationService;
             _bookRepository = bookRepository;
+            _notificationsService = notificationsService;
             _emailSenderService = emailSenderService;
         }
 
@@ -91,18 +94,26 @@ namespace Application.Services.Implementation
 
         public async Task NotifyAboutAvailableBookAsync(int bookId)
         {
-            var wishesQuery = _wishRepository.GetAll()
-                .Where(wish => wish.BookId == bookId && wish.User.IsEmailAllowed)
+            var wishes = await _wishRepository.GetAll()
+                .Where(wish => wish.BookId == bookId)
                 .Include(wish => wish.User)
-                .Include(wish => wish.Book);
+                .Include(wish => wish.Book).ToListAsync();
 
-            foreach (var wish in wishesQuery)
+            foreach (var wish in wishes)
             {
-                await _emailSenderService.SendForWishBecameAvailable(
-                    $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
+                await _notificationsService.NotifyAsync(
+                    wish.User, 
+                    $"The book '{wish.Book.Name}' from your wish list is available now.", 
                     wish.BookId, 
-                    wish.Book.Name, 
-                    wish.User.Email);
+                    NotificationAction.Request);
+                if (wish.User.IsEmailAllowed)
+                {
+                    await _emailSenderService.SendForWishBecameAvailable(
+                        $"{wish.User.FirstName} {wish.User.LastName}".Trim(),
+                        wish.BookId,
+                        wish.Book.Name,
+                        wish.User.Email);
+                }
             }
         }
 

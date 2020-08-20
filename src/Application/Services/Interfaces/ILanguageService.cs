@@ -46,6 +46,6 @@ namespace Application.Services.Interfaces
         /// </summary>
         /// <param name="language">NewLanguage DTO instance</param>
         /// <returns>Returns created Language DTO </returns>
-        Task<LanguageDto> Add(LanguageDto language);
+        Task<LanguagePostDto> Add(LanguagePostDto language);
     }
 }

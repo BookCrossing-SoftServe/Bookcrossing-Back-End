@@ -17,51 +17,14 @@ These instructions will get you a copy of the project up and running on your loc
 
 [Docker-compose](https://github.com/docker/compose)
 
+###### Note: It's better to use [docker-desktop](https://www.docker.com/products/docker-desktop) if you are on windows
 
 ### Installing
 1. Clone repository from GitHub with $ git clone https://github.com/Lv-492-SoftServe/Bookcrossing-Back-End.git 
 
-2. Move to the Bookcrossing-Back-End/src/BookCrossingBackEnd/ and create file appsettings.json then paste the code below.
-```
-{
-  "iKeyForDevelop": "{microsoft_insights_key}",
+2. Move to Bookcrossing-Back-End and execute "docker-compose up"
 
-  "iKeyForProduction": "{microsoft_insights_key}",
-
-  "EmailConfiguration": {
-    "From": "{sender_email}",
-    "SmtpServer": "{smtp_server}",
-    "Port": 587,
-    "Username": "{username}",
-    "Password": "{password}"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
-  },
-  "AllowedHosts": "*",
-
-  "Data": {
-    "DefaultConnection": {
-      "ConnectionString": ""
-    }
-  },
-  "Jwt": {
-    "Key": "SoftServeBookCrossingSecretKey",
-    "Issuer": "BookCrossing.com"
-  },
-
-  "StorageConfiguration": {
-    "FolderForBookImages": "book_images"
-  }
-}
-```
-###### 07.29.2020
-
-3. Move back to Bookcrossing-Back-End and execute "docker-compose up"
+###### Note: Also check Bookcrossing-Back-End/src/BookCrossingBackEnd/examplesettings.json and save it as appsettings.json if you want to deploy without docker-compose or pass any extra variables!
   
 **Note! Contribution rules:**  
 1. All Pull Requests should start from prefix *#xxx-yyy* where *xxx* - task number and and *yyy* - short description 

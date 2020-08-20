@@ -1,9 +1,9 @@
-﻿using Domain.NoSQL.Entities;
-using MongoDB.Driver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Domain.NoSQL.Entities;
+using MongoDB.Driver;
 
 namespace Domain.NoSQL
 {

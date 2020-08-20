@@ -60,6 +60,13 @@ namespace Application.Services.Interfaces
         /// </summary>
         ///  <param name="parameters">filter parametrs</param>
         /// <returns></returns>
+        /// 
+
+        Task<List<BookGetDto>> GetCurrentOwnedById(int id);
+
+
+        Task<int> GetCurrentOwnedByIdCount(int userId);
+
         Task<PaginationDto<BookGetDto>> GetReadBooksAsync(BookQueryParams parameters);
 
         /// <summary>

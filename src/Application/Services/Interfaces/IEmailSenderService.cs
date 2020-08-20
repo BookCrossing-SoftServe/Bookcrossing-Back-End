@@ -21,12 +21,18 @@ namespace Application.Services.Interfaces
         Task SendReceiveConfirmationAsync(string userName, string bookName, int bookId, int requestId, string userAddress);
 
         /// <summary>
-        /// Sending email to notify that book was delivered to user
+        /// Sending email to notify previous owner that book was delivered to user
         /// </summary>
         /// <param name="message">message</param>
         /// <returns></returns>
-        Task SendThatBookWasReceivedAsync(RequestMessage message);
+        Task SendThatBookWasReceivedToPreviousOwnerAsync(RequestMessage message);
 
+        /// <summary>
+        /// Sending email to notify new owner that book was delivered to user
+        /// </summary>
+        /// <param name="message">message</param>
+        /// <returns></returns>
+        Task SendThatBookWasReceivedToNewOwnerAsync(RequestMessage message);
         /// <summary>
         /// Sending email to notify that book was activated
         /// </summary>

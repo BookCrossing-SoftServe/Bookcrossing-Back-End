@@ -24,7 +24,7 @@ namespace BookCrossingBackEnd.Controllers
         [HttpGet("{id:min(1)}")]
         public async Task<ActionResult<GenreDto>> GetGenre(int id)
         {
-            _logger.LogInformation("Getting genre {Id}", id);
+            _logger.LogInformation("Getting genre {id}", id);
             var genre = await _genreService.GetById(id);
             if (genre == null)
             {
