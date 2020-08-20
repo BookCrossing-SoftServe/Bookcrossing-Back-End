@@ -33,12 +33,12 @@ namespace Application.Services.Implementation
             return _mapper.Map<List<LanguageDto>>(await _languageRepository.GetAll().ToListAsync());
         }
 
-        public async Task<LanguagePostDto> Add(LanguagePostDto languageDto)
+        public async Task<LanguageDto> Add(LanguagePostDto languageDto)
         {
             var language = _mapper.Map<Language>(languageDto);
             _languageRepository.Add(language);
             await _languageRepository.SaveChangesAsync();
-            return _mapper.Map<LanguagePostDto>(language);
+            return _mapper.Map<LanguageDto>(language);
         }
 
         public async Task<bool> Remove(int languageId)
