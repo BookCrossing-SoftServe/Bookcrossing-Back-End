@@ -18,10 +18,22 @@ namespace Application.Services.Implementation
         }
         public async Task ScheduleRequestJob(RequestMessage message)
         {
-            var jobId = BackgroundJob.Schedule<EmailSenderService>(x => x.SendReceiveConfirmationAsync(message.UserName, message.BookName, 
-                    message.BookId, message.RequestId, message.UserAddress.ToString()),
+            if (message.User.IsEmailAllowed)
+            {
+                var emailJobId = BackgroundJob.Schedule<EmailSenderService>(x => x.SendReceiveConfirmationAsync(
+                        message.UserName, message.BookName,
+                        message.BookId, message.RequestId, message.UserAddress.ToString()),
+                    TimeSpan.FromDays(9));
+                _scheduleRepository.Add(new ScheduleJob { ScheduleId = emailJobId, RequestId = message.RequestId });
+            }
+            var notificationJobId = BackgroundJob.Schedule<NotificationsService>(
+                x => x.NotifyAsync(
+                    message.User,
+                    $"You have requested '{message.BookName}'. Please click 'Start reading' if the book is received otherwise the book request will be automatically canceled in 1 day",
+                    message.BookId,
+                    NotificationAction.StartReading),
                 TimeSpan.FromDays(9));
-            _scheduleRepository.Add(new ScheduleJob{ ScheduleId = jobId, RequestId = message.RequestId});
+            _scheduleRepository.Add(new ScheduleJob { ScheduleId = notificationJobId, RequestId = message.RequestId });
             await _scheduleRepository.SaveChangesAsync();
             var secondJobId = BackgroundJob.Schedule<RequestService>(x => x.RemoveAsync(message.RequestId),
                 TimeSpan.FromDays(10));

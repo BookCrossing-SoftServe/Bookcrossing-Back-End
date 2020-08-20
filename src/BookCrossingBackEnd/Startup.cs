@@ -1,25 +1,26 @@
 using System;
 using System.IO;
+using System.Linq;
+using Application;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
+using Application.SignalR.Hubs;
+using BookCrossingBackEnd.ServiceExtension;
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.MemoryStorage;
+using Infrastructure.RDBMS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Application;
-using Hangfire;
-using Hangfire.MemoryStorage;
-using BookCrossingBackEnd.ServiceExtension;
-using Infrastructure.RDBMS;
-using Microsoft.Data.SqlClient;
-using System.Linq;
-using Hangfire.Dashboard;
+using Microsoft.OpenApi.Models;
 
 namespace BookCrossingBackEnd
 {
@@ -44,6 +45,8 @@ namespace BookCrossingBackEnd
             services.AddDbContext(Configuration, Environment);
 
             services.AddGoodreadsSource(Configuration);
+
+            services.AddNotifications();
 
             services.AddMongoSettings(Configuration, Environment);
 
@@ -74,6 +77,32 @@ namespace BookCrossingBackEnd
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SoftServe BookCrossing", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    In = ParameterLocation.Header,
+                    Type= SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
 
             services.AddHangfire(config =>
@@ -146,6 +175,7 @@ namespace BookCrossingBackEnd
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<NotificationsHub>(NotificationsHub.URL);
                 endpoints.MapControllers();
             });
 

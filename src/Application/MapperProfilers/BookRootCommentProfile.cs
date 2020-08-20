@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using AutoMapper;
 using NoSqlEntities = Domain.NoSQL.Entities;
 namespace Application.MapperProfilers
 {

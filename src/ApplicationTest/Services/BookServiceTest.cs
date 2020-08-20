@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.Dto;
@@ -148,6 +148,19 @@ namespace ApplicationTest.Services
             var booksResult = await _bookService.GetAllAsync(query);
 
             booksResult.Page.Should().HaveCount(1);
+        }
+
+        [Test]
+        public async Task GetCurrentOwnedByIdCount_UserExistsAndHaveBooks_ReturnsNumberOfBooks()
+        {
+            int userId = 2;
+            int expectedNumber = 1;
+            var booksMock = GetTestBooks().AsQueryable().BuildMock();
+            _bookRepositoryMock.Setup(s => s.GetAll()).Returns(booksMock.Object);
+
+            var result = _bookService.GetCurrentOwnedByIdCount(userId).Result;
+
+            result.Should().Be(expectedNumber);
         }
 
         [Test]
@@ -434,7 +447,7 @@ namespace ApplicationTest.Services
         {
             return new List<Book>
             {
-                new Book { Id = 1 },
+                new Book { Id = 1, UserId = 2 },
                 new Book { Id = 2 }
             };
         }

@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson;
+﻿using System.Collections.Generic;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Collections.Generic;
 
 namespace Domain.NoSQL.Entities
 {
@@ -11,19 +11,29 @@ namespace Domain.NoSQL.Entities
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonIgnoreIfNull]
         public string Id { get; set; }
+
         [BsonIgnoreIfNull]
         public string Text { get; set; }
+
         [BsonIgnoreIfNull]
         public string Date { get; set; }
+
         [BsonIgnoreIfNull]
         public int Rating { get; set; }
+
         [BsonIgnoreIfDefault]
         public int BookId { get; set; }
+
         [BsonIgnoreIfDefault]
         public int OwnerId { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
+
         [BsonIgnoreIfNull]
         public IEnumerable<BookChildComment> Comments { get; set; }
+
         public BookRootComment() { }
+
         public BookRootComment(bool IsForInserting)
         {
             if (IsForInserting)

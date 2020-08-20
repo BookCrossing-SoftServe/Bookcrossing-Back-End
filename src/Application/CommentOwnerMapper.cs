@@ -21,7 +21,7 @@ namespace Application
         public async Task<IEnumerable<Dto.Comment.Book.RootDto>> MapAsync(IEnumerable<BookRootComment> rootEntities)
         {
             if (rootEntities == null)
-            {
+            {   
                 return new List<Dto.Comment.Book.RootDto>();
             }
 

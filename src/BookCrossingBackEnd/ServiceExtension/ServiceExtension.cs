@@ -3,8 +3,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Dto.Email;
 using Application.Dto.OuterSource;
+using Application.MapperProfilers;
 using Application.Services.Implementation;
 using Application.Services.Interfaces;
+using Application.SignalR.Hubs;
+using Application.SignalR.UserIdProviders;
 using AutoMapper;
 using BookCrossingBackEnd.Validators;
 using Domain.NoSQL;
@@ -13,6 +16,7 @@ using Hangfire;
 using Infrastructure.NoSQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +49,18 @@ namespace BookCrossingBackEnd.ServiceExtension
             services.AddScoped<ILanguageService, LanguageService>();
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<IAphorismService, AphorismService>();
+        }
+
+        public static void AddNotifications(this IServiceCollection services)
+        {
+            services.AddScoped<INotificationsService, NotificationsService>();
+
+            services.AddSignalR(options =>
+            {
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(100);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(50);
+            });
+            services.AddSingleton<IUserIdProvider, UserIdProvider>();
         }
 
         public static void AddGoodreadsSource(this IServiceCollection services, IConfiguration configuration)
@@ -82,12 +98,24 @@ namespace BookCrossingBackEnd.ServiceExtension
                     };
                     options.Events = new JwtBearerEvents
                     {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            if (string.IsNullOrEmpty(accessToken) == false && 
+                                context.Request.Path.StartsWithSegments(NotificationsHub.URL))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        },
                         OnAuthenticationFailed = context =>
                         {
                             if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                             {
                                 context.Response.Headers.Add("Token-Expired", "true");
                             }
+
                             return Task.CompletedTask;
                         }
                     };
@@ -112,9 +140,9 @@ namespace BookCrossingBackEnd.ServiceExtension
             string settingsName;
 
             if (!env.IsProduction())
-                settingsName = "MongoSettings";
+                settingsName = "MongoSettingsLocal";
             else
-                settingsName = "CosmoDBSettings";
+                settingsName = "MongoSettings";
 
             services.Configure<MongoSettings>(
                 configuration.GetSection(settingsName));
@@ -137,6 +165,7 @@ namespace BookCrossingBackEnd.ServiceExtension
                 mc.AddProfile(new Application.MapperProfilers.BookProfile());
                 mc.AddProfile(new Application.MapperProfilers.LanguageProfile());
                 mc.AddProfile(new Application.MapperProfilers.AphorismProfile());
+                mc.AddProfile(new NotificationProfile());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
@@ -165,11 +194,13 @@ namespace BookCrossingBackEnd.ServiceExtension
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .WithExposedHeaders("Token-Expired", "InvalidRefreshToken", "InvalidCredentials")
-                .Build());
+                options.AddPolicy("CorsPolicy", builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("Token-Expired", "InvalidRefreshToken", "InvalidCredentials")
+                    .WithOrigins("http://localhost:4200", "https://book-crossing-dev.herokuapp.com", "https://book-crossing-web.azurewebsites.net")
+                    .AllowCredentials()
+                    .Build());
             });
         }
         public static void AddMVCWithFluentValidatoin(this IServiceCollection services)
