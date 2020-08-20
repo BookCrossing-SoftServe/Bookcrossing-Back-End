@@ -106,12 +106,12 @@ namespace Application.Services.Implementation
             }
 
             await _notificationsService.NotifyAsync(
-                book.User,
+                book.User.Id,
                 $"Your book '{book.Name}' was requested by {user.FirstName} {user.LastName}",
                 book.Id,
                 NotificationAction.Open);
             await _notificationsService.NotifyAsync(
-                user,
+                user.Id,
                 $"The book '{book.Name}' that you`ve requested is available now.",
                 book.Id,
                 NotificationAction.Open);
@@ -289,20 +289,15 @@ namespace Application.Services.Implementation
                     OwnerAddress = new MailboxAddress($"{request.User.Email}")
                 };
                 await _emailSenderService.SendThatBookWasReceivedAsync(emailMessage);
-                await _notificationsService.NotifyAsync(
-                    request.User,
-                    $"Book '{request.Book.Name}' was received!",
-                    request.BookId,
-                    NotificationAction.Open);
             }
 
             await _notificationsService.NotifyAsync(
-                request.Owner,
+                request.Owner.Id,
                 $"{request.User.FirstName} {request.User.LastName} has successfully received and started reading '{book.Name}'.",
                 book.Id,
                 NotificationAction.Open);
             await _notificationsService.NotifyAsync(
-                request.User,
+                request.User.Id,
                 $"You became a current owner of the book '{book.Name}'",
                 book.Id,
                 NotificationAction.Open);
@@ -339,12 +334,12 @@ namespace Application.Services.Implementation
             }
 
             await _notificationsService.NotifyAsync(
-                request.Owner,
+                request.Owner.Id,
                 $"Your book '{request.Book.Name}' request was canceled.",
                 request.BookId,
                 NotificationAction.Open);
             await _notificationsService.NotifyAsync(
-                request.User,
+                request.User.Id,
                 $"Your request for book '{request.Book.Name}' was canceled.",
                 request.BookId,
                 NotificationAction.Open);

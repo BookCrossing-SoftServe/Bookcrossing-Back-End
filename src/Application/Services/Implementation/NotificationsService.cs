@@ -33,11 +33,12 @@ namespace Application.Services.Implementation
             _notificationHubContext = notificationHubContext;
         }
 
-        public async Task NotifyAsync(User user, string message, int? bookId, NotificationAction action)
+        public async Task NotifyAsync(int userId, string message, int? bookId = null,
+            NotificationAction action = NotificationAction.None)
         {
             var newNotification = new Notification 
             {
-                UserId = user.Id,
+                UserId = userId,
                 Message = message,
                 BookId = bookId,
                 Action = action
@@ -45,7 +46,7 @@ namespace Application.Services.Implementation
 
             _notificationsRepository.Add(newNotification);
             await _notificationsRepository.SaveChangesAsync();
-            await _notificationHubContext.Clients.User(user.Id.ToString())
+            await _notificationHubContext.Clients.User(userId.ToString())
                 .SendAsync(
                     "Notify", 
                     _mapper.Map<NotificationDto>(newNotification));

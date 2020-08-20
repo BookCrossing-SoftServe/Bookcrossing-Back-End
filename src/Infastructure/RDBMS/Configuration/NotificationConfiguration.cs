@@ -17,7 +17,7 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasDefaultValue(false);
 
             builder.Property(notification => notification.CreatedAt)
-                .HasDefaultValueSql("GETDATE()");
+                .HasDefaultValueSql("GETUTCDATE()");
 
             builder.Property(notification => notification.Action)
                 .HasConversion<int>();
