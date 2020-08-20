@@ -33,7 +33,6 @@ namespace Infrastructure.RDBMS.Configuration
                 .HasMaxLength(40);
 
             builder.Property(e => e.Password)
-                .IsRequired()
                 .HasColumnName("password")
                 .HasMaxLength(100);
 

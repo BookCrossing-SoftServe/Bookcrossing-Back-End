@@ -112,7 +112,16 @@ namespace Application.Services.Implementation
             if (await _userRepository.FindByCondition(u => u.Email == userRegisterDto.Email) == null)
             {
                 var user = _mapper.Map<User>(userRegisterDto);
-                user.Password = _passwordHasher.HashPassword(user, user.Password);
+
+                if(!String.IsNullOrEmpty(user.AzureId))
+                {
+                    user.AzureId = _passwordHasher.HashPassword(user, user.AzureId);
+                }
+                else
+                {
+                    user.Password = _passwordHasher.HashPassword(user, user.Password);
+                }
+
                 user.FirstName = Regex.Replace(user.FirstName, "[ ]+", " ");
                 user.LastName = Regex.Replace(user.LastName, "[ ]+", " ");
                 _userRepository.Add(user);

@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200820155916_AddAzureId")]
+    partial class AddAzureId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -429,7 +431,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 8, 20, 21, 51, 8, 110, DateTimeKind.Local).AddTicks(8410),
+                            DateAdded = new DateTime(2020, 8, 20, 18, 59, 15, 445, DateTimeKind.Local).AddTicks(2320),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,
@@ -598,7 +600,7 @@ namespace BookCrossingBackEnd.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool>("IsRead")
                         .ValueGeneratedOnAdd()
@@ -606,8 +608,8 @@ namespace BookCrossingBackEnd.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("Message")
-                        .HasColumnType("nvarchar(512)")
-                        .HasMaxLength(512);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");

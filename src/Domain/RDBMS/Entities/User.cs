@@ -7,6 +7,8 @@ namespace Domain.RDBMS.Entities
     {
         public int Id { get; set; }
 
+        public string AzureId { get; set; }
+
         public string FirstName { get; set; }
 
         public string MiddleName { get; set; }
