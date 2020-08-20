@@ -11,7 +11,7 @@ namespace Infrastructure.RDBMS.Configuration
             builder.ToTable("Notification");
 
             builder.Property(notification => notification.Message)
-                .HasMaxLength(100);
+                .HasMaxLength(512);
 
             builder.Property(notification => notification.IsRead)
                 .HasDefaultValue(false);
