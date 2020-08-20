@@ -112,7 +112,7 @@ namespace Application.Services.Implementation
                 NotificationAction.Open);
             await _notificationsService.NotifyAsync(
                 user.Id,
-                $"The book '{book.Name}' that you`ve requested is available now.",
+                $"The book '{book.Name}' successfully requested.",
                 book.Id,
                 NotificationAction.Open);
 
