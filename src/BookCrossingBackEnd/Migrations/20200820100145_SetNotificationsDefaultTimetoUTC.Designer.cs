@@ -4,14 +4,16 @@ using Infrastructure.RDBMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookCrossingBackEnd.Migrations
 {
     [DbContext(typeof(BookCrossingContext))]
-    partial class BookCrossingContextModelSnapshot : ModelSnapshot
+    [Migration("20200820100145_SetNotificationsDefaultTimetoURC")]
+    partial class SetNotificationsDefaultTimetoUTC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,35 +50,35 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 1,
                             IsCurrent = false,
-                            Phrase = "A book is not only a friend, it makes friends for you. When you have possessed a book with mind and spirit, you are enriched. But when you pass it on you are enriched threefold.",
-                            PhraseAuthor = "Henry Miller"
+                            Phrase = "…Учітесь,читайте,і чужому научайтесь,й свого не цурайтесь.",
+                            PhraseAuthor = "Taras Shevchenko"
                         },
                         new
                         {
                             Id = 2,
                             IsCurrent = false,
-                            Phrase = "Без книг порожнє людське життя.",
+                            Phrase = "Без книг порожнє людське життя",
                             PhraseAuthor = "Д. Бідний"
                         },
                         new
                         {
                             Id = 3,
                             IsCurrent = false,
-                            Phrase = "Strange thoughts brew in your heart when you spend too much time with old books.",
+                            Phrase = "Strange thoughts brew in your heart when you spend too much time with old books",
                             PhraseAuthor = "Aravind Adiga"
                         },
                         new
                         {
                             Id = 4,
                             IsCurrent = false,
-                            Phrase = "Читання – це звичка, до якої не звикають, а хворіють на неї.",
+                            Phrase = "Читання – це звичка, до якої не звикають, а хворіють на неї",
                             PhraseAuthor = "Д. Лихачов"
                         },
                         new
                         {
                             Id = 5,
                             IsCurrent = false,
-                            Phrase = "Access to knowledge is the superb, the supreme act of truly great civilizations. Of all the institutions that purport to do this, free libraries stand virtually alone in accomplishing this mission.",
+                            Phrase = "Access to knowledge is the superb, the supreme act of truly great civilizations. Of all the institutions that purport to do this, free libraries stand virtually alone in accomplishing this mission",
                             PhraseAuthor = "Toni Morrison"
                         },
                         new
@@ -97,77 +99,77 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 8,
                             IsCurrent = false,
-                            Phrase = "Книга… залишається німою не тільки для того, хто не вміє читати, а й для того, хто… не уміє витягти з мертвої букви живої думки.",
+                            Phrase = "Книга… залишається німою не тільки для того, хто не вміє читати, а й для того, хто… не уміє витягти з мертвої букви живої думки",
                             PhraseAuthor = "К. Ушинський"
                         },
                         new
                         {
                             Id = 9,
                             IsCurrent = false,
-                            Phrase = "The First Book: Go ahead, it won't bite. Well... maybe a little. More a nip, like. A tingle. It's pleasurable, really. You see, it keeps on opening. You may fall in. Sure, it's hard to get started; remember learning to use knife and fork? Dig in: you'll never reach bottom. It's not like it's the end of the world - just the world as you think you know it.",
+                            Phrase = "The First Book: Go ahead, it won't bite. Well... maybe a little. More a nip, like. A tingle. It's pleasurable, really. You see, it keeps on opening. You may fall in. Sure, it's hard to get started; remember learning to use knife and fork? Dig in: you'll never reach bottom. It's not like it's the end of the world -- just the world as you think you know it.",
                             PhraseAuthor = "Rita Dove"
                         },
                         new
                         {
                             Id = 10,
                             IsCurrent = false,
-                            Phrase = "Книги - це ріки, що наповнюють моря.",
+                            Phrase = "Книги - це ріки, що наповнюють моря",
                             PhraseAuthor = "Я. Мудрий"
                         },
                         new
                         {
                             Id = 11,
                             IsCurrent = false,
-                            Phrase = "Reading is to the mind what exercise is to the body.",
+                            Phrase = "Reading is to the mind what exercise is to the body",
                             PhraseAuthor = "Joseph Addison"
                         },
                         new
                         {
                             Id = 12,
                             IsCurrent = false,
-                            Phrase = "Кожна книга – крадіжка у власного життя. Чим більше читаєш, тим менше вмієш і хочеш жити сам.",
+                            Phrase = "Кожна книга – крадіжка у власного життя. Чим більше читаєш, тим менше вмієш і хочеш жити сам",
                             PhraseAuthor = "М. Цвєтаєва"
                         },
                         new
                         {
                             Id = 13,
                             IsCurrent = false,
-                            Phrase = "The greatest gift is a passion for reading. It is cheap, it consoles, it distracts, it excites, it gives you the knowledge of the world and experience of a wide kind. It is a moral illumination.",
+                            Phrase = "The greatest gift is a passion for reading. It is cheap, it consoles, it distracts, it excites, it gives you the knowledge of the world and experience of a wide kind. It is a moral illumination. ",
                             PhraseAuthor = "Elizabeth Hardwick"
                         },
                         new
                         {
                             Id = 14,
                             IsCurrent = false,
-                            Phrase = "Книги – люди в палітурках.",
+                            Phrase = "Книги – люди в палітурках",
                             PhraseAuthor = "А. Макаренко"
                         },
                         new
                         {
                             Id = 15,
                             IsCurrent = false,
-                            Phrase = "The book is good which puts me in a working mind.",
+                            Phrase = "The book is good which puts me in a working mind",
                             PhraseAuthor = "Ralph Waldo Emerson"
                         },
                         new
                         {
                             Id = 16,
                             IsCurrent = false,
-                            Phrase = "Є у мене товариші вірні – книжки добрії.",
+                            Phrase = "Є у мене товариші вірні – книжки добрії",
                             PhraseAuthor = "М. Грушевський"
                         },
                         new
                         {
                             Id = 17,
                             IsCurrent = false,
-                            Phrase = "Writing a book of poetry is like dropping a rose petal down the Grand Canyon and waiting for the echo.",
+                            Phrase = "Writing a book of poetry is like dropping a rose petal down the Grand Canyon and waiting for the echo",
                             PhraseAuthor = "Don Marquis"
                         },
                         new
                         {
                             Id = 18,
                             IsCurrent = false,
-                            Phrase = "Хто полюбить книгу, той далеко піде у своєму розвитку. Книга рятує душу від здерев’яніння.",
+                            Phrase = "Хто полюбить книгу, той далеко піде у своєму розвитку. Книга рятує душу від здерев’яніння",
                             PhraseAuthor = "Т. Шевченко"
                         },
                         new
@@ -181,7 +183,7 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 20,
                             IsCurrent = false,
-                            Phrase = "…Дивною і ненатуральною здається людина, яка існує без книги.",
+                            Phrase = "…Дивною і ненатуральною здається людина, яка існує без книги",
                             PhraseAuthor = "Т. Шевченко"
                         },
                         new
@@ -202,7 +204,7 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 23,
                             IsCurrent = false,
-                            Phrase = "The mere brute pleasure of reading - the sort of pleasure a cow must have in grazing.",
+                            Phrase = "The mere brute pleasure of reading -- the sort of pleasure a cow must have in grazing.",
                             PhraseAuthor = "G. K. Chesterton"
                         },
                         new
@@ -223,7 +225,7 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 26,
                             IsCurrent = false,
-                            Phrase = "Людину можна пізнати по тих книгах, які вона читає.",
+                            Phrase = "Людину можна пізнати по тих книгах, які вона читає",
                             PhraseAuthor = "С. Самолов"
                         },
                         new
@@ -251,7 +253,7 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 30,
                             IsCurrent = false,
-                            Phrase = "Три найсмачніші запахи? Запах гарячої кави, свіжої випічки і сторінок нової книги.",
+                            Phrase = "Три найсмачніші запахи? Запах гарячої кави, свіжої випічки і сторінок нової книги",
                             PhraseAuthor = "Н. Ясмінська"
                         },
                         new
@@ -272,7 +274,7 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 33,
                             IsCurrent = false,
-                            Phrase = "It is books that are a key to the wide world; if you can't do anything else, read all that you can.",
+                            Phrase = "It is books that are a key to the wide world; if you can't do anything else, read all that you can. ",
                             PhraseAuthor = "Jane Hamilton"
                         },
                         new
@@ -286,42 +288,42 @@ namespace BookCrossingBackEnd.Migrations
                         {
                             Id = 35,
                             IsCurrent = false,
-                            Phrase = "I wrote my first novel because I wanted to read it.",
+                            Phrase = "I wrote my first novel because I wanted to read it. ",
                             PhraseAuthor = "Toni Morrison"
                         },
                         new
                         {
                             Id = 36,
                             IsCurrent = false,
-                            Phrase = "Книга - велика річ, поки людина вміє нею користуватися.",
+                            Phrase = "Книга - велика річ, поки людина вміє нею користуватися",
                             PhraseAuthor = "O. Блок"
                         },
                         new
                         {
                             Id = 37,
                             IsCurrent = false,
-                            Phrase = "Everything in the world exists in order to end up as a book.",
+                            Phrase = "Everything in the world exists in order to end up as a book. ",
                             PhraseAuthor = "Stéphane Mallarmé"
                         },
                         new
                         {
                             Id = 38,
                             IsCurrent = false,
-                            Phrase = "Читання може бути трояке: перше - читати і не розуміти; друге - читати і розуміти; третє - читати і розуміти навіть те, чого не написано.",
-                            PhraseAuthor = "Я. Княжнін"
+                            Phrase = "Читання може бути трояке: перше - читати і не розуміти; друге - читати і розуміти; третє - читати і розуміти навіть те, чого не написано. ",
+                            PhraseAuthor = "-	Я. Княжнін"
                         },
                         new
                         {
                             Id = 39,
                             IsCurrent = false,
                             Phrase = "He felt about books as doctors feel about medicines, or managers about plays -- cynical but hopeful.",
-                            PhraseAuthor = "Dame Rose Macauley"
+                            PhraseAuthor = "-	Dame Rose Macauley"
                         },
                         new
                         {
                             Id = 40,
                             IsCurrent = false,
-                            Phrase = "Моя відрада - уявний політ над книгами зі сторінки на сторінку.",
+                            Phrase = "Моя відрада - уявний політ над книгами зі сторінки на сторінку",
                             PhraseAuthor = "М. Рубакін"
                         });
                 });
@@ -429,7 +431,7 @@ namespace BookCrossingBackEnd.Migrations
                         new
                         {
                             Id = 1,
-                            DateAdded = new DateTime(2020, 8, 20, 18, 59, 15, 445, DateTimeKind.Local).AddTicks(2320),
+                            DateAdded = new DateTime(2020, 8, 20, 13, 1, 43, 971, DateTimeKind.Local).AddTicks(9242),
                             LanguageId = 1,
                             Name = "Adventures of Junior",
                             Rating = 0.0,
@@ -764,9 +766,6 @@ namespace BookCrossingBackEnd.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AzureId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("BirthDate")
                         .HasColumnName("birth_date")
                         .HasColumnType("datetime2");
@@ -801,6 +800,7 @@ namespace BookCrossingBackEnd.Migrations
                         .HasMaxLength(20);
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnName("password")
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);

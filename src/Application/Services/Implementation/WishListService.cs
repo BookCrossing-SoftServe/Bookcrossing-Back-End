@@ -102,7 +102,7 @@ namespace Application.Services.Implementation
             foreach (var wish in wishes)
             {
                 await _notificationsService.NotifyAsync(
-                    wish.User, 
+                    wish.User.Id, 
                     $"The book '{wish.Book.Name}' from your wish list is available now.", 
                     wish.BookId, 
                     NotificationAction.Request);
