@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Dto;
 using Application.Dto.QueryParams;
 using Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -44,6 +45,7 @@ namespace BookCrossingBackEnd.Controllers
 
         // PUT: api/Language
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutLanguage(LanguageDto languageDto)
         {
             _logger.LogInformation("Update language {LanguageDto}", languageDto);
@@ -58,15 +60,17 @@ namespace BookCrossingBackEnd.Controllers
 
         // POST: api/Language
         [HttpPost]
-        public async Task<ActionResult<LanguagePostDto>> PostLanguage([FromBody]LanguagePostDto languageDto)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<LanguageDto>> PostLanguage([FromBody]LanguagePostDto languageDto)
         {
-            _logger.LogInformation("Post language {LanguageDto}", languageDto);
+            _logger.LogInformation("Post language {LanguagePostDto}", languageDto);
             var insertedLanguage = await _languageService.Add(languageDto);
             return Created("GetLanguage", insertedLanguage);
         }
 
         // DELETE: api/Language/id
         [HttpDelete("{id:min(1)}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteLanguage(int id)
         {
             _logger.LogInformation("Delete language {Id}", id);
