@@ -16,6 +16,8 @@ namespace Application.Services.Implementation
 {
     public class NotificationsService : INotificationsService
     {
+        private const string MethodNameOfHubProxy = "Notify";
+
         private readonly IRepository<Notification> _notificationsRepository;
         private readonly IUserResolverService _userResolverService;
         private readonly IMapper _mapper;
@@ -33,9 +35,18 @@ namespace Application.Services.Implementation
             _notificationHubContext = notificationHubContext;
         }
 
-        public async Task NotifyAsync(int userId, string message, int? bookId = null,
-            NotificationAction action = NotificationAction.None)
+        public async Task NotifyAsync(int userId, string message, int? bookId = null, NotificationAction action = NotificationAction.None)
         {
+            if (message == null)
+            {
+                throw new ArgumentNullException(nameof(message), "Message of notification cannot be null");
+            }
+
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                throw new ArgumentException("Message of notification cannot contain only white spaces or be empty", nameof(message));
+            }
+
             var newNotification = new Notification 
             {
                 UserId = userId,
@@ -48,7 +59,7 @@ namespace Application.Services.Implementation
             await _notificationsRepository.SaveChangesAsync();
             await _notificationHubContext.Clients.User(userId.ToString())
                 .SendAsync(
-                    "Notify", 
+                    MethodNameOfHubProxy, 
                     _mapper.Map<NotificationDto>(newNotification));
         }
 
