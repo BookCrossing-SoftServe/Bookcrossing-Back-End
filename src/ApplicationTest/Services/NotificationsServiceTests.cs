@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Application.Dto;
 using Application.Services.Implementation;
