@@ -9,6 +9,7 @@ namespace Domain.RDBMS.Entities
         Available,
         Requested,
         Reading,
-        InActive
+        InActive,
+        RequestedFromCompany
     }
 }
