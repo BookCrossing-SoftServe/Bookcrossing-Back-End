@@ -21,7 +21,8 @@
     "requested": "Запити",
     "currentlyOwned": "Отримані",
     "read": "Прочитані",
-    "wishlist":  "Список Бажань",
+    "wishlist": "Список Бажань",
+    "statistics": "Статистика",
     "manage": "Управління",
     "logOut": "Вийти",
     "languages": {
