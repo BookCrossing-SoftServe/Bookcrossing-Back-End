@@ -370,5 +370,10 @@ namespace Application.Services.Implementation
             var affectedRows = await _requestRepository.SaveChangesAsync();
             return affectedRows > 0;
         }
+
+        public async Task<int> GetNumberOfRequestedBooksAsync(int userId)
+        {
+            return await _requestRepository.GetAll().Where(r => r.UserId == userId && r.ReceiveDate == null).CountAsync();
+        }
     }
 }

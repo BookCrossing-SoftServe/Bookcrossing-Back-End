@@ -355,6 +355,20 @@ namespace ApplicationTest.Services
             result.Should().BeTrue();
         }
 
+        [Test]
+        public async Task GetNumberOfBooksInReadStatusAsync_ReturnsMatchedNumber()
+        {
+            _bookRepositoryMock.Setup(m => m.GetAll())
+                .Returns(GetPopulatedBooks().AsQueryable().BuildMock().Object);
+            _requestServiceMock.Setup(m => m.GetAll())
+                .Returns(new List<Request>().AsQueryable().BuildMock().Object);
+            var userId = 1;
+
+            var result = await _bookService.GetNumberOfBooksInReadStatusAsync(userId);
+
+            result.Should().Be(GetPopulatedBooks().Count(b => b.UserId == userId));
+        }
+
         private List<Book> GetPopulatedBooks()
         {
             var genres = GetBookGenre();

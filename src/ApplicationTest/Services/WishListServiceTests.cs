@@ -200,6 +200,18 @@ namespace ApplicationTest.Services
                 Times.Once);
         }
 
+        [Test]
+        public async Task GetNumberOfWishedBooksAsync_ReturnsMatchedNumber()
+        {
+            _wishRepositoryMock.Setup(m => m.GetAll())
+                .Returns(_wishes.AsQueryable().BuildMock().Object);
+            var matchedBooks = _wishes.Count(w => w.UserId == _currentUser.Id);
+
+            var result = await _service.GetNumberOfWishedBooksAsync(_currentUser.Id);
+
+            result.Should().Be(matchedBooks);
+        }
+
         private void MockData()
         {
             _currentUser = new User

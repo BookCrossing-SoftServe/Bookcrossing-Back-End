@@ -54,5 +54,12 @@ namespace Application.Services.Interfaces
         /// <param name="requestId">Request's ID</param>
         /// <returns>boolean</returns>
         Task<bool> RemoveAsync(int requestId);
+
+        /// <summary>
+        /// Get number of requested books of the specified user
+        /// </summary>
+        /// <param name="userId"> The user of the wish list </param>
+        /// <returns> Number of requested books </returns>
+        Task<int> GetNumberOfRequestedBooksAsync(int userId);
     }
 }

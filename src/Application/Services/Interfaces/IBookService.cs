@@ -1,6 +1,6 @@
-﻿using Application.Dto;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Application.Dto;
 using Application.Dto.QueryParams;
 
 namespace Application.Services.Interfaces
@@ -82,5 +82,18 @@ namespace Application.Services.Interfaces
         ///  <param name="bookId">Book Id</param>
         /// <returns></returns>
         Task<bool> DeactivateAsync(int bookId);
+
+        /// <summary>
+        /// Get number of times registered books were read
+        /// </summary>
+        /// <returns>Number of times</returns>
+        Task<int> GetNumberOfTimesRegisteredBooksWereReadAsync(int userId);
+
+        /// <summary>
+        /// Get number of books that are in read status
+        /// </summary>
+        /// <param name="userId"> User id </param>
+        /// <returns> Number of books </returns>
+        Task<int> GetNumberOfBooksInReadStatusAsync(int userId);
     }
 }

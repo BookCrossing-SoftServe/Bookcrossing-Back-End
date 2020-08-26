@@ -15,5 +15,12 @@ namespace Application.Services.Interfaces
         Task NotifyAboutAvailableBookAsync(int bookId);
 
         Task<bool> CheckIfBookInWishListAsync(int bookId);
+
+        /// <summary>
+        /// Get number of wished list in user's wish-list
+        /// </summary>
+        /// <param name="userId"> The user of the wish list </param>
+        /// <returns> Number of wished books </returns>
+        Task<int> GetNumberOfWishedBooksAsync(int userId);
     }
 }

@@ -20,6 +20,7 @@ namespace ApplicationTest.Services.Comment.Book
         private Mock<IChildRepository<BookRootComment,BookChildComment>> _childRepository;
         private Mock<IBookRootCommentService> _rootRepository;
         private Mock<IMapper> _mapper;
+        private BookChildCommentServiceProxy _bookChildCommentServiceProxy;
 
         [SetUp]
         public void Setup()
@@ -28,6 +29,11 @@ namespace ApplicationTest.Services.Comment.Book
             _rootRepository = new Mock<IBookRootCommentService>();
             _mapper = new Mock<IMapper>();
             _bookChildCommentService = new BookChildCommentService(_childRepository.Object, _rootRepository.Object, _mapper.Object);
+            _bookChildCommentServiceProxy = new BookChildCommentServiceProxy(
+                _childRepository.Object,
+                _rootRepository.Object,
+                _mapper.Object
+            );
         }
 
         #region Update
@@ -126,7 +132,7 @@ namespace ApplicationTest.Services.Comment.Book
         [Test]
         public async Task SetAsDeleted_ReturnsNumberOfUpdatedObjects()
         {
-            var bookChildCommentServiceMock = new BookChildCommentServiceMock(
+            var bookChildCommentServiceMock = new BookChildCommentServiceProxy(
                 _childRepository.Object, 
                 _rootRepository.Object, 
                 _mapper.Object);
@@ -139,7 +145,7 @@ namespace ApplicationTest.Services.Comment.Book
                     It.IsAny<IEnumerable<(string, string)>>()))
                 .ReturnsAsync(updateResult);
 
-            var result = await bookChildCommentServiceMock.SetAsDeleted(
+            var result = await bookChildCommentServiceMock.SetAsDeletedProxy(
                 new List<string> {"5e9c9ee859231a63bc853bf1", "5e9c9ee859231a63bc853bf2"}, 
                 new ChildDto() {Comments = new List<ChildDto>()
                 {
@@ -152,7 +158,7 @@ namespace ApplicationTest.Services.Comment.Book
 
         [Test] public async Task Delete_RootCommentIsDeletedAndDoesntContainActiveSubcomments_ReturnsNumberOfUpdatedObjects()
         {
-            var bookChildCommentServiceMock = new BookChildCommentServiceMock(
+            var bookChildCommentServiceMock = new BookChildCommentServiceProxy(
                 _childRepository.Object,
                 _rootRepository.Object,
                 _mapper.Object);
@@ -168,7 +174,7 @@ namespace ApplicationTest.Services.Comment.Book
             _rootRepository.Setup(m => m.GetById(It.IsAny<string>()))
                 .ReturnsAsync(new RootDto() {IsDeleted = true, Comments = new List<ChildDto>()});
 
-            var result = await bookChildCommentServiceMock.Delete(
+            var result = await bookChildCommentServiceMock.DeleteProxy(
                 new List<string> { "5e9c9ee859231a63bc853bf1", "5e9c9ee859231a63bc853bf2", "5e9c9ee859231a63bc853bf3" },
                 "5e9c9ee859231a63bc853bf0",
                 "5e9c9ee859231a63bc853bf1");
@@ -178,14 +184,8 @@ namespace ApplicationTest.Services.Comment.Book
         }
 
         [Test]
-        public void HasActiveComments_Yes_ReturnTrue()
+        public void HasActiveComments_HasAnyActiveSubComments_ReturnTrue()
         {
-            var bookChildCommentServiceMock = new BookChildCommentServiceMock(
-                _childRepository.Object,
-                _rootRepository.Object,
-                _mapper.Object);
-
-
             List<ChildDto> childDtos = new List<ChildDto>()
             {
                 new ChildDto() {IsDeleted = true, Comments = new List<ChildDto>()},
@@ -195,21 +195,15 @@ namespace ApplicationTest.Services.Comment.Book
                 }}
             };
 
-            var result = bookChildCommentServiceMock.HasActiveComments(childDtos);
+            var result = _bookChildCommentServiceProxy.HasActiveCommentsProxy(childDtos);
 
             result.Should().Be(true);
         }
 
 
         [Test]
-        public void HasActiveComments_No_ReturnFalse()
+        public void HasActiveComments_HasNotAnyActiveSubComments_ReturnFalse()
         {
-            var bookChildCommentServiceMock = new BookChildCommentServiceMock(
-                _childRepository.Object,
-                _rootRepository.Object,
-                _mapper.Object);
-
-
             List<ChildDto> childDtos = new List<ChildDto>()
             {
                 new ChildDto() {IsDeleted = true, Comments = new List<ChildDto>()},
@@ -219,7 +213,7 @@ namespace ApplicationTest.Services.Comment.Book
                 }}
             };
 
-            var result = bookChildCommentServiceMock.HasActiveComments(childDtos);
+            var result = _bookChildCommentServiceProxy.HasActiveCommentsProxy(childDtos);
 
             result.Should().Be(false);
         }
@@ -232,11 +226,6 @@ namespace ApplicationTest.Services.Comment.Book
         [TestCase("8", false)]
         public async Task FindChild_WasFounded_ReturnChildDto(string searchChildId, bool found)
         {
-            var bookChildCommentServiceMock = new BookChildCommentServiceMock(
-                _childRepository.Object,
-                _rootRepository.Object,
-                _mapper.Object);
-
             var children = new List<ChildDto>
             {
                 new ChildDto() {Id = "1", Comments = new List<ChildDto>()},
@@ -253,36 +242,38 @@ namespace ApplicationTest.Services.Comment.Book
                 }},
             };
 
-            var result = await bookChildCommentServiceMock.FindChild(children, searchChildId);
+            var result = await _bookChildCommentServiceProxy.FindChildProxy(children, searchChildId);
 
             (result != null).Should().Be(found);
         }
 
 
-        class BookChildCommentServiceMock : BookChildCommentService
+        private class BookChildCommentServiceProxy : BookChildCommentService
         {
-            public BookChildCommentServiceMock(IChildRepository<BookRootComment, BookChildComment> childCommentRepository,
+            public BookChildCommentServiceProxy(
+                IChildRepository<BookRootComment, BookChildComment> childCommentRepository,
                 IBookRootCommentService bookRootCommentService,
-                IMapper mapper) : base(childCommentRepository, bookRootCommentService, mapper)
+                IMapper mapper
+            ) : base(childCommentRepository, bookRootCommentService, mapper)
             {
             }
 
-            public new async Task<int> SetAsDeleted(IEnumerable<string> ids, ChildDto childComment, string rootId)
+            public async Task<int> SetAsDeletedProxy(IEnumerable<string> ids, ChildDto childComment, string rootId)
             {
                 return await base.SetAsDeleted(ids, childComment, rootId);
             }
 
-            public new async Task<int> Delete(IEnumerable<string> ids, string rootId, string childId)
+            public async Task<int> DeleteProxy(IEnumerable<string> ids, string rootId, string childId)
             {
                 return await base.Delete(ids, rootId, childId);
             }
 
-            public new bool HasActiveComments(IEnumerable<ChildDto> children)
+            public bool HasActiveCommentsProxy(IEnumerable<ChildDto> children)
             {
                 return base.HasActiveComments(children);
             }
 
-            public new Task<ChildDto> FindChild(IEnumerable<ChildDto> children, string childId)
+            public Task<ChildDto> FindChildProxy(IEnumerable<ChildDto> children, string childId)
             {
                 return base.FindChild(children, childId);
             }
