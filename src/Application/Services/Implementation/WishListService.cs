@@ -125,5 +125,10 @@ namespace Application.Services.Implementation
 
             return wish != null;
         }
+
+        public async Task<int> GetNumberOfWishedBooksAsync(int userId)
+        {
+            return await _wishRepository.GetAll().Where(wish => wish.UserId == userId).CountAsync();
+        }
     }
 }

@@ -147,29 +147,27 @@ namespace Application.Services.Implementation
             }
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
         }
-        public async Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters)
+
+        private async Task<IEnumerable<int>> FindRegisteredBooksAsync(int userId)
         {
-            
-            var userId = _userResolverService.GetUserId();
-                       
             //registered books            
             var allRequests = await _requestRepository.GetAll()
-                                              .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
-                                              .ToListAsync();
+                .Select(x => new { Owner = x.Owner.Id, Time = x.RequestDate, Book = x.Book })
+                .ToListAsync();
 
             var firstRequests = allRequests.GroupBy(a => new { a.Book })
-                                           .Select(g => new
-                                           {
-                                               g.Key.Book,
-                                               MinTime = g.Min(book => book.Time)
-                                           }).ToList();
+                .Select(g => new
+                {
+                    g.Key.Book,
+                    MinTime = g.Min(book => book.Time)
+                }).ToList();
 
             var firstRequestsBookId = firstRequests.Select(g => g.Book.Id);
 
             var userBooks = await _bookRepository.GetAll()
-                                       .Where(x => x.UserId == userId)
-                                       .Select(x => x.Id)
-                                       .ToListAsync();
+                .Where(x => x.UserId == userId)
+                .Select(x => x.Id)
+                .ToListAsync();
 
             var userCurrentBooks = userBooks.Except(firstRequestsBookId);
 
@@ -177,10 +175,31 @@ namespace Application.Services.Implementation
             //all user books
             var allBooks = userCurrentBooks.Union(userFirstBooks);
 
-            var query = _bookRepository.GetAll().Where(x => allBooks.Contains(x.Id));
+            return allBooks;
+        }
+
+        public async Task<PaginationDto<BookGetDto>> GetRegistered(BookQueryParams parameters)
+        {
+            var userId = _userResolverService.GetUserId();
+            var registeredBooks = await FindRegisteredBooksAsync(userId);
+            var query = _bookRepository.GetAll().Where(x => registeredBooks.Contains(x.Id));
             query = GetFilteredQuery(query, parameters);
 
             return await _paginationService.GetPageAsync<BookGetDto, Book>(query, parameters);
+        }
+
+        public async Task<int> GetNumberOfTimesRegisteredBooksWereReadAsync(int userId)
+        {
+            var booksTransitions = await _requestRepository.GetAll()
+                .Where(r => r.ReceiveDate != null && r.OwnerId != r.UserId)
+                .GroupBy(r => r.BookId)
+                .Select(r => new { BookId = r.Key, Count = r.Count() })
+                .ToListAsync();
+            var registeredBooks = await FindRegisteredBooksAsync(userId);
+
+            return booksTransitions
+                .Where(x => registeredBooks.Contains(x.BookId))
+                .Sum(c => c.Count);
         }
 
         public async Task<PaginationDto<BookGetDto>> GetCurrentOwned(BookQueryParams parameters)
@@ -300,6 +319,13 @@ namespace Application.Services.Implementation
             return true;
         }
 
+        public async Task<int> GetNumberOfBooksInReadStatusAsync(int userId)
+        {
+            var ownedBooks = _requestRepository.GetAll().Where(a => a.OwnerId == userId).Select(a => a.Book);
+            var currentlyOwnedBooks = _bookRepository.GetAll().Where(a => a.UserId == userId);
+            
+            return await ownedBooks.Union(currentlyOwnedBooks).CountAsync();
+        }
 
         private IQueryable<Book> GetFilteredQuery(IQueryable<Book> query, BookQueryParams parameters)
         {
@@ -354,6 +380,5 @@ namespace Application.Services.Implementation
                 .ThenInclude(x => x.Location)
                 .Include(x => x.Language);
         }
-
     }
 }

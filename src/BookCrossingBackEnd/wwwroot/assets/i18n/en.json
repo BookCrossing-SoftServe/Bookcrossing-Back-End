@@ -21,7 +21,8 @@
     "requested": "Requested",
     "currentlyOwned": "Currently Owned",
     "read": "Read",
-    "wishlist":  "Wish List",
+    "wishlist": "Wish List",
+    "statistics": "Statistics",
     "manage": "Management",
     "logOut": "Log Out",
     "languages": {
