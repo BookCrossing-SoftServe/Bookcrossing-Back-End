@@ -101,7 +101,7 @@ namespace BookCrossingBackEnd.Controllers
         /// <param name="id"></param>
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             _logger.LogInformation("Delete user {id}", id);
@@ -110,7 +110,7 @@ namespace BookCrossingBackEnd.Controllers
         }
 
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RecoverUser([FromRoute] int id)
         {
             _logger.LogInformation("Recover user {id}", id);

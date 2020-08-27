@@ -208,8 +208,12 @@
         "found-number": "Number of found users: {{value}}",
         "first-name": "First name",
         "last-name": "Last name",
-        "register-date": "Register date" 
-      } 
+        "register-date": "Register date"
+      },
+      "timespans": {
+        "timespan": "Timespan",
+        "timespans": "Timespans"
+      }
     }
   }
 }
