@@ -16,11 +16,15 @@ addons:
   sonarcloud:
     organization: "bookcrossing-softserve"
     
+before_script:
+    - ./tools/travis-ci-install-sonar.sh
+
 script:
+    - dotnet tools/sonar/SonarScanner.MSBuild.dll begin /o:"bookcrossing-softserve" /k:"BookCrossing-SoftServe_Bookcrossing-Back-End" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login=${SONAR_TOKEN}
     - dotnet build src/BookCrossingBackEnd.sln -c Release
     - dotnet test -c Release --no-build src/ApplicationTest/ApplicationTest.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-    - sonar-scanner
-    
+    - dotnet tools/sonar/SonarScanner.MSBuild.dll end /d:sonar.login=${SONAR_TOKEN}
+
 after_script:
     - bash <(curl -s https://codecov.io/bash) 
 
