@@ -1,7 +1,7 @@
 ﻿language: csharp
 
 dotnet: 3.1.301
-mono: 3.10.0
+mono: none
 sudo: false
 
 git:
@@ -17,7 +17,7 @@ addons:
     organization: "bookcrossing-softserve"
     
 before_script:
-    - travis-ci-install-sonar.sh
+    - /tools/travis-ci-install-sonar.sh
 
 script:
     - dotnet build src/BookCrossingBackEnd.sln -c Release
