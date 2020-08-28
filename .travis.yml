@@ -17,7 +17,8 @@ addons:
     organization: "bookcrossing-softserve"
     
 before_script:
-    - /tools/travis-ci-install-sonar.sh
+    - ls -la
+    - cd tools && ./travis-ci-install-sonar.sh
 
 script:
     - dotnet build src/BookCrossingBackEnd.sln -c Release
