@@ -144,7 +144,7 @@ namespace Application.Services.Implementation
                 throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
             }
 
-            if (user.Book != null && user.Book.Where(p => p.State != BookState.InActive).Count() > 0)
+            if (user.Book.Count(p => p.State != BookState.InActive) > 0)
             {
                 throw new InvalidOperationException();
             }

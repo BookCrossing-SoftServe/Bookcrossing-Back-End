@@ -158,7 +158,7 @@ namespace ApplicationTest.Services
 
 
         [Test]
-        public async Task UpdateUser_AffectedRows0_ThrowsDbUpdateException()
+        public void UpdateUser_AffectedRowsAreEqualToZero_ThrowsDbUpdateException()
         {
             _userRepositoryMock.Setup(s => s.SaveChangesAsync()).ReturnsAsync(0);
             var updateUser = new UserUpdateDto()
@@ -178,7 +178,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveUser_AffectedRows0_ThrowsObjectNotFoundException()
+        public void  RemoveUser_AffectedRowsAreEqualToZero_ThrowsObjectNotFoundException()
         {
             int userId = 5;
             _userRepositoryMock.Setup(s => s.FindByIdAsync(userId)).ReturnsAsync(new User());
@@ -190,7 +190,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveUser_UserDoesNotExist_ThrowsObjectNotFoundException()
+        public void RemoveUser_UserDoesNotExist_ThrowsObjectNotFoundException()
         {
             var userId = 5;
             _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
@@ -202,7 +202,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveUser_UserExistsAndHaveBookOrBooks_ShouldNotDeleteUsers()
+        public void RemoveUser_UserExistsAndHaveBookOrBooks_ShouldNotDeleteUsers()
         {
             var userId = 5;
             var books = new List<Book>
@@ -211,7 +211,7 @@ namespace ApplicationTest.Services
                 new Book {Id = 2, State = BookState.Reading}
             };
             var user = new User {Id = userId, Book = books};
-            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
+             _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
                 .ReturnsAsync(user);
             _userRepositoryMock.Setup(r => r.SaveChangesAsync())
                 .ReturnsAsync(1);
