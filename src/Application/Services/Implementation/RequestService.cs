@@ -73,7 +73,7 @@ namespace Application.Services.Implementation
         {
             var book = await _bookRepository.GetAll().Include(x => x.User).FirstOrDefaultAsync(x => x.Id == bookId);
             var isNotAvailableForRequest = book == null || book.State != BookState.Available;
-
+            var user = _userRepository.FindByIdAsync(userId).Result;
             if (isNotAvailableForRequest)
             {
                 return null;
@@ -86,11 +86,14 @@ namespace Application.Services.Implementation
                 UserId = userId,
                 RequestDate = DateTime.UtcNow
             };
+            if (user.IsDeleted)
+            {
+                throw new InvalidOperationException();
+            }
             _requestRepository.Add(request);
             await _requestRepository.SaveChangesAsync();
             book.State = BookState.Requested;
             await _bookRepository.SaveChangesAsync();
-            var user = _userRepository.FindByIdAsync(userId).Result;
             if (book.User.IsEmailAllowed)
             {
                 var emailMessageForRequest = new RequestMessage()
