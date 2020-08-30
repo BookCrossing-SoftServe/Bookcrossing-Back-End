@@ -17,7 +17,6 @@ using Domain.RDBMS.Entities;
 using Infrastructure.RDBMS;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
 
 namespace Application.Services.Implementation
 {
@@ -144,7 +143,7 @@ namespace Application.Services.Implementation
                 throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
             }
 
-            if (user.Book.Count(p => p.State != BookState.InActive) > 0)
+            if (user.Book.Any(p => p.State != BookState.InActive))
             {
                 throw new InvalidOperationException();
             }
@@ -170,7 +169,7 @@ namespace Application.Services.Implementation
                 throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
             }
 
-            if (user != null && user.IsDeleted == true)
+            if (user.IsDeleted)
             {
                 user.IsDeleted = false;
             }
