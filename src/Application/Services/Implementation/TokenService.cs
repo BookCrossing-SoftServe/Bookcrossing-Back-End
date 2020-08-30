@@ -55,7 +55,8 @@ namespace Application.Services.Implementation
             }
 
             if(!String.IsNullOrWhiteSpace(loginModel.AzureId) &&
-                _passwordHasher.VerifyHashedPassword(user, user.AzureId, loginModel.AzureId) == PasswordVerificationResult.Success)
+                _passwordHasher.VerifyHashedPassword(user, user.AzureId, loginModel.AzureId) == PasswordVerificationResult.Success &&
+                !user.IsDeleted)
             {
                 return user;
             }

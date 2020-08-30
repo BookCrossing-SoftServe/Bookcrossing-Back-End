@@ -166,10 +166,12 @@ namespace BookCrossingBackEnd
                 WorkerCount = 1
             });
 
+            int hours = 23;
+            int minutes = 59;
             recurringJobManager.AddOrUpdate(
                 "Run every day",
                 () => serviceProvider.GetService<IAphorismService>().MoveToNextAsync(),
-                "59 23 * * *",
+                $"{minutes} {hours} * * *",
                 TimeZoneInfo.Local
             );
 

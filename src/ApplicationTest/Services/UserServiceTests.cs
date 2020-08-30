@@ -35,6 +35,7 @@ namespace ApplicationTest.Services
         private Mock<IRepository<UserRoom>> _userRoomRepositoryMock;
         private Mock<IRepository<ResetPassword>> _resetPasswordRepositoryMock;
         private Mock<IBookService> _bookServiceMock;
+        private Mock<IRequestService> _requestServiceMock;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -46,6 +47,7 @@ namespace ApplicationTest.Services
             _userRoomRepositoryMock = new Mock<IRepository<UserRoom>>();
             _bookServiceMock = new Mock<IBookService>();
             _paginationServiceMock = new Mock<IPaginationService>();
+            _requestServiceMock = new Mock<IRequestService>();
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new Application.MapperProfilers.AuthorProfile());
@@ -62,7 +64,7 @@ namespace ApplicationTest.Services
             _context = new BookCrossingContext(options);
             _usersService = new UsersService(_userRepositoryMock.Object, _mapper,_emailSenderServiceMock.Object,
                                                 _resetPasswordRepositoryMock.Object, _userRoomRepositoryMock.Object, _bookServiceMock.Object,
-                                                    _context, _paginationServiceMock.Object);
+                                                    _context, _paginationServiceMock.Object, _requestServiceMock.Object);
         }
         [SetUp]
         public void SetUp()
@@ -156,7 +158,7 @@ namespace ApplicationTest.Services
 
 
         [Test]
-        public async Task UpdateUser_AffectedRows0_ThrowsDbUpdateException()
+        public void UpdateUser_AffectedRowsAreEqualToZero_ThrowsDbUpdateException()
         {
             _userRepositoryMock.Setup(s => s.SaveChangesAsync()).ReturnsAsync(0);
             var updateUser = new UserUpdateDto()
@@ -176,7 +178,7 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveUser_AffectedRows0_ThrowsDbUpdateException()
+        public void  RemoveUser_AffectedRowsAreEqualToZero_ThrowsObjectNotFoundException()
         {
             int userId = 5;
             _userRepositoryMock.Setup(s => s.FindByIdAsync(userId)).ReturnsAsync(new User());
@@ -184,11 +186,11 @@ namespace ApplicationTest.Services
 
             Func<Task> a = async () => await _usersService.RemoveUser(userId);
 
-            a.Should().Throw<DbUpdateException>();
+            a.Should().Throw<ObjectNotFoundException> ();
         }
 
         [Test]
-        public async Task RemoveUser_UserDoesNotExist_ThrowsObjectNotFound()
+        public void RemoveUser_UserDoesNotExist_ThrowsObjectNotFoundException()
         {
             var userId = 5;
             _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
@@ -200,29 +202,24 @@ namespace ApplicationTest.Services
         }
 
         [Test]
-        public async Task RemoveUser_UserExists_ShouldDeactivateUsersBooksAndRemoveHis()
+        public void RemoveUser_UserExistsAndHaveBookOrBooks_ShouldNotDeleteUsers()
         {
             var userId = 5;
             var books = new List<Book>
             {
-                new Book {Id = 1},
-                new Book {Id = 2}
+                new Book {Id = 1, State = BookState.Available},
+                new Book {Id = 2, State = BookState.Reading}
             };
-            var user = new User {Id = userId, Book = books };
-            _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
+            var user = new User {Id = userId, Book = books};
+             _userRepositoryMock.Setup(s => s.FindByIdAsync(userId))
                 .ReturnsAsync(user);
             _userRepositoryMock.Setup(r => r.SaveChangesAsync())
                 .ReturnsAsync(1);
+            _userRepositoryMock.Setup(s => s.GetAll())
+                .Returns(new List<User> {user}.AsQueryable);
+            Func<Task> a = async () => await _usersService.RemoveUser(userId);
 
-            await _usersService.RemoveUser(userId);
-
-            foreach (var book in books)
-            {
-                _bookServiceMock.Verify(s => s.DeactivateAsync(book.Id), Times.Once);
-            }
-
-            _userRepositoryMock.Verify(r => r.Remove(user), Times.Once);
-            _userRepositoryMock.Verify(r => r.SaveChangesAsync());
+            a.Should().Throw<InvalidOperationException>();
         }
     }
 }

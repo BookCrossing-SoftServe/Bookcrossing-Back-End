@@ -210,6 +210,10 @@
         "first-name": "Ім'я",
         "last-name": "Прізвище",
         "register-date": "Дата реєстрації"
+      },
+      "timespans": {
+        "timespan": "Таймспан",
+        "timespans": "Таймспани"
       }
     }
   }

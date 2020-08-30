@@ -60,7 +60,7 @@ namespace BookCrossingBackEnd.Controllers
         public async Task<ActionResult<UserDto>> Get([FromRoute] int userId)
         {
             _logger.LogInformation("Getting user by id = {userId}", userId);
-            var user = await _userService.GetById(x=>x.Id == userId);
+            var user = await _userService.GetById(x => x.Id == userId);
             if (user == null)
                 return NotFound();
             return user;
@@ -101,11 +101,20 @@ namespace BookCrossingBackEnd.Controllers
         /// <param name="id"></param>
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             _logger.LogInformation("Delete user {id}", id);
             await _userService.RemoveUser(id);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RecoverUser([FromRoute] int id)
+        {
+            _logger.LogInformation("Recover user {id}", id);
+            await _userService.RecoverDeletedUser(id);
             return Ok();
         }
 

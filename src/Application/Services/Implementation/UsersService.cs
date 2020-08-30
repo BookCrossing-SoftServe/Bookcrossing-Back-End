@@ -26,6 +26,7 @@ namespace Application.Services.Implementation
         private readonly IRepository<User> _userRepository;
         private readonly IBookService _bookService;
         private readonly IMapper _mapper;
+        private readonly IRequestService _requestService;
         private readonly IEmailSenderService _emailSenderService;
         private readonly IRepository<ResetPassword> _resetPasswordRepository;
         private readonly IRepository<UserRoom> _userRoomRepository;
@@ -35,7 +36,7 @@ namespace Application.Services.Implementation
 
         public UsersService(IRepository<User> userRepository, IMapper mapper, IEmailSenderService emailSenderService, 
             IRepository<ResetPassword> resetPasswordRepository, IRepository<UserRoom> userRoomRepository, IBookService bookService, 
-            BookCrossingContext context, IPaginationService paginationService)
+            BookCrossingContext context, IPaginationService paginationService, IRequestService requestService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -46,6 +47,7 @@ namespace Application.Services.Implementation
             _context = context;
             _passwordHasher = new PasswordHasher<User>();
             _paginationService = paginationService;
+            _requestService = requestService;
         }
         ///<inheritdoc/>
         public async Task<UserDto> GetById(Expression<Func<User, bool>> predicate)
@@ -71,7 +73,7 @@ namespace Application.Services.Implementation
         {
             var userList = _userRepository.GetAll().Include(p => p.UserRoom);
             var paginatedListOfUsers = await _paginationService.GetPageAsync<UserDto, User>(userList, parameters);
-            paginatedListOfUsers.Page.ForEach(async user => user.numberOfBooksOwned = await _bookService.GetCurrentOwnedByIdCount(user.Id));
+            paginatedListOfUsers.Page.ForEach(async user => user.NumberOfBooksOwned = await _bookService.GetCurrentOwnedByIdCount(user.Id));
             return paginatedListOfUsers;
         }
 
@@ -135,21 +137,22 @@ namespace Application.Services.Implementation
         public async Task RemoveUser(int userId)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            var user = await _userRepository.FindByIdAsync(userId);
+            var user = _userRepository.GetAll().Include(user => user.Book).Include(user => user.RequestUser).ThenInclude(requesr => requesr.Book).FirstOrDefault(user => user.Id == userId);
             if (user == null)
             {
                 throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
             }
 
-            if (user.Book != null)
+            if (user.Book.Any(p => p.State != BookState.InActive))
             {
-                foreach (var book in user.Book)
-                {
-                    await _bookService.DeactivateAsync(book.Id);
-                }
+                throw new InvalidOperationException();
             }
-
-            _userRepository.Remove(user);
+            var requestsIds = user.RequestUser.Where(request => request.ReceiveDate == null).Select(request => request.Id).ToList();
+            foreach(var requestId in requestsIds)
+            {
+                await _requestService.RemoveAsync(requestId);
+            }
+            user.IsDeleted = true;
             var affectedRows = await _userRepository.SaveChangesAsync();
             if (affectedRows == 0)
             {
@@ -157,7 +160,28 @@ namespace Application.Services.Implementation
             }
             await transaction.CommitAsync();
         }
-        /// <inheritdoc />
+
+        public async Task RecoverDeletedUser(int userId)
+        {
+            var user = await _userRepository.FindByCondition(ar => ar.IsDeleted);
+            if (user == null)
+            {
+                throw new ObjectNotFoundException($"There is no user with id = {userId} in database");
+            }
+
+            if (user.IsDeleted)
+            {
+                user.IsDeleted = false;
+            }
+
+            var affectedRows = await _userRepository.SaveChangesAsync();
+            if (affectedRows == 0)
+            {
+                throw new DbUpdateException();
+            }
+        }
+
+            /// <inheritdoc />
         public async Task SendPasswordResetConfirmation(string email)
         {
             var user = await _userRepository.FindByCondition(c => c.Email == email);
@@ -170,6 +194,7 @@ namespace Application.Services.Implementation
             await _resetPasswordRepository.SaveChangesAsync();
             await _emailSenderService.SendForPasswordResetAsync(user.FirstName, resetPassword.ConfirmationNumber, email);
         }
+
         /// <inheritdoc />
         public async Task ResetPassword(ResetPasswordDto newPassword)
         {

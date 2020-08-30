@@ -54,6 +54,9 @@ namespace Infrastructure.RDBMS.Configuration
                .HasColumnName("email_allowed")
                .HasColumnType("bit"); ;
 
+            builder.Property(e => e.IsDeleted)
+             .HasColumnName("isDeleted");
+
             builder.HasOne(d => d.Role)
                 .WithMany(p => p.User)
                 .HasForeignKey(d => d.RoleId)

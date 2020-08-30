@@ -30,6 +30,8 @@ namespace Application.Services.Interfaces
 
         Task RemoveUser(int userId);
 
+        Task RecoverDeletedUser(int userId);
+
         /// <summary>
         /// Sending an email with unique confirmation code for password reset
         /// </summary>

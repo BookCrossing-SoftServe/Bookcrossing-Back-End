@@ -31,6 +31,8 @@ namespace Domain.RDBMS.Entities
 
         public bool IsEmailAllowed { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public virtual Role Role { get; set; }
 
         public virtual List<Book> Book { get; set; } 
